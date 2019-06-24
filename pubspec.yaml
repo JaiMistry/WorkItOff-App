@@ -86,6 +86,7 @@ flutter:
    - assets/categories/alcohol.png
    - assets/categories/common_favs.png
    - assets/categories/drinks.png
+   # Icons
    - assets/icon_512.png
    - assets/icon_1024.png
    - assets/logo_transparent.png
