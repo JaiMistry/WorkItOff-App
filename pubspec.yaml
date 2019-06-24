@@ -42,6 +42,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+  # Cards
    - assets/cards/aerobics.png
    - assets/cards/baseball.png
    - assets/cards/basketball.png
@@ -90,6 +91,30 @@ flutter:
    - assets/logo_transparent.png
    - assets/splash.png
    - assets/text_logo.png
+  #  Logos
+   - assets/logos/buffalo_wild_wings.jpg
+   - assets/logos/burger_king.png
+   - assets/logos/cheddars.png
+   - assets/logos/cheesecake-factory.png
+   - assets/logos/chick-fil-a.png
+   - assets/logos/chilis.png
+   - assets/logos/chipotle.png
+   - assets/logos/dominos.jpg
+   - assets/logos/dunkin_donuts.png
+   - assets/logos/five-guys.png
+   - assets/logos/mcdonalds.png
+   - assets/logos/olive-garden.gif
+   - assets/logos/outback-steakhouse.png
+   - assets/logos/panda_express.png
+   - assets/logos/panera_bread.png
+   - assets/logos/papa-johns.webp
+   - assets/logos/pizza-hut.png
+   - assets/logos/starbucks.jpg
+   - assets/logos/tacobell.png
+   - assets/logos/texas_roadhouse.jpg
+   - assets/logos/wendys.jpg
+   - assets/logos/whataburger.png
+   - assets/logos/wing-stop.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
