@@ -1,5 +1,5 @@
 name: workitoff
-description: A new Flutter project.
+description: A (better) clone of the WorkItOff app.
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -83,10 +83,11 @@ flutter:
    - assets/cards/weight_lifting.png
    - assets/cards/wrestling.png
    - assets/cards/yoga.png
+  # Categories
    - assets/categories/alcohol.png
    - assets/categories/common_favs.png
    - assets/categories/drinks.png
-   # Icons
+  # Icons
    - assets/icon_512.png
    - assets/icon_1024.png
    - assets/logo_transparent.png
