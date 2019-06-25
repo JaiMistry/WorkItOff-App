@@ -16,14 +16,14 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
 
   final List<String> cardList = [
     'assets/cards/running.png',
-    'assets/cards/hiking.png',
-    'assets/cards/aerobics.png',
-    'assets/cards/swimming.png',
+    'assets/cards/yoga.png',
+    'assets/cards/weight_lifting.png',
+    'assets/cards/stairs.png',
   ];
 
   Widget _buildWorkoutCard(BuildContext context, int index) {
     return Container(
-      height: 250,
+      height: 305,
       child: Column(
         children: <Widget>[
           Card(
@@ -31,15 +31,44 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10.0),
-              child: Image.asset(
-                cardList[index],
-                fit: BoxFit.cover,
-              ),
+            child: Column(
+              children: <Widget>[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: Image.asset(
+                    cardList[index],
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 15.0),
+                  child: Text(
+                    '${_sliderValue.round()}' + ' MINUTES',
+                    style: TextStyle(color: Colors.white, fontSize: 15.0),
+                  ),
+                ),
+                SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                      thumbColor: Colors.white,
+                      thumbShape:
+                          RoundSliderThumbShape(enabledThumbRadius: 10.0),
+                      activeTrackColor: Color(0xff3ADEA7),
+                      inactiveTrackColor: Colors.grey,
+                      overlayColor: Colors.transparent,
+                      trackHeight: 1.0),
+                  child: Slider(
+                    value: _sliderValue,
+                    onChanged: _setValue,
+                    min: 0.0,
+                    max: 150.0,
+                    divisions: 30,
+                  ),
+                ),
+              ],
             ),
-            elevation: 5.0,
-            margin: EdgeInsets.all(15.0),
+            color: Colors.transparent,
+            elevation: 0.0,
+            margin: EdgeInsets.all(10.0),
           ),
         ],
       ),
@@ -54,7 +83,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints.expand(),
+      // constraints: BoxConstraints.expand(),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
