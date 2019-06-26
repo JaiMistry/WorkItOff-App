@@ -38,19 +38,19 @@ class _NavigationBarState extends State<NavigationBar> {
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Container(),
-              title: Icon(FontAwesomeIcons.fire, color: Colors.white,),
+              title: Icon(FontAwesomeIcons.fire, color: Colors.white),
             ),
             BottomNavigationBarItem(
               icon: Container(),
-              title: Icon(Icons.fastfood, color: Colors.white,),
+              title: Icon(Icons.fastfood, color: Colors.white),
             ),
             BottomNavigationBarItem(
               icon: Container(),
-              title: Icon(Icons.directions_bike, color: Colors.white,),
+              title: Icon(Icons.directions_bike, color: Colors.white),
             ),
             BottomNavigationBarItem(
               icon: Container(),
-              title: Icon(Icons.person, color: Colors.white,),
+              title: Icon(Icons.person, color: Colors.white),
             )
           ],
           currentIndex: _selectedIndex,
