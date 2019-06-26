@@ -83,7 +83,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // constraints: BoxConstraints.expand(),
+      constraints: BoxConstraints.expand(),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -92,7 +92,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
           stops: [0.75, 1],
         ),
       ),
-      child: _buildCardList(),
+      child: _buildCardList()
     );
   }
 }
