@@ -11,7 +11,7 @@ bool isNumeric(String s) {
 Widget buildTextFormField({label: String, failedValidateText: String}) {
   return TextFormField(
     validator: (string) {
-      if (string.isEmpty == true || isNumeric(string) == false) {
+      if (string.isEmpty|| !isNumeric(string)) {
         return failedValidateText;
       }
       return null;
@@ -32,6 +32,7 @@ Widget buildTextFormField({label: String, failedValidateText: String}) {
 }
 
 Widget buildGenderFild(){
+  // TODO Add something
   return Container();
 }
 
@@ -69,7 +70,7 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
           RaisedButton(
-            child: Text("UPDATE PROFILE"),
+            child: Text("Update Profile"),
             onPressed: () {
               if (_formKey.currentState.validate()) {
                 Scaffold.of(context).showSnackBar(SnackBar(content: Text('Processing Data')));
