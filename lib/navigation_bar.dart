@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
+import 'package:workitoff/pages/profilepage.dart';
 import './pages/burnpage.dart';
 
 class NavigationBar extends StatefulWidget {
@@ -13,9 +13,9 @@ class _NavigationBarState extends State<NavigationBar> {
   int _selectedIndex = 0;
   final List<Widget> _pageOptions = <Widget>[
     BurnPage(),
-    Scaffold(body: Center(child: Text("Food Page"))),
-    Scaffold(body: Center(child: Text("Workouts Page"))),
-    Scaffold(body: Center(child: Text("Profile Page"))),
+    Scaffold(body: Center(child: Text("Food Page", style: TextStyle(color: Colors.teal)))),
+    Scaffold(body: Center(child: Text("Workouts Page", style: TextStyle(color: Colors.teal)))),
+    ProfilePage(),
   ];
 
   void _onItemTapped(int index) {
