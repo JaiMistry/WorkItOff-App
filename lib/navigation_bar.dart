@@ -37,20 +37,20 @@ class _NavigationBarState extends State<NavigationBar> {
           type: BottomNavigationBarType.fixed,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(FontAwesomeIcons.fire),
-              title: Container(),
+              icon: Container(),
+              title: Icon(FontAwesomeIcons.fire, color: Colors.white,),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.fastfood),
-              title: Container(),
+              icon: Container(),
+              title: Icon(Icons.fastfood, color: Colors.white,),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.directions_bike),
-              title: Container(),
+              icon: Container(),
+              title: Icon(Icons.directions_bike, color: Colors.white,),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              title: Container(),
+              icon: Container(),
+              title: Icon(Icons.person, color: Colors.white,),
             )
           ],
           currentIndex: _selectedIndex,
