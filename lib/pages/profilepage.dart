@@ -11,7 +11,7 @@ bool isNumeric(String s) {
 Widget buildTextFormField({label: String, failedValidateText: String}) {
   return TextFormField(
     validator: (string) {
-      if (string.isEmpty|| !isNumeric(string)) {
+      if (string.isEmpty || !isNumeric(string)) {
         return failedValidateText;
       }
       return null;
@@ -19,7 +19,7 @@ Widget buildTextFormField({label: String, failedValidateText: String}) {
     inputFormatters: [LengthLimitingTextInputFormatter(3)],
     keyboardType: TextInputType.number,
     // autovalidate: true,
-    cursorColor: Colors.teal[300],
+    cursorColor: Color(0xff4ff7d3),
     decoration: InputDecoration(
       focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent)),
       labelText: label,
@@ -31,9 +31,86 @@ Widget buildTextFormField({label: String, failedValidateText: String}) {
   );
 }
 
-Widget buildGenderFild(){
-  // TODO Add something
-  return Container();
+class GenderRadio extends StatefulWidget {
+  GenderRadio({Key key}) : super(key: key);
+
+  _GenderRadioState createState() => _GenderRadioState();
+}
+
+class _GenderRadioState extends State<GenderRadio> {
+  int _selected = 0;
+  Map<int, bool> _genderMapping = {0: false, 1: false}; // Handles whether item is selected or not
+
+  void onRadioChanged(int value) {
+    setState(() {
+      _selected = value;
+      _genderMapping[value] = true; // Change the slected item
+      value == 0 ? _genderMapping[1] = false : _genderMapping[0] = false; // Remove unslected item
+    });
+  }
+
+  List<Widget> makeRadios() {
+    List<String> twoGenders = ['Male', 'Female'];
+
+    List<Widget> list = List<Widget>();
+
+    // for (int i = 0; i < twoGenders.length; i++) {
+    //   list.add(Material(
+    //     color: Colors.transparent,
+    //     child: InkWell(
+    //       onTap: () {},
+    //       // highlightColor: Colors.grey,
+    //       // splashColor: Colors.green,
+    //       child: Row(
+    //         children: <Widget>[
+    //           Container(alignment: Alignment.centerRight, child: Text(twoGenders.elementAt(i))),
+    //           Radio(
+    //             value: i,
+    //             groupValue: _selected,
+    //             onChanged: (int value) {
+    //               onRadioChanged(value);
+    //             },
+    //           ),
+    //         ],
+    //       ),
+    //     ),
+    //   ));
+    // }
+
+    for (int i = 0; i < twoGenders.length; i++) {
+      list.add(Material(
+        color: Colors.transparent,
+        child: Theme(
+          data: ThemeData.dark(),
+          child: RadioListTile(
+            value: i,
+            controlAffinity: ListTileControlAffinity.trailing,
+            // dense: true,
+            title: Text(twoGenders.elementAt(i),
+                style: TextStyle(color: _genderMapping[i] ? Color(0xff4ff7d3) : Colors.white)),
+            // secondary: Icon(Icons.close),
+            // subtitle: Text('TWo genders'),
+            activeColor: Color(0xff4ff7d3),
+
+            groupValue: _selected,
+            onChanged: (int value) {
+              onRadioChanged(value);
+            },
+          ),
+        ),
+      ));
+    }
+    return list;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: makeRadios(),
+      ),
+    );
+  }
 }
 
 class ProfilePage extends StatelessWidget {
@@ -63,19 +140,33 @@ class ProfilePage extends StatelessWidget {
               padding: EdgeInsets.all(10.0),
               child: Column(children: <Widget>[
                 buildTextFormField(label: 'Weight', failedValidateText: 'Enter your weight.'),
-                SizedBox(height: 15.0,),
+                SizedBox(
+                  height: 15.0,
+                ),
                 buildTextFormField(label: 'Age', failedValidateText: 'Enter your age.'),
-                buildGenderFild()
+                GenderRadio()
               ]),
             ),
           ),
-          RaisedButton(
-            child: Text("Update Profile"),
-            onPressed: () {
-              if (_formKey.currentState.validate()) {
-                Scaffold.of(context).showSnackBar(SnackBar(content: Text('Processing Data')));
-              }
-            },
+          Container(
+            padding: EdgeInsets.all(10.0),
+            child: Text(
+              "Visit our website and contact us to suggest new resturaunts or workouts you'd like to see",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 11.0),
+            ),
+          ),
+          Column(
+            children: <Widget>[
+              RaisedButton(
+                child: Text("Update Profile"),
+                onPressed: () {
+                  if (_formKey.currentState.validate()) {
+                    Scaffold.of(context).showSnackBar(SnackBar(content: Text('Processing Data')));
+                  }
+                },
+              ),
+            ],
           )
         ],
       ),
