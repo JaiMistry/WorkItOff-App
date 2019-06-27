@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:url_launcher/url_launcher.dart';
+
 bool isNumeric(String s) {
   if (s == null) {
     return false;
@@ -39,13 +41,13 @@ class GenderRadio extends StatefulWidget {
 
 class _GenderRadioState extends State<GenderRadio> {
   int _selected = 0;
-  Map<int, bool> _genderMapping = {0: false, 1: false}; // Handles whether item is selected or not
+  Map<int, Color> _genderMapping = {0: Colors.white, 1: Colors.white}; // Handles whether item is selected or not
 
   void onRadioChanged(int value) {
     setState(() {
       _selected = value;
-      _genderMapping[value] = true; // Change the slected item
-      value == 0 ? _genderMapping[1] = false : _genderMapping[0] = false; // Remove unslected item
+      _genderMapping[value] = Color(0xff4ff7d3); // Change the slected item color
+      value == 0 ? _genderMapping[1] = Colors.white : _genderMapping[0] = Colors.white; // Unslected item
     });
   }
 
@@ -85,9 +87,8 @@ class _GenderRadioState extends State<GenderRadio> {
           child: RadioListTile(
             value: i,
             controlAffinity: ListTileControlAffinity.trailing,
-            // dense: true,
-            title: Text(twoGenders.elementAt(i),
-                style: TextStyle(color: _genderMapping[i] ? Color(0xff4ff7d3) : Colors.white)),
+            dense: true,
+            title: Text(twoGenders.elementAt(i), style: TextStyle(fontSize: 14.0, color: _genderMapping[i])),
             // secondary: Icon(Icons.close),
             // subtitle: Text('TWo genders'),
             activeColor: Color(0xff4ff7d3),
@@ -144,18 +145,63 @@ class ProfilePage extends StatelessWidget {
                   height: 15.0,
                 ),
                 buildTextFormField(label: 'Age', failedValidateText: 'Enter your age.'),
+                Container(
+                    padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0, bottom: 19.0),
+                    alignment: Alignment.centerLeft,
+                    child: Text('Gender', style: TextStyle(color: Color(0xff4ff7d3)))),
                 GenderRadio()
               ]),
             ),
           ),
           Container(
-            padding: EdgeInsets.all(10.0),
-            child: Text(
-              "Visit our website and contact us to suggest new resturaunts or workouts you'd like to see",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 11.0),
-            ),
-          ),
+              padding: EdgeInsets.all(10.0),
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    child: Text(
+                      "Visit our website and contact us to suggest new resturaunts or workouts you'd like to see!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 11.0),
+                    ),
+                  ),
+                  InkWell(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                      alignment: Alignment.centerLeft,
+                      child: Text("Website", style: TextStyle(color: Color(0xff4ff7d3))),
+                    ),
+                    onTap: () async {
+                      if (await canLaunch("https://workitoffapp.com")) {
+                        await launch("https://workitoffapp.com");
+                      }
+                    },
+                  ),
+                  InkWell(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                      alignment: Alignment.centerLeft,
+                      child: Text("Terms of Service", style: TextStyle(color: Color(0xff4ff7d3))),
+                    ),
+                    onTap: () async {
+                      if (await canLaunch("https://workitoffapp.com/terms.html")) {
+                        await launch("https://workitoffapp.com/terms.html");
+                      }
+                    },
+                  ),
+                  InkWell(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                      alignment: Alignment.centerLeft,
+                      child: Text("Privacy Policy", style: TextStyle(color: Color(0xff4ff7d3))),
+                    ),
+                    onTap: () async {
+                      if (await canLaunch("https://workitoffapp.com/privacy.html")) {
+                        await launch("https://workitoffapp.com/privacy.html");
+                      }
+                    },
+                  ),
+                ],
+              )),
           Column(
             children: <Widget>[
               RaisedButton(
