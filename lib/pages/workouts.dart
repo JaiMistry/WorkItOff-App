@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class WorkoutsPage extends StatefulWidget {
   @override
@@ -77,13 +78,17 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
 
   Widget _buildCardList() {
     return ListView.builder(
-        itemCount: cardList.length, itemBuilder: _buildWorkoutCard);
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemBuilder: _buildWorkoutCard,
+      itemCount: cardList.length,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints.expand(),
+      // constraints: BoxConstraints.expand(),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -92,7 +97,30 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
           stops: [0.75, 1],
         ),
       ),
-      child: _buildCardList()
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            _buildCardList(),
+            SizedBox(height: 20.0),
+            Container(
+              padding: EdgeInsets.only(bottom: 90.0),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    'We are always adding new workouts!',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  SizedBox(height: 10.0),
+                  Text(
+                    'Calories burned are calculated from your weight and our algorithm.',
+                    style: TextStyle(color: Colors.white, fontSize: 10.0),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
