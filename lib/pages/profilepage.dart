@@ -3,17 +3,17 @@ import 'package:flutter/services.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
-bool isNumeric(String s) {
-  if (s == null) {
+bool _isNumeric(String str) {
+  if (str == null) {
     return false;
   }
-  return double.parse(s, (e) => null) != null;
+  return double.tryParse(str) != null;
 }
 
 Widget buildTextFormField({label: String, failedValidateText: String}) {
   return TextFormField(
     validator: (string) {
-      if (string.isEmpty || !isNumeric(string)) {
+      if (string.isEmpty || !_isNumeric(string)) {
         return failedValidateText;
       }
       return null;
@@ -23,12 +23,16 @@ Widget buildTextFormField({label: String, failedValidateText: String}) {
     // autovalidate: true,
     cursorColor: Color(0xff4ff7d3),
     decoration: InputDecoration(
-      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent)),
-      labelText: label,
-      filled: true,
-      fillColor: Colors.black38,
-      labelStyle: TextStyle(color: Colors.grey),
-    ),
+        focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.transparent), borderRadius: BorderRadius.all(Radius.zero)),
+        labelText: label,
+        filled: true,
+        fillColor: Color(0xffd1d1d1).withOpacity(0.15),
+        labelStyle: TextStyle(color: Colors.grey),
+        contentPadding: EdgeInsets.all(10.0),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.zero),
+        )),
     style: TextStyle(color: Colors.white),
   );
 }
@@ -53,31 +57,7 @@ class _GenderRadioState extends State<GenderRadio> {
 
   List<Widget> makeRadios() {
     List<String> twoGenders = ['Male', 'Female'];
-
     List<Widget> list = List<Widget>();
-
-    // for (int i = 0; i < twoGenders.length; i++) {
-    //   list.add(Material(
-    //     color: Colors.transparent,
-    //     child: InkWell(
-    //       onTap: () {},
-    //       // highlightColor: Colors.grey,
-    //       // splashColor: Colors.green,
-    //       child: Row(
-    //         children: <Widget>[
-    //           Container(alignment: Alignment.centerRight, child: Text(twoGenders.elementAt(i))),
-    //           Radio(
-    //             value: i,
-    //             groupValue: _selected,
-    //             onChanged: (int value) {
-    //               onRadioChanged(value);
-    //             },
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //   ));
-    // }
 
     for (int i = 0; i < twoGenders.length; i++) {
       list.add(Material(
@@ -89,10 +69,7 @@ class _GenderRadioState extends State<GenderRadio> {
             controlAffinity: ListTileControlAffinity.trailing,
             dense: true,
             title: Text(twoGenders.elementAt(i), style: TextStyle(fontSize: 14.0, color: _genderMapping[i])),
-            // secondary: Icon(Icons.close),
-            // subtitle: Text('TWo genders'),
             activeColor: Color(0xff4ff7d3),
-
             groupValue: _selected,
             onChanged: (int value) {
               onRadioChanged(value);
@@ -164,7 +141,7 @@ class ProfilePage extends StatelessWidget {
                       style: TextStyle(fontSize: 11.0),
                     ),
                   ),
-                  InkWell(
+                  GestureDetector(
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
                       alignment: Alignment.centerLeft,
@@ -176,11 +153,11 @@ class ProfilePage extends StatelessWidget {
                       }
                     },
                   ),
-                  InkWell(
+                  GestureDetector(
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
                       alignment: Alignment.centerLeft,
-                      child: Text("Terms of Service", style: TextStyle(color: Color(0xff4ff7d3))),
+                      child: Container(child: Text("Terms of Service", style: TextStyle(color: Color(0xff4ff7d3)))),
                     ),
                     onTap: () async {
                       if (await canLaunch("https://workitoffapp.com/terms.html")) {
@@ -188,7 +165,7 @@ class ProfilePage extends StatelessWidget {
                       }
                     },
                   ),
-                  InkWell(
+                  GestureDetector(
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
                       alignment: Alignment.centerLeft,

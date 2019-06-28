@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:workitoff/pages/profilepage.dart';
-import './pages/burnpage.dart';
+import 'package:workitoff/pages/burnpage.dart';
 
 class NavigationBar extends StatefulWidget {
   @override
@@ -30,7 +30,7 @@ class _NavigationBarState extends State<NavigationBar> {
       body: _pageOptions.elementAt(_selectedIndex),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
-          canvasColor: Color(0xff271037),
+          canvasColor: Color(0xff271037).withOpacity(0.90),
           splashColor: Colors.transparent,
         ),
         child: BottomNavigationBar(
