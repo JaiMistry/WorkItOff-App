@@ -27,6 +27,7 @@ class _NavigationBarState extends State<NavigationBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // resizeToAvoidBottomPadding: false,
       body: _pageOptions.elementAt(_selectedIndex),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
