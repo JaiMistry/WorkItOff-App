@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: NavigationBar(),
+      theme: ThemeData(textTheme: TextTheme(body1: TextStyle(color: Colors.white))),
     );
   }
 }

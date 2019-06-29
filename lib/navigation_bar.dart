@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import './pages/workouts.dart';
-import './pages/burnpage.dart';
+import 'package:workitoff/pages/profilepage.dart';
+import 'package:workitoff/pages/burnpage.dart';
 
 class NavigationBar extends StatefulWidget {
   @override
@@ -14,9 +13,9 @@ class _NavigationBarState extends State<NavigationBar> {
   int _selectedIndex = 0;
   final List<Widget> _pageOptions = <Widget>[
     BurnPage(),
-    Scaffold(body: Center(child: Text("Food Page"))),
-    WorkoutsPage(),
-    Scaffold(body: Center(child: Text("Profile Page"))),
+    Scaffold(body: Center(child: Text("Food Page", style: TextStyle(color: Colors.teal)))),
+    Scaffold(body: Center(child: Text("Workouts Page", style: TextStyle(color: Colors.teal)))),
+    ProfilePage(),
   ];
 
   void _onItemTapped(int index) {
@@ -28,30 +27,31 @@ class _NavigationBarState extends State<NavigationBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // resizeToAvoidBottomPadding: false,
       body: _pageOptions.elementAt(_selectedIndex),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
-          canvasColor: Color(0xff271037),
+          canvasColor: Color(0xff271037).withOpacity(0.90),
           splashColor: Colors.transparent,
         ),
         child: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(FontAwesomeIcons.fire),
-              title: Container(),
+              icon: Container(),
+              title: Icon(FontAwesomeIcons.fire, color: Colors.white),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.fastfood),
-              title: Container(),
+              icon: Container(),
+              title: Icon(Icons.fastfood, color: Colors.white),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.directions_bike),
-              title: Container(),
+              icon: Container(),
+              title: Icon(Icons.directions_bike, color: Colors.white),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              title: Container(),
+              icon: Container(),
+              title: Icon(Icons.person, color: Colors.white),
             )
           ],
           currentIndex: _selectedIndex,
