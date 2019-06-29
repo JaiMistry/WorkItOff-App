@@ -6,13 +6,24 @@ class WorkoutsPage extends StatefulWidget {
   _WorkoutsPageState createState() => _WorkoutsPageState();
 }
 
-class _WorkoutsPageState extends State<WorkoutsPage> {
+class _WorkoutsPageState extends State<WorkoutsPage>
+    with SingleTickerProviderStateMixin {
   double _sliderValue = 0.0;
+  bool _isSliderMoved = true;
+  AnimationController _controller;
 
-  void _setValue(double value) {
-    setState(() {
-      _sliderValue = value;
-    });
+  @override
+  void initState() {
+    if (_isSliderMoved) {
+      super.initState();
+      _controller = AnimationController(
+          duration: const Duration(milliseconds: 350), vsync: this);
+      _controller.forward();
+    } else {
+      super.initState();
+      _controller =
+          AnimationController(duration: Duration(seconds: 0), vsync: this);
+    }
   }
 
   final List<String> cardList = [
@@ -21,6 +32,12 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
     'assets/cards/weight_lifting.png',
     'assets/cards/stairs.png',
   ];
+
+  void _setValue(double value) {
+    setState(() {
+      _sliderValue = value;
+    });
+  }
 
   Widget _buildWorkoutCard(BuildContext context, int index) {
     return Container(
@@ -97,29 +114,50 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
           stops: [0.75, 1],
         ),
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            _buildCardList(),
-            SizedBox(height: 20.0),
-            Container(
-              padding: EdgeInsets.only(bottom: 90.0),
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: SingleChildScrollView(
               child: Column(
+                mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
-                  Text(
-                    'We are always adding new workouts!',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  SizedBox(height: 10.0),
-                  Text(
-                    'Calories burned are calculated from your weight and our algorithm.',
-                    style: TextStyle(color: Colors.white, fontSize: 10.0),
+                  _buildCardList(),
+                  SizedBox(height: 20.0),
+                  Container(
+                    padding: EdgeInsets.only(bottom: 50.0),
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          'We are always adding new workouts!',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        SizedBox(height: 10.0),
+                        Text(
+                          'Calories burned are calculated from your weight and our algorithm.',
+                          style: TextStyle(color: Colors.white, fontSize: 10.0),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+          FadeTransition(
+            opacity: CurvedAnimation(parent: _controller, curve: Curves.linear),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              child: FlatButton(
+                // padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width/3),
+                color: Color(0xff4ff7d3),
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                child: Text("Enter Workouts", style: TextStyle(fontSize: 18.0)),
+                onPressed: () {},
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
