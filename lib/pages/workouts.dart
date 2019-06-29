@@ -12,26 +12,24 @@ class _WorkoutsPageState extends State<WorkoutsPage>
   bool _isSliderMoved = true;
   AnimationController _controller;
 
-  @override
-  void initState() {
-    if (_isSliderMoved) {
-      super.initState();
-      _controller = AnimationController(
-          duration: const Duration(milliseconds: 350), vsync: this);
-      _controller.forward();
-    } else {
-      super.initState();
-      _controller =
-          AnimationController(duration: Duration(seconds: 0), vsync: this);
-    }
-  }
-
   final List<String> cardList = [
     'assets/cards/running.png',
     'assets/cards/yoga.png',
     'assets/cards/weight_lifting.png',
     'assets/cards/stairs.png',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (_isSliderMoved) {
+      _controller = AnimationController(
+          duration: const Duration(milliseconds: 350), vsync: this);
+      _controller.forward();
+    } else {
+      _controller = AnimationController(vsync: this);
+    }
+  }
 
   void _setValue(double value) {
     setState(() {
@@ -116,6 +114,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
       ),
       child: Column(
         children: <Widget>[
+          // TODO: add Searchbar
           Expanded(
             child: SingleChildScrollView(
               child: Column(
