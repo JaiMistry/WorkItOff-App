@@ -13,6 +13,13 @@ bool _isNumeric(String str) {
   return double.tryParse(str) != null;
 }
 
+class NoOverscrollBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
+  }
+}
+
 class StandardTextInputField extends StatefulWidget {
   final String label;
   final String failedValidateText;
@@ -180,83 +187,85 @@ class ProfilePage extends StatelessWidget {
             child: Text('Profile', style: TextStyle(fontSize: 18.0)),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              // TODO Remove overscroll animation
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Form(
-                        key: _formKey,
-                        child: Container(
+            child: ScrollConfiguration(
+              behavior: NoOverscrollBehavior(),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Form(
+                          key: _formKey,
+                          child: Container(
+                            padding: EdgeInsets.all(10.0),
+                            child: Column(children: <Widget>[
+                              StandardTextInputField(label: 'Weight', failedValidateText: 'Enter your weight.'),
+                              SizedBox(height: 15.0),
+                              StandardTextInputField(label: 'Age', failedValidateText: 'Enter your age.'),
+                              Container(
+                                  padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0, bottom: 19.0),
+                                  alignment: Alignment.centerLeft,
+                                  child: Text('Gender', style: TextStyle(color: Color(0xff4ff7d3)))),
+                              GenderRadio()
+                            ]),
+                          ),
+                        ),
+                        Container(
                           padding: EdgeInsets.all(10.0),
-                          child: Column(children: <Widget>[
-                            StandardTextInputField(label: 'Weight', failedValidateText: 'Enter your weight.'),
-                            SizedBox(height: 15.0),
-                            StandardTextInputField(label: 'Age', failedValidateText: 'Enter your age.'),
-                            Container(
-                                padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0, bottom: 19.0),
-                                alignment: Alignment.centerLeft,
-                                child: Text('Gender', style: TextStyle(color: Color(0xff4ff7d3)))),
-                            GenderRadio()
-                          ]),
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(10.0),
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              child: Text(
-                                "Visit our website and contact us to suggest new resturaunts or workouts you'd like to see!",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 11.0),
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                child: Text(
+                                  "Visit our website and contact us to suggest new resturaunts or workouts you'd like to see!",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 11.0),
+                                ),
                               ),
-                            ),
-                            GestureDetector(
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
-                                alignment: Alignment.centerLeft,
-                                child: Text("Website", style: TextStyle(color: Color(0xff4ff7d3))),
-                              ),
-                              onTap: () async {
-                                if (await canLaunch("https://workitoffapp.com")) {
-                                  await launch("https://workitoffapp.com");
-                                }
-                              },
-                            ),
-                            GestureDetector(
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
-                                alignment: Alignment.centerLeft,
+                              GestureDetector(
                                 child: Container(
-                                    child: Text("Terms of Service", style: TextStyle(color: Color(0xff4ff7d3)))),
+                                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                                  alignment: Alignment.centerLeft,
+                                  child: Text("Website", style: TextStyle(color: Color(0xff4ff7d3))),
+                                ),
+                                onTap: () async {
+                                  if (await canLaunch("https://workitoffapp.com")) {
+                                    await launch("https://workitoffapp.com");
+                                  }
+                                },
                               ),
-                              onTap: () async {
-                                if (await canLaunch("https://workitoffapp.com/terms.html")) {
-                                  await launch("https://workitoffapp.com/terms.html");
-                                }
-                              },
-                            ),
-                            GestureDetector(
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
-                                alignment: Alignment.centerLeft,
-                                child: Text("Privacy Policy", style: TextStyle(color: Color(0xff4ff7d3))),
+                              GestureDetector(
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                                  alignment: Alignment.centerLeft,
+                                  child: Container(
+                                      child: Text("Terms of Service", style: TextStyle(color: Color(0xff4ff7d3)))),
+                                ),
+                                onTap: () async {
+                                  if (await canLaunch("https://workitoffapp.com/terms.html")) {
+                                    await launch("https://workitoffapp.com/terms.html");
+                                  }
+                                },
                               ),
-                              onTap: () async {
-                                if (await canLaunch("https://workitoffapp.com/privacy.html")) {
-                                  await launch("https://workitoffapp.com/privacy.html");
-                                }
-                              },
-                            ),
-                          ],
+                              GestureDetector(
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                                  alignment: Alignment.centerLeft,
+                                  child: Text("Privacy Policy", style: TextStyle(color: Color(0xff4ff7d3))),
+                                ),
+                                onTap: () async {
+                                  if (await canLaunch("https://workitoffapp.com/privacy.html")) {
+                                    await launch("https://workitoffapp.com/privacy.html");
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  )
-                ],
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -267,7 +276,7 @@ class ProfilePage extends StatelessWidget {
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // Removed all padding
               padding: EdgeInsets.zero,
               color: Color(0xff4ff7d3),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3.0)),
               child: Text("Update Profile", style: TextStyle(fontSize: 18.0)),
               onPressed: () {
                 if (_formKey.currentState.validate()) {
