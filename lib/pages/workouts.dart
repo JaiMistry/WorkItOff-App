@@ -26,11 +26,17 @@ class WorkoutsPage extends StatefulWidget {
 class _WorkoutsPageState extends State<WorkoutsPage>
     with SingleTickerProviderStateMixin {
   bool _isSliderMoved = true;
+  String _query = "";
+  List<String> _filteredList;
   AnimationController _controller;
+  TextEditingController _searchController;
 
   @override
   void initState() {
     super.initState();
+    List<String> _workouts = ['running', 'yoga', 'weight_lifiting', 'stairs'];
+    _workouts.sort();
+
     if (_isSliderMoved) {
       _controller = AnimationController(
           duration: const Duration(milliseconds: 350), vsync: this);
@@ -59,7 +65,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
       ),
       child: Column(
         children: <Widget>[
-          // TODO: add Searchbar
+          _buildSearchBar(),
           Expanded(
             child: ScrollConfiguration(
               behavior: NoOverscrollBehavior(),
@@ -109,6 +115,22 @@ class _WorkoutsPageState extends State<WorkoutsPage>
       ),
     );
   }
+
+  Widget _buildSearchBar() {
+    return Container(
+      margin: EdgeInsets.only(top: 40.0),
+      decoration:
+          BoxDecoration(border: Border.all(width: 1.0), color: Colors.white),
+      child: TextField(
+        controller: _searchController,
+        decoration: InputDecoration(
+          hintText: 'Search Workouts',
+          hintStyle: TextStyle(color: Colors.grey[300]),
+        ),
+        textAlign: TextAlign.left,
+      ),
+    );
+  }
 }
 
 // * Each card needs to have its own individual state
@@ -123,13 +145,7 @@ class MyWorkoutCards extends StatefulWidget {
 }
 
 class _MyWorkoutCardsState extends State<MyWorkoutCards> {
-  double _sliderValue;
-
-  @override
-  void initState() {
-    super.initState();
-    _sliderValue = 0.0;
-  }
+  double _sliderValue = 0.0;
 
   void _setValue(double value) {
     setState(() {
