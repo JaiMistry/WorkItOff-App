@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import './navigation_bar.dart';
+import './pages/intropage.dart';
 
 void main() {
   debugPaintSizeEnabled = false;
@@ -12,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: NavigationBar(),
+      home: IntroPage(),
       theme: ThemeData(textTheme: TextTheme(body1: TextStyle(color: Colors.white))),
     );
   }
