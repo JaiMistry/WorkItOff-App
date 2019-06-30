@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:url_launcher/url_launcher.dart';
-// import 'package:flushbar/flushbar.dart';
+import 'package:flushbar/flushbar.dart';
 
+// TODO Separate widgets
 
 bool _isNumeric(String str) {
   if (str == null) {
@@ -78,18 +79,23 @@ class _StandardTextInputFieldState extends State<StandardTextInputField> {
             // autovalidate: true,
             cursorColor: Color(0xff4ff7d3),
             decoration: InputDecoration(
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent, style: BorderStyle.none),
-                  borderRadius: BorderRadius.all(Radius.zero),
-                ),
-                // labelText: widget.label,
-                filled: true,
-                fillColor: Color(0xffd1d1d1).withOpacity(0.15),
-                labelStyle: TextStyle(color: Colors.grey),
-                contentPadding: EdgeInsets.all(8.0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.zero),
-                )),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(style: BorderStyle.none),
+                borderRadius: BorderRadius.all(Radius.zero),
+              ),
+              // labelText: widget.label,
+              filled: true,
+              fillColor: Color(0xffd1d1d1).withOpacity(0.15),
+              labelStyle: TextStyle(color: Colors.grey),
+              contentPadding: EdgeInsets.all(8.0),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.zero),
+                borderSide: BorderSide(style: BorderStyle.none),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.zero),
+              ),
+            ),
             style: TextStyle(color: Colors.white),
           ),
         ],
@@ -175,6 +181,7 @@ class ProfilePage extends StatelessWidget {
           ),
           Expanded(
             child: SingleChildScrollView(
+              // TODO Remove overscroll animation
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
@@ -256,12 +263,30 @@ class ProfilePage extends StatelessWidget {
           Container(
             width: MediaQuery.of(context).size.width,
             child: FlatButton(
-              // padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width/3),
+              // TODO Make button slightly fade in on tab click
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // Removed all padding
+              padding: EdgeInsets.zero,
               color: Color(0xff4ff7d3),
-              child: Text("Update Profile", style: TextStyle(fontSize: 18.0),),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
+              child: Text("Update Profile", style: TextStyle(fontSize: 18.0)),
               onPressed: () {
                 if (_formKey.currentState.validate()) {
-                  Scaffold.of(context).showSnackBar(SnackBar(content: Text('Processing Data')));
+                  // If the form validates
+                  // Scaffold.of(context).showSnackBar(SnackBar(content: Text('Processing Data')));
+                  Flushbar(
+                    // message: 'Profile Updated!',
+                    messageText: Text(
+                      'Profile Updated!',
+                      style: TextStyle(color: Colors.purple[800]),
+                    ),
+                    isDismissible: true,
+                    backgroundColor: Colors.white,
+                    dismissDirection: FlushbarDismissDirection.HORIZONTAL,
+                    // reverseAnimationCurve: Curves.decelerate,
+                    // forwardAnimationCurve: Curves.easeIn,
+                    duration: Duration(seconds: 3),
+                    flushbarPosition: FlushbarPosition.TOP,
+                  ).show(context);
                 }
               },
             ),
