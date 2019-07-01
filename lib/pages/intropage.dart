@@ -155,7 +155,7 @@ class _CustomSliderState extends State<CustomSlider> {
 }
 
 class StartButton extends StatelessWidget {
-  final bool startReady;  // Indicates whether the user has inputted all data and is ready to proceed
+  final bool startReady; // Indicates whether the user has inputted all data and is ready to proceed
   const StartButton({Key key, this.startReady}) : super(key: key);
 
   @override
@@ -190,7 +190,10 @@ class InputPage extends StatefulWidget {
   _InputPageState createState() => _InputPageState();
 }
 
-class _InputPageState extends State<InputPage> {
+class _InputPageState extends State<InputPage> with AutomaticKeepAliveClientMixin<InputPage> {
+  @override
+  bool get wantKeepAlive => true;  // Maintains the page state even the the page is changed
+
   bool _genderSelected = false;
   bool _weightSelected = false;
   bool _ageSelected = false;
