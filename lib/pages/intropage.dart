@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 
 import 'dart:math';
+import 'package:workitoff/navigation_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import 'package:flutter_swiper/flutter_swiper.dart';
 
 class GenderSelector extends StatefulWidget {
-  GenderSelector({Key key}) : super(key: key);
+  final Function(String) genderCallback; // Used to send data back to the parent
+
+  GenderSelector(this.genderCallback);
+  // GenderSelector({Key key, this.genderCallback}) : super(key: key);
 
   _GenderSelectorState createState() => _GenderSelectorState();
 }
 
 class _GenderSelectorState extends State<GenderSelector> {
-  String _gender = 'male';
+  String _gender = '';
 
   void onGenderChange(String gender) {
     setState(() {
+      // this.widget.createState();
+      widget.genderCallback(gender);
       _gender = gender;
     });
   }
@@ -42,16 +48,27 @@ class _GenderSelectorState extends State<GenderSelector> {
             children: <Widget>[
               Center(
                 child: IconButton(
-                  icon: Icon(FontAwesomeIcons.male, size: 40.0, color: _gender == 'male' ? Color(0xff4ff7d3) : Colors.white),
+                  icon: Icon(
+                    FontAwesomeIcons.male,
+                    size: 40.0,
+                    color: _gender == 'male' ? Color(0xff4ff7d3) : Colors.white,
+                  ),
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
                   onPressed: () {
                     onGenderChange('male');
                   },
                 ),
               ),
-              SizedBox(width: 20.0),
+              SizedBox(width: 60.0),
               IconButton(
-                icon: Icon(FontAwesomeIcons.female,
-                    size: 40.0, color: _gender == 'female' ? Color(0xff4ff7d3) : Colors.white),
+                icon: Icon(
+                  FontAwesomeIcons.female,
+                  size: 40.0,
+                  color: _gender == 'female' ? Color(0xff4ff7d3) : Colors.white,
+                ),
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
                 onPressed: () {
                   onGenderChange('female');
                 },
@@ -64,20 +81,31 @@ class _GenderSelectorState extends State<GenderSelector> {
   }
 }
 
-class AgeSlider extends StatefulWidget {
-  AgeSlider({Key key}) : super(key: key);
+class CustomSlider extends StatefulWidget {
+  final String leadingText;
+  final String trailingText;
+  final double minSliderVal;
+  final double maxSliderVal;
+  final Function(int) callback;
 
-  _AgeSliderState createState() => _AgeSliderState();
+  CustomSlider({Key key, this.leadingText, this.trailingText, this.minSliderVal, this.maxSliderVal, this.callback})
+      : super(key: key);
+
+  _CustomSliderState createState() => _CustomSliderState(val: minSliderVal);
 }
 
-class _AgeSliderState extends State<AgeSlider> {
+class _CustomSliderState extends State<CustomSlider> {
+  double val; // Contains the value of the slider
+
+  _CustomSliderState({this.val: 10.0});
+
   bool beenTouched = false;
-  double _age = 10.0;
 
   void _setValue(double value) {
     setState(() {
       beenTouched = true;
-      _age = value;
+      widget.callback(val.toInt());
+      val = value;
     });
   }
 
@@ -87,6 +115,7 @@ class _AgeSliderState extends State<AgeSlider> {
       margin: EdgeInsets.symmetric(horizontal: 15.0),
       child: Column(
         children: <Widget>[
+          SizedBox(height: 10.0),
           RichText(
             text: TextSpan(
               style: TextStyle(
@@ -94,29 +123,140 @@ class _AgeSliderState extends State<AgeSlider> {
                 color: Colors.white,
               ),
               children: <TextSpan>[
-                TextSpan(text: 'I am '),
-                beenTouched ? TextSpan(text: '${_age.toInt()} ', style: TextStyle(color: Color(0xff4ff7d3))) : TextSpan(),
-                TextSpan(text: 'years old.'),
+                TextSpan(text: widget.leadingText),
+                beenTouched
+                    ? TextSpan(text: '${val.toInt()} ', style: TextStyle(color: Color(0xff4ff7d3)))
+                    : TextSpan(),
+                TextSpan(text: widget.trailingText),
               ],
             ),
           ),
+          SizedBox(height: 10.0),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
-                thumbColor: Colors.white,
+                thumbColor: val == widget.minSliderVal ? Colors.white : Color(0xff3ADEA7),
                 thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10.0),
                 activeTrackColor: Color(0xff3ADEA7),
                 inactiveTrackColor: Colors.grey,
                 overlayColor: Colors.transparent,
                 trackHeight: 1.0),
             child: Slider(
-              value: _age,  
+              value: val,
               onChanged: _setValue,
-              min: 10.0,
-              max: 75.0,
-              divisions: 65,
+              min: widget.minSliderVal,
+              max: widget.maxSliderVal,
+              divisions: widget.maxSliderVal.toInt() - widget.minSliderVal.toInt(),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class StartButton extends StatelessWidget {
+  final bool startReady;  // Indicates whether the user has inputted all data and is ready to proceed
+  const StartButton({Key key, this.startReady}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.only(top: 20.0, bottom: 4.0),
+          child: this.startReady
+              ? Text("You're all set!", style: TextStyle(fontSize: 18.0))
+              : Text('Almost Done!', style: TextStyle(fontSize: 18.0)),
+        ),
+        SizedBox(height: 4.0),
+        RaisedButton(
+          child: Text('Start Work It Off'),
+          color: Color(0xff3ADEA7),
+          disabledColor: Colors.teal[900],
+          disabledTextColor: Colors.black,
+          onPressed: this.startReady
+              ? () => Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (BuildContext context) => NavigationBar()))
+              : null,
+        ),
+      ],
+    );
+  }
+}
+
+class InputPage extends StatefulWidget {
+  InputPage({Key key}) : super(key: key);
+
+  _InputPageState createState() => _InputPageState();
+}
+
+class _InputPageState extends State<InputPage> {
+  bool _genderSelected = false;
+  bool _weightSelected = false;
+  bool _ageSelected = false;
+  bool _allItemsCompleted = false;
+
+  void _genderCallback(String gender) {
+    _genderSelected = true;
+    checkProfileCompletion();
+  }
+
+  void _weightCallback(int weight) {
+    _weightSelected = true;
+    checkProfileCompletion();
+  }
+
+  void _ageCallback(int age) {
+    _ageSelected = true;
+    checkProfileCompletion();
+  }
+
+  void checkProfileCompletion() {
+    if (_genderSelected & _weightSelected & _ageSelected) {
+      setState(() {
+        _allItemsCompleted = true;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Container(
+        color: Colors.transparent,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('Profile Info', style: TextStyle(color: Colors.white, fontSize: 18.0)),
+              Container(
+                padding: EdgeInsets.only(top: 8.0),
+                width: 250.0,
+                child: Text(
+                  'Help us tune our algorith to you by entering your basic info.',
+                  style: TextStyle(color: Colors.white, fontSize: 14.0),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              GenderSelector(_genderCallback),
+              CustomSlider(
+                leadingText: 'I am ',
+                trailingText: 'years old.',
+                minSliderVal: 10,
+                maxSliderVal: 75,
+                callback: _ageCallback,
+              ),
+              CustomSlider(
+                leadingText: 'I weigh ',
+                trailingText: 'lbs.',
+                minSliderVal: 80,
+                maxSliderVal: 450,
+                callback: _weightCallback,
+              ),
+              StartButton(startReady: _allItemsCompleted)
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -126,35 +266,17 @@ class IntroPage extends StatelessWidget {
   // const IntroPage({Key key}) : super(key: key);
 
   final List<Widget> _pages = [
-    Container(color: Colors.red, child: Center(child: Text('Page 1'))),
-    Container(color: Colors.blue, child: Center(child: Text('Page 2'))),
-    Container(color: Colors.green, child: Center(child: Text('Page 3'))),
-    Container(color: Colors.yellow, child: Center(child: Text('Page 4'))),
-    Container(
-        color: Colors.transparent,
-        child: Center(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('Profile Info', style: TextStyle(color: Colors.white, fontSize: 18.0)),
-            Container(
-              padding: EdgeInsets.only(top: 8.0),
-              width: 250.0,
-              child: Text(
-                'Help us tune our algorith to you by entering your basic info.',
-                style: TextStyle(color: Colors.white, fontSize: 14.0),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            GenderSelector(),
-            AgeSlider()
-          ],
-        )))
+    Container(color: Colors.purple[600], child: Center(child: Text('Page 1'))),
+    Container(color: Colors.purple[700], child: Center(child: Text('Page 2'))),
+    Container(color: Colors.purple[800], child: Center(child: Text('Page 3'))),
+    Container(color: Colors.purple[900], child: Center(child: Text('Page 4'))),
+    // TODO Maintain state of input page if user goes backwards a page
+    InputPage()
   ];
 
   @override
   Widget build(BuildContext context) {
-    int _selected_Index = 0;
+    // int _selected_Index = 0;
     final _controller = PageController(viewportFraction: 1.0);
 
     const _kDuration = const Duration(milliseconds: 300);
@@ -166,9 +288,9 @@ class IntroPage extends StatelessWidget {
         Container(
           child: PageView(
             controller: _controller,
-            onPageChanged: (int page) {
-              _selected_Index = page;
-            },
+            // onPageChanged: (int page) {
+            //   _selected_Index = page;
+            // },
             children: _pages,
             scrollDirection: Axis.horizontal,
           ),
