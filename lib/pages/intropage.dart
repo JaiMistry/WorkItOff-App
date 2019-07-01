@@ -187,7 +187,8 @@ class StartButton extends StatelessWidget {
 class PageData extends StatelessWidget {
   final String title;
   final String message;
-  const PageData({Key key, this.title, this.message}) : super(key: key);
+  final String imagePath;
+  const PageData({Key key, this.title, this.message, this.imagePath}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -196,6 +197,8 @@ class PageData extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          Image.asset(imagePath, width: 275),
+          SizedBox(height: 10.0),
           Text(
             title,
             textAlign: TextAlign.center,
@@ -206,7 +209,7 @@ class PageData extends StatelessWidget {
           ),
           Container(
             padding: EdgeInsets.only(top: 10.0),
-            width: 275.0,
+            width: 260.0,
             child: Text(
               message,
               textAlign: TextAlign.center,
@@ -215,7 +218,8 @@ class PageData extends StatelessWidget {
                 fontSize: 16.0,
               ),
             ),
-          )
+          ),
+          SizedBox(height: 30.0),
         ],
       ),
     );
@@ -303,34 +307,44 @@ class _InputPageState extends State<InputPage> with AutomaticKeepAliveClientMixi
   }
 }
 
+
+class NoOverscrollBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
+  }
+}
+
 class IntroPage extends StatelessWidget {
   // const IntroPage({Key key}) : super(key: key);
-
-  // TODO Remove overscroll effect
 
   final List<Widget> _pages = [
     Container(
       child: PageData(
         title: 'Welcome to Work It Off!',
         message: 'Get started on living healthy without making compromises.',
+        imagePath: 'assets/intro_images/page1.jpg',
       ),
     ),
     Container(
       child: PageData(
         title: 'Cheat Meals',
         message: 'Indulge in the foods you love and add them to the app.',
+        imagePath: 'assets/intro_images/page2.jpg',
       ),
     ),
     Container(
       child: PageData(
         title: 'Workouts',
         message: 'Work off those meals by selecting from a wide variety of workouts.',
+        imagePath: 'assets/intro_images/page3.jpg',
       ),
     ),
     Container(
       child: PageData(
         title: 'Dashboard',
         message: 'Watch your progress as you refocus on enjoying life while living healthy.',
+        imagePath: 'assets/intro_images/page4.jpg',
       ),
     ),
     InputPage()
@@ -348,13 +362,17 @@ class IntroPage extends StatelessWidget {
       backgroundColor: Color(0xff170422),
       body: Stack(children: [
         Container(
-          child: PageView(
-            controller: _controller,
-            // onPageChanged: (int page) {
-            //   _selected_Index = page;
-            // },
-            children: _pages,
-            scrollDirection: Axis.horizontal,
+          child: ScrollConfiguration(
+            behavior: NoOverscrollBehavior(),
+            child: PageView(
+              physics: BouncingScrollPhysics(),
+              controller: _controller,
+              // onPageChanged: (int page) {
+              //   _selected_Index = page;
+              // },
+              children: _pages,
+              scrollDirection: Axis.horizontal,
+            ),
           ),
         ),
         Positioned(
@@ -363,7 +381,7 @@ class IntroPage extends StatelessWidget {
           right: 0.0,
           child: Container(
             color: Colors.transparent,
-            padding: const EdgeInsets.all(20.0), // Padding of dots from screen bottom
+            padding: const EdgeInsets.all(10.0), // Padding of dots from screen bottom
             child: Center(
               child: DotsIndicator(
                 // color:  _newColor,
