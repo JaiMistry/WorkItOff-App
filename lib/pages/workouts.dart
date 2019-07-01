@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+String _filter;
+RegExp pattern =
+    new RegExp(r'[^\/][\w]+(?=\.)', caseSensitive: false, multiLine: false);
+
 final List<String> cardList = [
   'assets/cards/running.png',
   'assets/cards/yoga.png',
@@ -12,8 +16,16 @@ Widget _buildCardList() {
   return ListView.builder(
     shrinkWrap: true,
     physics: NeverScrollableScrollPhysics(),
-    itemBuilder: (BuildContext context, int index) =>
-        MyWorkoutCards(cardList[index]),
+    itemBuilder: (BuildContext context, int index) {
+      return _filter == null || _filter == ''
+          ? MyWorkoutCards(cardList[index])
+          : pattern
+                  .stringMatch(cardList[index])
+                  .toLowerCase()
+                  .contains(_filter.toLowerCase())
+              ? MyWorkoutCards(cardList[index])
+              : Container();
+    },
     itemCount: cardList.length,
   );
 }
@@ -25,30 +37,61 @@ class WorkoutsPage extends StatefulWidget {
 
 class _WorkoutsPageState extends State<WorkoutsPage>
     with SingleTickerProviderStateMixin {
-  String _query = "";
-  List<String> _filteredList;
-  AnimationController _controller;
+  AnimationController _animationController;
   TextEditingController _searchController = new TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    List<String> _workouts = ['running', 'yoga', 'weight_lifiting', 'stairs'];
-    _workouts.sort();
+    _searchController.addListener(() {
+      setState(() {
+        _filter = _searchController.text;
+      });
+    });
 
     if (true) {
-      _controller = AnimationController(
+      _animationController = AnimationController(
           duration: const Duration(milliseconds: 350), vsync: this);
-      _controller.forward();
+      _animationController.forward();
     } else {
-      _controller = AnimationController(vsync: this);
+      _animationController = AnimationController(vsync: this);
     }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _animationController.dispose();
+    _searchController.dispose();
     super.dispose();
+  }
+
+  Future<void> _showLogDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Log Workout?'),
+          actions: <Widget>[
+            FlatButton(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.grey[200],
+                textColor: Colors.black,
+                child: Text('Cancel'),
+                onPressed: () => Navigator.of(context).pop()),
+            FlatButton(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.grey[200],
+                textColor: Colors.black,
+                child: Text(
+                  'Log',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                onPressed: () => Navigator.of(context).pop()),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -96,7 +139,8 @@ class _WorkoutsPageState extends State<WorkoutsPage>
             ),
           ),
           FadeTransition(
-            opacity: CurvedAnimation(parent: _controller, curve: Curves.linear),
+            opacity: CurvedAnimation(
+                parent: _animationController, curve: Curves.linear),
             child: Container(
               width: MediaQuery.of(context).size.width,
               child: FlatButton(
@@ -105,7 +149,9 @@ class _WorkoutsPageState extends State<WorkoutsPage>
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 child: Text("Enter Workouts", style: TextStyle(fontSize: 18.0)),
-                onPressed: () {},
+                onPressed: () {
+                  _showLogDialog();
+                },
               ),
             ),
           ),
@@ -130,10 +176,8 @@ class _WorkoutsPageState extends State<WorkoutsPage>
           hintStyle: TextStyle(color: Colors.grey, fontSize: 15),
           prefixIcon: Icon(Icons.search, color: Color(0xff5a5a5a)),
           suffixIcon: IconButton(
-            icon: Icon(Icons.clear, size: 20),
-            onPressed: () {
-              _searchController.clear();
-            },
+            icon: Icon(Icons.clear, size: 20, color: Colors.grey),
+            onPressed: () => _searchController.clear(),
           ),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
           enabledBorder: OutlineInputBorder(
