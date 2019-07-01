@@ -25,11 +25,10 @@ class WorkoutsPage extends StatefulWidget {
 
 class _WorkoutsPageState extends State<WorkoutsPage>
     with SingleTickerProviderStateMixin {
-  bool _isSliderMoved = true;
   String _query = "";
   List<String> _filteredList;
   AnimationController _controller;
-  TextEditingController _searchController;
+  TextEditingController _searchController = new TextEditingController();
 
   @override
   void initState() {
@@ -37,7 +36,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
     List<String> _workouts = ['running', 'yoga', 'weight_lifiting', 'stairs'];
     _workouts.sort();
 
-    if (_isSliderMoved) {
+    if (true) {
       _controller = AnimationController(
           duration: const Duration(milliseconds: 350), vsync: this);
       _controller.forward();
@@ -71,7 +70,6 @@ class _WorkoutsPageState extends State<WorkoutsPage>
               behavior: NoOverscrollBehavior(),
               child: SingleChildScrollView(
                 child: Column(
-                  mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
                     _buildCardList(),
                     SizedBox(height: 20.0),
@@ -118,14 +116,30 @@ class _WorkoutsPageState extends State<WorkoutsPage>
 
   Widget _buildSearchBar() {
     return Container(
-      margin: EdgeInsets.only(top: 40.0),
-      decoration:
-          BoxDecoration(border: Border.all(width: 1.0), color: Colors.white),
+      margin: EdgeInsets.only(top: 40.0, left: 8.0, right: 8.0),
+      padding: EdgeInsets.only(bottom: 6.0),
+      decoration: BoxDecoration(
+          border: Border.all(width: 1.0), color: Colors.transparent),
       child: TextField(
         controller: _searchController,
         decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
           hintText: 'Search Workouts',
-          hintStyle: TextStyle(color: Colors.grey[300]),
+          hintStyle: TextStyle(color: Colors.grey, fontSize: 15),
+          prefixIcon: Icon(Icons.search, color: Color(0xff5a5a5a)),
+          suffixIcon: IconButton(
+            icon: Icon(Icons.clear, size: 20),
+            onPressed: () {
+              _searchController.clear();
+            },
+          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(style: BorderStyle.none)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(style: BorderStyle.none)),
         ),
         textAlign: TextAlign.left,
       ),
@@ -146,10 +160,12 @@ class MyWorkoutCards extends StatefulWidget {
 
 class _MyWorkoutCardsState extends State<MyWorkoutCards> {
   double _sliderValue = 0.0;
+  bool _isChanged = false;
 
   void _setValue(double value) {
     setState(() {
       _sliderValue = value;
+      _isChanged = true;
     });
   }
 
