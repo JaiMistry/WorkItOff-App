@@ -3,6 +3,123 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 // import 'package:flutter_swiper/flutter_swiper.dart';
 
+class GenderSelector extends StatefulWidget {
+  GenderSelector({Key key}) : super(key: key);
+
+  _GenderSelectorState createState() => _GenderSelectorState();
+}
+
+class _GenderSelectorState extends State<GenderSelector> {
+  String _gender = 'male';
+
+  void onGenderChange(String gender) {
+    setState(() {
+      _gender = gender;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(10.0),
+      child: Column(
+        children: <Widget>[
+          RichText(
+            text: TextSpan(
+              style: TextStyle(
+                fontSize: 16.0,
+                color: Colors.white,
+              ),
+              children: <TextSpan>[
+                TextSpan(text: 'I am '),
+                TextSpan(text: '$_gender', style: TextStyle(color: Color(0xff4ff7d3))),
+              ],
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Center(
+                child: IconButton(
+                  icon: Icon(Icons.person_pin, size: 40.0, color: _gender == 'male' ? Color(0xff4ff7d3) : Colors.white),
+                  onPressed: () {
+                    onGenderChange('male');
+                  },
+                ),
+              ),
+              SizedBox(width: 20.0),
+              IconButton(
+                icon: Icon(Icons.person_pin_circle,
+                    size: 40.0, color: _gender == 'female' ? Color(0xff4ff7d3) : Colors.white),
+                onPressed: () {
+                  onGenderChange('female');
+                },
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class AgeSlider extends StatefulWidget {
+  AgeSlider({Key key}) : super(key: key);
+
+  _AgeSliderState createState() => _AgeSliderState();
+}
+
+class _AgeSliderState extends State<AgeSlider> {
+  bool beenTouched = false;
+  double _age = 10.0;
+
+  void _setValue(double value) {
+    setState(() {
+      beenTouched = true;
+      _age = value;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: <Widget>[
+          RichText(
+            text: TextSpan(
+              style: TextStyle(
+                fontSize: 16.0,
+                color: Colors.white,
+              ),
+              children: <TextSpan>[
+                TextSpan(text: 'I am '),
+                beenTouched ? TextSpan(text: '${_age.toInt()} ', style: TextStyle(color: Color(0xff4ff7d3))) : TextSpan(),
+                TextSpan(text: 'years old.'),
+              ],
+            ),
+          ),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+                thumbColor: Colors.white,
+                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10.0),
+                activeTrackColor: Color(0xff3ADEA7),
+                inactiveTrackColor: Colors.grey,
+                overlayColor: Colors.transparent,
+                trackHeight: 1.0),
+            child: Slider(
+              value: _age,
+              onChanged: _setValue,
+              min: 10.0,
+              max: 75.0,
+              divisions: 65,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class IntroPage extends StatelessWidget {
   // const IntroPage({Key key}) : super(key: key);
 
@@ -11,9 +128,27 @@ class IntroPage extends StatelessWidget {
     Container(color: Colors.blue, child: Center(child: Text('Page 2'))),
     Container(color: Colors.green, child: Center(child: Text('Page 3'))),
     Container(color: Colors.yellow, child: Center(child: Text('Page 4'))),
-    Container(color: Colors.purple, child: Center(child: Text('Page 5')))
+    Container(
+        color: Colors.transparent,
+        child: Center(
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('Profile Info', style: TextStyle(color: Colors.white, fontSize: 18.0)),
+            Container(
+              padding: EdgeInsets.only(top: 8.0),
+              width: 250.0,
+              child: Text(
+                'Help us tune our algorith to you by entering your basic info.',
+                style: TextStyle(color: Colors.white, fontSize: 14.0),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            GenderSelector(),
+            AgeSlider()
+          ],
+        )))
   ];
-
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +166,6 @@ class IntroPage extends StatelessWidget {
             controller: _controller,
             onPageChanged: (int page) {
               _selected_Index = page;
-              
             },
             children: _pages,
             scrollDirection: Axis.horizontal,
@@ -71,8 +205,8 @@ class DotsIndicator extends AnimatedWidget {
     this.controller,
     this.itemCount,
     this.onPageSelected,
-    this.color: Colors.white, 
-  }): super(listenable: controller);
+    this.color: Colors.white,
+  }) : super(listenable: controller);
 
   final PageController controller; // The PageController that this DotsIndicator is representing.
 
@@ -105,7 +239,7 @@ class DotsIndicator extends AnimatedWidget {
             width: _kDotSize * zoom,
             height: _kDotSize * zoom,
             child: InkWell(
-              onTap: () => onPageSelected(index),  // Handles button click
+              onTap: () => onPageSelected(index), // Handles button click
             ),
           ),
         ),
