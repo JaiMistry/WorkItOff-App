@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'dart:math';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import 'package:flutter_swiper/flutter_swiper.dart';
 
 class GenderSelector extends StatefulWidget {
@@ -41,7 +42,7 @@ class _GenderSelectorState extends State<GenderSelector> {
             children: <Widget>[
               Center(
                 child: IconButton(
-                  icon: Icon(Icons.person_pin, size: 40.0, color: _gender == 'male' ? Color(0xff4ff7d3) : Colors.white),
+                  icon: Icon(FontAwesomeIcons.male, size: 40.0, color: _gender == 'male' ? Color(0xff4ff7d3) : Colors.white),
                   onPressed: () {
                     onGenderChange('male');
                   },
@@ -49,7 +50,7 @@ class _GenderSelectorState extends State<GenderSelector> {
               ),
               SizedBox(width: 20.0),
               IconButton(
-                icon: Icon(Icons.person_pin_circle,
+                icon: Icon(FontAwesomeIcons.female,
                     size: 40.0, color: _gender == 'female' ? Color(0xff4ff7d3) : Colors.white),
                 onPressed: () {
                   onGenderChange('female');
@@ -83,6 +84,7 @@ class _AgeSliderState extends State<AgeSlider> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: 15.0),
       child: Column(
         children: <Widget>[
           RichText(
@@ -107,7 +109,7 @@ class _AgeSliderState extends State<AgeSlider> {
                 overlayColor: Colors.transparent,
                 trackHeight: 1.0),
             child: Slider(
-              value: _age,
+              value: _age,  
               onChanged: _setValue,
               min: 10.0,
               max: 75.0,
@@ -153,7 +155,7 @@ class IntroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int _selected_Index = 0;
-    final _controller = PageController(viewportFraction: 0.9);
+    final _controller = PageController(viewportFraction: 1.0);
 
     const _kDuration = const Duration(milliseconds: 300);
     const _kCurve = Curves.ease;
