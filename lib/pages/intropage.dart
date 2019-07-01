@@ -1,9 +1,8 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 
-import 'dart:math';
 import 'package:workitoff/navigation_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-// import 'package:flutter_swiper/flutter_swiper.dart';
 
 class GenderSelector extends StatefulWidget {
   final Function(String) genderCallback; // Used to send data back to the parent
@@ -28,7 +27,7 @@ class _GenderSelectorState extends State<GenderSelector> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10.0),
+      padding: EdgeInsets.all(15.0),
       child: Column(
         children: <Widget>[
           RichText(
@@ -50,7 +49,7 @@ class _GenderSelectorState extends State<GenderSelector> {
                 child: IconButton(
                   icon: Icon(
                     FontAwesomeIcons.male,
-                    size: 40.0,
+                    size: 45.0,
                     color: _gender == 'male' ? Color(0xff4ff7d3) : Colors.white,
                   ),
                   splashColor: Colors.transparent,
@@ -60,11 +59,11 @@ class _GenderSelectorState extends State<GenderSelector> {
                   },
                 ),
               ),
-              SizedBox(width: 60.0),
+              SizedBox(width: 80.0),
               IconButton(
                 icon: Icon(
                   FontAwesomeIcons.female,
-                  size: 40.0,
+                  size: 45.0,
                   color: _gender == 'female' ? Color(0xff4ff7d3) : Colors.white,
                 ),
                 splashColor: Colors.transparent,
@@ -307,7 +306,6 @@ class _InputPageState extends State<InputPage> with AutomaticKeepAliveClientMixi
   }
 }
 
-
 class NoOverscrollBehavior extends ScrollBehavior {
   @override
   Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
@@ -381,10 +379,11 @@ class IntroPage extends StatelessWidget {
           right: 0.0,
           child: Container(
             color: Colors.transparent,
-            padding: const EdgeInsets.all(10.0), // Padding of dots from screen bottom
+            padding: const EdgeInsets.all(12.0), // Padding of dots from screen bottom
             child: Center(
               child: DotsIndicator(
-                // color:  _newColor,
+                mainColor: Colors.purple[200].withOpacity(0.2),
+                selectedColor: Colors.purple[200],
                 controller: _controller,
                 itemCount: _pages.length,
                 onPageSelected: (int page) {
@@ -409,20 +408,17 @@ class DotsIndicator extends AnimatedWidget {
     this.controller,
     this.itemCount,
     this.onPageSelected,
-    this.color: Colors.white,
+    this.mainColor: Colors.white,
+    this.selectedColor: Colors.blue,
   }) : super(listenable: controller);
 
   final PageController controller; // The PageController that this DotsIndicator is representing.
-
   final int itemCount; // The number of items managed by the PageController
-
   final ValueChanged<int> onPageSelected; // Called when a dot is tapped
-
-  final Color color; // The color of the dots. Defaults to `Colors.white`.
-
+  final Color mainColor; // The color of the dots. Defaults to `Colors.white`.
+  final Color selectedColor; // The color of the SELECTED dot. Defaults to `Colors.blue`.
   static const double _kDotSize = 8.0; // The base size of the dots
-
-  static const double _kMaxZoom = 2.0; // The increase in the size of the selected dot
+  static const double _kMaxZoom = 1.0; // The increase in the size of the selected dot. 1.0 = no change
 
   Widget _buildDot(int index) {
     double selectedness = Curves.easeOut.transform(
@@ -431,13 +427,15 @@ class DotsIndicator extends AnimatedWidget {
 
     double zoom = 1.0 + (_kMaxZoom - 1.0) * selectedness;
 
-    // print(controller.page);
-
     return Container(
       width: 25, // The distance between the center of each dot
       child: Center(
         child: Material(
-          color: Colors.white,
+          color: (controller.page == null && index == 0)
+              ? selectedColor
+              : (controller.page == null && index != 0)
+                  ? mainColor
+                  : (controller.page.round() == index) ? selectedColor : mainColor,
           type: MaterialType.circle,
           child: Container(
             width: _kDotSize * zoom,

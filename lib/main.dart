@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-import './navigation_bar.dart';
+// import './navigation_bar.dart';
 import './pages/intropage.dart';
 
 void main() {
