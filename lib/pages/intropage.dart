@@ -184,6 +184,44 @@ class StartButton extends StatelessWidget {
   }
 }
 
+class PageData extends StatelessWidget {
+  final String title;
+  final String message;
+  const PageData({Key key, this.title, this.message}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 50.0,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 20.0,
+              color: Color(0xff4ff7d3),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 10.0),
+            width: 275.0,
+            child: Text(
+              message,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16.0,
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
 class InputPage extends StatefulWidget {
   InputPage({Key key}) : super(key: key);
 
@@ -192,7 +230,7 @@ class InputPage extends StatefulWidget {
 
 class _InputPageState extends State<InputPage> with AutomaticKeepAliveClientMixin<InputPage> {
   @override
-  bool get wantKeepAlive => true;  // Maintains the page state even the the page is changed
+  bool get wantKeepAlive => true; // Maintains the page state even the the page is changed
 
   bool _genderSelected = false;
   bool _weightSelected = false;
@@ -268,12 +306,33 @@ class _InputPageState extends State<InputPage> with AutomaticKeepAliveClientMixi
 class IntroPage extends StatelessWidget {
   // const IntroPage({Key key}) : super(key: key);
 
+  // TODO Remove overscroll effect
+
   final List<Widget> _pages = [
-    Container(color: Colors.purple[600], child: Center(child: Text('Page 1'))),
-    Container(color: Colors.purple[700], child: Center(child: Text('Page 2'))),
-    Container(color: Colors.purple[800], child: Center(child: Text('Page 3'))),
-    Container(color: Colors.purple[900], child: Center(child: Text('Page 4'))),
-    // TODO Maintain state of input page if user goes backwards a page
+    Container(
+      child: PageData(
+        title: 'Welcome to Work It Off!',
+        message: 'Get started on living healthy without making compromises.',
+      ),
+    ),
+    Container(
+      child: PageData(
+        title: 'Cheat Meals',
+        message: 'Indulge in the foods you love and add them to the app.',
+      ),
+    ),
+    Container(
+      child: PageData(
+        title: 'Workouts',
+        message: 'Work off those meals by selecting from a wide variety of workouts.',
+      ),
+    ),
+    Container(
+      child: PageData(
+        title: 'Dashboard',
+        message: 'Watch your progress as you refocus on enjoying life while living healthy.',
+      ),
+    ),
     InputPage()
   ];
 
