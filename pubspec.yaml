@@ -20,6 +20,8 @@ dependencies:
   flutter:
     sdk: flutter
   font_awesome_flutter: ^8.4.0
+  firebase_core: ^0.2.5
+  firebase_analytics: ^1.0.4
   url_launcher: ^5.0.3
   flushbar: '1.5.3' # ! Do not update to 1.7.0. Will cause crash. Need newer version with fix implemented before update.
   flutter_swiper: ^1.1.6
