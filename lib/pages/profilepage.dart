@@ -15,7 +15,8 @@ bool _isNumeric(String str) {
 
 class NoOverscrollBehavior extends ScrollBehavior {
   @override
-  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
     return child;
   }
 }
@@ -41,7 +42,9 @@ class _StandardTextInputFieldState extends State<StandardTextInputField> {
 
     _focusNode.addListener(() {
       setState(() {
-        _focusNode.hasFocus ? _labelColor = Color(0xff4ff7d3) : _labelColor = Colors.grey;
+        _focusNode.hasFocus
+            ? _labelColor = Color(0xff4ff7d3)
+            : _labelColor = Colors.grey;
       });
     });
   }
@@ -119,13 +122,19 @@ class GenderRadio extends StatefulWidget {
 
 class _GenderRadioState extends State<GenderRadio> {
   int _selected = 0;
-  Map<int, Color> _genderMapping = {0: Colors.white, 1: Colors.white}; // Handles whether item is selected or not
+  Map<int, Color> _genderMapping = {
+    0: Colors.white,
+    1: Colors.white
+  }; // Handles whether item is selected or not
 
   void onRadioChanged(int value) {
     setState(() {
       _selected = value;
-      _genderMapping[value] = Color(0xff4ff7d3); // Change the slected item color
-      value == 0 ? _genderMapping[1] = Colors.white : _genderMapping[0] = Colors.white; // Unslected item
+      _genderMapping[value] =
+          Color(0xff4ff7d3); // Change the slected item color
+      value == 0
+          ? _genderMapping[1] = Colors.white
+          : _genderMapping[0] = Colors.white; // Unslected item
     });
   }
 
@@ -142,7 +151,8 @@ class _GenderRadioState extends State<GenderRadio> {
             value: i,
             controlAffinity: ListTileControlAffinity.trailing,
             dense: true,
-            title: Text(twoGenders.elementAt(i), style: TextStyle(fontSize: 14.0, color: _genderMapping[i])),
+            title: Text(twoGenders.elementAt(i),
+                style: TextStyle(fontSize: 14.0, color: _genderMapping[i])),
             activeColor: Color(0xff4ff7d3),
             groupValue: _selected,
             onChanged: (int value) {
@@ -165,8 +175,23 @@ class _GenderRadioState extends State<GenderRadio> {
   }
 }
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
+  AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+        duration: const Duration(milliseconds: 350), vsync: this);
+    _animationController.forward();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -200,13 +225,23 @@ class ProfilePage extends StatelessWidget {
                           child: Container(
                             padding: EdgeInsets.all(10.0),
                             child: Column(children: <Widget>[
-                              StandardTextInputField(label: 'Weight', failedValidateText: 'Enter your weight.'),
+                              StandardTextInputField(
+                                  label: 'Weight',
+                                  failedValidateText: 'Enter your weight.'),
                               SizedBox(height: 15.0),
-                              StandardTextInputField(label: 'Age', failedValidateText: 'Enter your age.'),
+                              StandardTextInputField(
+                                  label: 'Age',
+                                  failedValidateText: 'Enter your age.'),
                               Container(
-                                  padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0, bottom: 19.0),
+                                  padding: EdgeInsets.only(
+                                      top: 15.0,
+                                      left: 10.0,
+                                      right: 10.0,
+                                      bottom: 19.0),
                                   alignment: Alignment.centerLeft,
-                                  child: Text('Gender', style: TextStyle(color: Color(0xff4ff7d3)))),
+                                  child: Text('Gender',
+                                      style:
+                                          TextStyle(color: Color(0xff4ff7d3)))),
                               GenderRadio()
                             ]),
                           ),
@@ -224,38 +259,52 @@ class ProfilePage extends StatelessWidget {
                               ),
                               GestureDetector(
                                 child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 15.0),
                                   alignment: Alignment.centerLeft,
-                                  child: Text("Website", style: TextStyle(color: Color(0xff4ff7d3))),
+                                  child: Text("Website",
+                                      style:
+                                          TextStyle(color: Color(0xff4ff7d3))),
                                 ),
                                 onTap: () async {
-                                  if (await canLaunch("https://workitoffapp.com")) {
+                                  if (await canLaunch(
+                                      "https://workitoffapp.com")) {
                                     await launch("https://workitoffapp.com");
                                   }
                                 },
                               ),
                               GestureDetector(
                                 child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 15.0),
                                   alignment: Alignment.centerLeft,
                                   child: Container(
-                                      child: Text("Terms of Service", style: TextStyle(color: Color(0xff4ff7d3)))),
+                                      child: Text("Terms of Service",
+                                          style: TextStyle(
+                                              color: Color(0xff4ff7d3)))),
                                 ),
                                 onTap: () async {
-                                  if (await canLaunch("https://workitoffapp.com/terms.html")) {
-                                    await launch("https://workitoffapp.com/terms.html");
+                                  if (await canLaunch(
+                                      "https://workitoffapp.com/terms.html")) {
+                                    await launch(
+                                        "https://workitoffapp.com/terms.html");
                                   }
                                 },
                               ),
                               GestureDetector(
                                 child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 15.0),
                                   alignment: Alignment.centerLeft,
-                                  child: Text("Privacy Policy", style: TextStyle(color: Color(0xff4ff7d3))),
+                                  child: Text("Privacy Policy",
+                                      style:
+                                          TextStyle(color: Color(0xff4ff7d3))),
                                 ),
                                 onTap: () async {
-                                  if (await canLaunch("https://workitoffapp.com/privacy.html")) {
-                                    await launch("https://workitoffapp.com/privacy.html");
+                                  if (await canLaunch(
+                                      "https://workitoffapp.com/privacy.html")) {
+                                    await launch(
+                                        "https://workitoffapp.com/privacy.html");
                                   }
                                 },
                               ),
@@ -269,35 +318,40 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            child: FlatButton(
-              // TODO Make button slightly fade in on tab click
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // Removed all padding
-              padding: EdgeInsets.zero,
-              color: Color(0xff4ff7d3),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3.0)),
-              child: Text("Update Profile", style: TextStyle(fontSize: 18.0)),
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  // If the form validates
-                  // Scaffold.of(context).showSnackBar(SnackBar(content: Text('Processing Data')));
-                  Flushbar(
-                    // message: 'Profile Updated!',
-                    messageText: Text(
-                      'Profile Updated!',
-                      style: TextStyle(color: Colors.purple[800]),
-                    ),
-                    isDismissible: true,
-                    backgroundColor: Colors.white,
-                    dismissDirection: FlushbarDismissDirection.HORIZONTAL,
-                    // reverseAnimationCurve: Curves.decelerate,
-                    // forwardAnimationCurve: Curves.easeIn,
-                    duration: Duration(seconds: 3),
-                    flushbarPosition: FlushbarPosition.TOP,
-                  ).show(context);
-                }
-              },
+          FadeTransition(
+            opacity: CurvedAnimation(
+                parent: _animationController, curve: Curves.linear),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              child: FlatButton(
+                materialTapTargetSize:
+                    MaterialTapTargetSize.shrinkWrap, // Removed all padding
+                padding: EdgeInsets.zero,
+                color: Color(0xff4ff7d3),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(3.0)),
+                child: Text("Update Profile", style: TextStyle(fontSize: 18.0)),
+                onPressed: () {
+                  if (_formKey.currentState.validate()) {
+                    // If the form validates
+                    // Scaffold.of(context).showSnackBar(SnackBar(content: Text('Processing Data')));
+                    Flushbar(
+                      // message: 'Profile Updated!',
+                      messageText: Text(
+                        'Profile Updated!',
+                        style: TextStyle(color: Colors.purple[800]),
+                      ),
+                      isDismissible: true,
+                      backgroundColor: Colors.white,
+                      dismissDirection: FlushbarDismissDirection.HORIZONTAL,
+                      // reverseAnimationCurve: Curves.decelerate,
+                      // forwardAnimationCurve: Curves.easeIn,
+                      duration: Duration(seconds: 3),
+                      flushbarPosition: FlushbarPosition.TOP,
+                    ).show(context);
+                  }
+                },
+              ),
             ),
           )
         ],
