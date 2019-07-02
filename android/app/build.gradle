@@ -35,6 +35,7 @@ android {
         applicationId "com.cloud3tech.workitoff"
         minSdkVersion 16
         targetSdkVersion 28
+        multiDexEnabled true  //Required for firebase
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
