@@ -19,10 +19,7 @@ Widget _buildCardList() {
     itemBuilder: (BuildContext context, int index) {
       return _filter == null || _filter == ''
           ? MyWorkoutCards(cardList[index])
-          : pattern
-                  .stringMatch(cardList[index])
-                  .toLowerCase()
-                  .contains(_filter.toLowerCase())
+          : pattern.stringMatch(cardList[index]).contains(_filter.toLowerCase())
               ? MyWorkoutCards(cardList[index])
               : Container();
     },
