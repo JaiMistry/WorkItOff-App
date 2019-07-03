@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import 'package:workitoff/widgets.dart';
+
 String _filter;
-RegExp pattern =
-    new RegExp(r'[^\/][\w]+(?=\.)', caseSensitive: false, multiLine: false);
+RegExp pattern = new RegExp(r'[^\/][\w]+(?=\.)', caseSensitive: false, multiLine: false);
 
 final List<String> cardList = [
   'assets/cards/running.png',
@@ -32,8 +33,7 @@ class WorkoutsPage extends StatefulWidget {
   _WorkoutsPageState createState() => _WorkoutsPageState();
 }
 
-class _WorkoutsPageState extends State<WorkoutsPage>
-    with SingleTickerProviderStateMixin {
+class _WorkoutsPageState extends State<WorkoutsPage> with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   TextEditingController _searchController = new TextEditingController();
 
@@ -47,8 +47,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
     });
 
     if (true) {
-      _animationController = AnimationController(
-          duration: const Duration(milliseconds: 350), vsync: this);
+      _animationController = AnimationController(duration: const Duration(milliseconds: 350), vsync: this);
       _animationController.forward();
     } else {
       _animationController = AnimationController(vsync: this);
@@ -104,7 +103,10 @@ class _WorkoutsPageState extends State<WorkoutsPage>
       ),
       child: Column(
         children: <Widget>[
-          _buildSearchBar(),
+          Container(
+            padding: EdgeInsets.only(bottom: 6.0),
+            child: SearchBar(hintText: 'Search Workouts', controller: _searchController),
+          ),
           Expanded(
             child: ScrollConfiguration(
               behavior: NoOverscrollBehavior(),
@@ -124,8 +126,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
                           SizedBox(height: 10.0),
                           Text(
                             'Calories burned are calculated from your weight and our algorithm.',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 10.0),
+                            style: TextStyle(color: Colors.white, fontSize: 10.0),
                           ),
                         ],
                       ),
@@ -136,8 +137,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
             ),
           ),
           FadeTransition(
-            opacity: CurvedAnimation(
-                parent: _animationController, curve: Curves.linear),
+            opacity: CurvedAnimation(parent: _animationController, curve: Curves.linear),
             child: Container(
               width: MediaQuery.of(context).size.width,
               child: FlatButton(
@@ -153,36 +153,6 @@ class _WorkoutsPageState extends State<WorkoutsPage>
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSearchBar() {
-    return Container(
-      margin: EdgeInsets.only(top: 40.0, left: 8.0, right: 8.0),
-      padding: EdgeInsets.only(bottom: 6.0),
-      decoration: BoxDecoration(
-          border: Border.all(width: 1.0), color: Colors.transparent),
-      child: TextField(
-        controller: _searchController,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
-          hintText: 'Search Workouts',
-          hintStyle: TextStyle(color: Colors.grey, fontSize: 15),
-          prefixIcon: Icon(Icons.search, color: Color(0xff5a5a5a)),
-          suffixIcon: IconButton(
-            icon: Icon(Icons.clear, size: 20, color: Colors.grey),
-            onPressed: () => _searchController.clear(),
-          ),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
-          enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(style: BorderStyle.none)),
-          focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(style: BorderStyle.none)),
-        ),
-        textAlign: TextAlign.left,
       ),
     );
   }
@@ -258,14 +228,5 @@ class _MyWorkoutCardsState extends State<MyWorkoutCards> {
         margin: EdgeInsets.all(10.0),
       ),
     );
-  }
-}
-
-// * Prevent glow effect from overscrolling
-class NoOverscrollBehavior extends ScrollBehavior {
-  @override
-  Widget buildViewportChrome(
-      BuildContext context, Widget child, AxisDirection axisDirection) {
-    return child;
   }
 }

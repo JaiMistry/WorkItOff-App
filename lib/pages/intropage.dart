@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:workitoff/navigation_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'package:workitoff/widgets.dart';
+
 class GenderSelector extends StatefulWidget {
   final Function(String) genderCallback; // Used to send data back to the parent
 
@@ -303,13 +305,6 @@ class _InputPageState extends State<InputPage> with AutomaticKeepAliveClientMixi
         ),
       ),
     );
-  }
-}
-
-class NoOverscrollBehavior extends ScrollBehavior {
-  @override
-  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
-    return child;
   }
 }
 

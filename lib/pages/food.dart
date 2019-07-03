@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 
 import 'package:transparent_image/transparent_image.dart';
 
+import 'package:workitoff/widgets.dart';
+
 class FoodPage extends StatefulWidget {
   // const FoodPage({Key key}) : super(key: key);
 
   @override
   _FoodPageState createState() => _FoodPageState();
 }
+
+
 
 class _FoodPageState extends State<FoodPage> {
   TextEditingController _searchController = new TextEditingController();
@@ -18,7 +22,7 @@ class _FoodPageState extends State<FoodPage> {
     return Container(
       child: Column(
         children: <Widget>[
-          _buildSearchBar(),
+          SearchBar(hintText: 'Search', controller: _searchController),
           // _builderEnterCaloriesButton(),
           Expanded(
             child: FoodBody(),
@@ -32,33 +36,6 @@ class _FoodPageState extends State<FoodPage> {
           colors: [Color(0xff170422), Color(0xff9B22E6)],
           stops: [0.75, 1],
         ),
-      ),
-    );
-  }
-
-  Widget _buildSearchBar() {
-    return Container(
-      margin: EdgeInsets.only(top: 40.0, left: 8.0, right: 8.0),
-      // padding: EdgeInsets.only(bottom: 0.0),
-      decoration: BoxDecoration(border: Border.all(width: 1.0), color: Colors.transparent),
-      child: TextField(
-        controller: _searchController,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
-          hintText: 'Search',
-          hintStyle: TextStyle(color: Colors.grey, fontSize: 15),
-          prefixIcon: Icon(Icons.search, color: Color(0xff5a5a5a)),
-          suffixIcon: IconButton(
-            icon: Icon(Icons.clear, size: 20, color: Colors.grey),
-            onPressed: () => _searchController.clear(),
-          ),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
-          enabledBorder: OutlineInputBorder(borderSide: BorderSide(style: BorderStyle.none)),
-          focusedBorder: OutlineInputBorder(borderSide: BorderSide(style: BorderStyle.none)),
-        ),
-        textAlign: TextAlign.left,
       ),
     );
   }
@@ -217,9 +194,4 @@ class FoodItemPage extends StatelessWidget {
   }
 }
 
-class NoOverscrollBehavior extends ScrollBehavior {
-  @override
-  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
-    return child;
-  }
-}
+
