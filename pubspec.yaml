@@ -29,6 +29,7 @@ dependencies:
   # firebase_core: ^0.2.5 #WORKS # ! Do not updated firebase version, requires further testing. Caused crash.
   # firebase_analytics: ^1.0.4 #WORKS # ! Do not updated firebase analytics version, requires further testing. Caused crash.
   # cloud_firestore: ^0.8.2+3 #WORKS # ! Do not updated firebase firestore version, requires further testing. Caused crash.
+  transparent_image: ^1.0.0
 
 
   # The following adds the Cupertino Icons font to your application.
