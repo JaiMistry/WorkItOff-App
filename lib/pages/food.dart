@@ -12,8 +12,6 @@ class FoodPage extends StatefulWidget {
   _FoodPageState createState() => _FoodPageState();
 }
 
-
-
 class _FoodPageState extends State<FoodPage> {
   TextEditingController _searchController = new TextEditingController();
 
@@ -87,7 +85,7 @@ class _FoodBodyState extends State<FoodBody> {
       imageUrl = 'https://via.placeholder.com/500x500?text=Error+Loading+Image';
     }
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: EdgeInsets.all(7),
       child: InkWell(
         onTap: () {
           print(restaurant.documentID);
@@ -101,8 +99,8 @@ class _FoodBodyState extends State<FoodBody> {
               child: FadeInImage.memoryNetwork(
                 placeholder: kTransparentImage,
                 image: imageUrl,
-                width: 175,
-                height: 175,
+                width: 180,
+                height: 180,
                 fit: BoxFit.contain,
                 fadeInDuration: Duration(milliseconds: 250),
               ),
@@ -116,46 +114,22 @@ class _FoodBodyState extends State<FoodBody> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 10, right: 10),
+      padding: EdgeInsets.symmetric(horizontal: 7),
       child: StreamBuilder<QuerySnapshot>(
         stream: Firestore.instance.collection('food').snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData | snapshot.hasError) {
             return Container();
-            // return Text('Loading...');
           }
-          // print(snapshot.data.documents.length);
-
-          // snapshot.data.documents.forEach((place) {
-          //   print(place.documentID);
-          //   print(place.data);
-          // });
 
           return ScrollConfiguration(
             behavior: NoOverscrollBehavior(),
-            child: ListView.builder(
+            child: GridView.builder(
               itemCount: snapshot.data.documents.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
               itemBuilder: (BuildContext context, int index) {
                 DocumentSnapshot restaurant = snapshot.data.documents[index];
-                DocumentSnapshot nextRestaurant;
-                // String restaurantName = restaurant.documentID.toString();
-                // print(index);
-                // print(snapshot.data.documents.length);
-                if (index + 1 < snapshot.data.documents.length) {
-                  nextRestaurant = snapshot.data.documents[index + 1];
-                }
-
-                if (index.isEven || index == snapshot.data.documents.length) {
-                  return Row(
-                    mainAxisAlignment: nextRestaurant != null ? MainAxisAlignment.center : MainAxisAlignment.start,
-                    children: <Widget>[
-                      _makeFoodCard(context, restaurant),
-                      _makeFoodCard(context, nextRestaurant),
-                    ],
-                  );
-                }
-
-                return Container();
+                return _makeFoodCard(context, restaurant);
               },
             ),
           );
@@ -193,5 +167,3 @@ class FoodItemPage extends StatelessWidget {
     );
   }
 }
-
-
