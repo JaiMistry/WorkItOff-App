@@ -51,14 +51,14 @@ Widget _builderEnterCaloriesButton() {
       Container(
         alignment: Alignment.center,
         width: 180,
-        height: 30,
+        height: 35,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(20),
           gradient: LinearGradient(
             begin: Alignment.centerRight,
             end: Alignment.centerLeft,
             colors: [Color(0xff9B22E6), Color(0xff4ff7d3)],
-            stops: [0.1, 1],
+            stops: [0.0, .7],
           ),
         ),
         child: InkWell(
