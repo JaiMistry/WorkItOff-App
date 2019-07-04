@@ -20,8 +20,10 @@ class _FoodPageState extends State<FoodPage> {
     return Container(
       child: Column(
         children: <Widget>[
-          SearchBar(hintText: 'Search', controller: _searchController),
-          // _builderEnterCaloriesButton(),
+          Container(
+            padding: EdgeInsets.only(bottom: 6),
+            child: SearchBar(hintText: 'Search', controller: _searchController),
+          ),
           Expanded(
             child: FoodBody(),
           ),
@@ -42,7 +44,6 @@ class _FoodPageState extends State<FoodPage> {
 Widget _builderEnterCaloriesButton() {
   return Column(
     children: <Widget>[
-      SizedBox(height: 20),
       Text("Can't find your cheat meal?", style: TextStyle(fontSize: 20, color: Color(0xff4ff7d3))),
       SizedBox(height: 12),
       Container(
@@ -115,25 +116,32 @@ class _FoodBodyState extends State<FoodBody> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 7),
-      child: StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection('food').snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData | snapshot.hasError) {
-            return Container();
-          }
-
-          return ScrollConfiguration(
-            behavior: NoOverscrollBehavior(),
-            child: GridView.builder(
-              itemCount: snapshot.data.documents.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-              itemBuilder: (BuildContext context, int index) {
-                DocumentSnapshot restaurant = snapshot.data.documents[index];
-                return _makeFoodCard(context, restaurant);
+      child: ScrollConfiguration(
+        behavior: NoOverscrollBehavior(),
+        child: ListView(
+          padding: EdgeInsets.only(top: 20.0),
+          children: <Widget>[
+            _builderEnterCaloriesButton(),
+            StreamBuilder<QuerySnapshot>(
+              stream: Firestore.instance.collection('food').snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData | snapshot.hasError) {
+                  return Container();
+                }
+                return GridView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: snapshot.data.documents.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                  itemBuilder: (BuildContext context, int index) {
+                    DocumentSnapshot restaurant = snapshot.data.documents[index];
+                    return _makeFoodCard(context, restaurant);
+                  },
+                );
               },
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }
