@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import 'package:transparent_image/transparent_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
+// import 'package:transparent_image/transparent_image.dart';
 
 import 'package:workitoff/widgets.dart';
 
@@ -97,9 +99,11 @@ class _FoodBodyState extends State<FoodBody> {
           child: Container(
             color: Colors.white,
             child: InkWell(
-              child: FadeInImage.memoryNetwork(
-                placeholder: kTransparentImage,
-                image: imageUrl,
+              child: CachedNetworkImage(
+                placeholder: (context, url) => Container(),
+                errorWidget: (context, url, error) => Container(child: Center(child: Text('Error Loading Image..'))),
+                // placeholder: kTransparentImage,
+                imageUrl: imageUrl,
                 width: 180,
                 height: 180,
                 fit: BoxFit.contain,

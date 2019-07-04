@@ -183,7 +183,7 @@ class _MyWorkoutCardsState extends State<MyWorkoutCards> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 305,
+      height: 306,
       child: Card(
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
