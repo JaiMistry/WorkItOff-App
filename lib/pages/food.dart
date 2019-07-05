@@ -68,11 +68,7 @@ Widget _builderEnterCaloriesButton() {
             begin: Alignment.centerRight,
             end: Alignment.centerLeft,
             colors: [Color(0xff9B22E6), Color(0xff4ff7d3)],
-<<<<<<< HEAD
             stops: [0.01, 0.7],
-=======
-            stops: [0.0, .5],
->>>>>>> 4266f14ff567bcbf55abed3388ec086c4bab3556
           ),
         ),
         child: InkWell(
