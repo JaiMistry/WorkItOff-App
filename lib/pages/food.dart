@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -33,10 +35,7 @@ class _FoodPageState extends State<FoodPage> {
     return Container(
       child: Column(
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(bottom: 6),
-            child: SearchBar(hintText: 'Search', controller: _searchController),
-          ),
+          SearchBar(hintText: 'Search', controller: _searchController, bottomMargin: 6),
           Expanded(
             child: FoodBody(),
           ),
@@ -69,7 +68,11 @@ Widget _builderEnterCaloriesButton() {
             begin: Alignment.centerRight,
             end: Alignment.centerLeft,
             colors: [Color(0xff9B22E6), Color(0xff4ff7d3)],
+<<<<<<< HEAD
             stops: [0.01, 0.7],
+=======
+            stops: [0.0, .5],
+>>>>>>> 4266f14ff567bcbf55abed3388ec086c4bab3556
           ),
         ),
         child: InkWell(
@@ -102,7 +105,6 @@ class _FoodBodyState extends State<FoodBody> {
       padding: EdgeInsets.all(7),
       child: InkWell(
         onTap: () {
-          print(restaurant.documentID);
           Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => FoodItemPage(restaurant)));
         },
         child: ClipRRect(
@@ -169,18 +171,131 @@ class _FoodBodyState extends State<FoodBody> {
 
 //*  FOOD ITEM PAGE //*
 
-class FoodItemPage extends StatelessWidget {
+class FoodItems extends StatefulWidget {
+  final DocumentSnapshot restaurant;
+  FoodItems({Key key, this.restaurant}) : super(key: key);
+
+  _FoodItemsState createState() => _FoodItemsState();
+}
+
+List<Widget> _buildExpansionButtons() {
+  return [
+    SizedBox(height: 3),
+    Container(
+      height: 30,
+      width: 150,
+      child: FlatButton(
+        padding: EdgeInsets.all(0),
+        color: Colors.purple.withOpacity(0.5),
+        onPressed: () {},
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            RichText(
+              text: TextSpan(
+                style: TextStyle(color: Colors.white),
+                children: <TextSpan>[
+                  TextSpan(text: 'Quantity '),
+                  TextSpan(text: '1'),
+                ],
+              ),
+            ),
+            Icon(Icons.arrow_drop_down, color: Colors.white.withOpacity(0.3))
+          ],
+        ),
+      ),
+    ),
+    SizedBox(height: 10),
+    Container(
+      height: 30,
+      width: 150,
+      child: FlatButton(
+        color: Colors.teal.withOpacity(0.5),
+        onPressed: () {},
+        child: Text('Add To Meal', style: TextStyle(color: Colors.white)),
+      ),
+    )
+  ];
+}
+
+class _FoodItemsState extends State<FoodItems> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Expanded(
+        child: ScrollConfiguration(
+          behavior: NoOverscrollBehavior(),
+          child: ListView.builder(
+            // shrinkWrap: true,
+            itemCount: 1,
+            itemBuilder: (BuildContext contect, int index) {
+              if (widget.restaurant.data['meals'] == null || widget.restaurant.data['meals'].toString() == '{}') {
+                return Container(padding: EdgeInsets.only(top: 20), child: Center(child: Text('No Meals Found.')));
+              }
+
+              Map<String, Map> categories = widget.restaurant.data['meals'].cast<String, Map>();
+              List<Widget> widgetList = [];
+
+              categories.forEach((categtory, mealMap) {
+                List<Widget> mealList = [];
+
+                Map<String, int> meals = mealMap.cast<String, int>();
+                meals.forEach((String meal, int cals) {
+                  mealList.add(
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: ExpansionTile(
+                          title: Text(meal, style: TextStyle(color: Colors.white, fontSize: 14)),
+                          trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
+                          children: _buildExpansionButtons(),
+                        ),
+                      ),
+                    ),
+                  );
+                });
+
+                widgetList.add(
+                  Column(
+                    children: <Widget>[
+                      ListTile(title: Text(categtory, style: TextStyle(color: Color(0xff4ff7d3), fontSize: 22))),
+                      Column(
+                        children: mealList,
+                      )
+                    ],
+                  ),
+                );
+              });
+
+              return Column(children: widgetList);
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class FoodItemPage extends StatefulWidget {
   final DocumentSnapshot restaurant;
 
   FoodItemPage(this.restaurant);
-  // const FoodItemPage({Key key}) : super(key: key);
+
+  @override
+  _FoodItemPageState createState() => _FoodItemPageState();
+}
+
+class _FoodItemPageState extends State<FoodItemPage> {
+  TextEditingController _searchController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xff170422),
-        title: Text(restaurant.documentID),
+        title: Text(widget.restaurant.documentID),
+        elevation: 0,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -190,6 +305,14 @@ class FoodItemPage extends StatelessWidget {
             colors: [Color(0xff170422), Color(0xff9B22E6)],
             stops: [0.75, 1],
           ),
+        ),
+        child: Column(
+          children: <Widget>[
+            SearchBar(controller: _searchController, hintText: 'Search', topMargin: 5, bottomMargin: 6),
+            FoodItems(
+              restaurant: widget.restaurant,
+            )
+          ],
         ),
       ),
     );

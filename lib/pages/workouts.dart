@@ -103,10 +103,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> with SingleTickerProviderSt
       ),
       child: Column(
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(bottom: 6.0),
-            child: SearchBar(hintText: 'Search Workouts', controller: _searchController),
-          ),
+          SearchBar(hintText: 'Search Workouts', controller: _searchController, bottomMargin: 6),
           Expanded(
             child: ScrollConfiguration(
               behavior: NoOverscrollBehavior(),
