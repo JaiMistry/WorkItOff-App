@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -20,6 +21,7 @@ class FoodPage extends StatefulWidget {
 
 class _FoodPageState extends State<FoodPage> {
   TextEditingController _searchController = new TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -43,7 +45,7 @@ class _FoodPageState extends State<FoodPage> {
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topCenter, 
+          begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [Color(0xff170422), Color(0xff9B22E6)],
           stops: [0.75, 1],
@@ -125,6 +127,20 @@ class _FoodBodyState extends State<FoodBody> {
     );
   }
 
+  List<Widget> _getFoodCards(AsyncSnapshot<QuerySnapshot> snapshot) {
+    List<Widget> _foodCards = [];
+
+    snapshot.data.documents.forEach((DocumentSnapshot restaurant) {
+      String restaurantName = restaurant.documentID.toLowerCase();
+      if (_filter == null || _filter == '' || restaurantName.contains(_filter.toLowerCase())) {
+        // If there is no filter applied or part of the string is in the restaurant name, then return it. Else nothing.
+        _foodCards.add(_makeFoodCard(context, restaurant));
+      }
+    });
+
+    return _foodCards;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -141,20 +157,12 @@ class _FoodBodyState extends State<FoodBody> {
                 if (!snapshot.hasData | snapshot.hasError) {
                   return Container();
                 }
-                return GridView.builder(
+
+                return GridView(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: snapshot.data.documents.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-                  itemBuilder: (BuildContext context, int index) {
-                    DocumentSnapshot restaurant =
-                        snapshot.data.documents[index];
-                    return _filter == null || _filter == ''
-                        ? _makeFoodCard(context, snapshot.data.documents[index])
-                        : restaurant.documentID.toLowerCase().contains(_filter.toLowerCase())
-                            ? _makeFoodCard(context, restaurant)
-                            : Container();
-                  },
+                  children: _getFoodCards(snapshot),
                 );
               },
             ),
@@ -305,9 +313,7 @@ class _FoodItemPageState extends State<FoodItemPage> {
         child: Column(
           children: <Widget>[
             SearchBar(controller: _searchController, hintText: 'Search', topMargin: 5, bottomMargin: 6),
-            FoodItems(
-              restaurant: widget.restaurant,
-            )
+            FoodItems(restaurant: widget.restaurant)
           ],
         ),
       ),
