@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 class SearchBar extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
+  final double topMargin;
+  final double bottomMargin;
 
-  SearchBar({Key key, this.hintText, this.controller}) : super(key: key);
+  SearchBar({Key key, this.hintText: 'Search', this.controller, this.topMargin: 40, this.bottomMargin : 0}) : super(key: key);
 
   _SearchBarState createState() => _SearchBarState();
 }
@@ -17,8 +19,7 @@ class _SearchBarState extends State<SearchBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 40.0, left: 8.0, right: 8.0),
-      // padding: EdgeInsets.only(bottom: 0.0),
+      margin: EdgeInsets.only(top: widget.topMargin, left: 8.0, right: 8.0, bottom: widget.bottomMargin),
       decoration: BoxDecoration(border: Border.all(width: 1.0), color: Colors.transparent),
       child: TextField(
         onChanged: (text) {
