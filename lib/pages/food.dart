@@ -57,7 +57,7 @@ Widget _builderEnterCaloriesButton() {
             begin: Alignment.centerRight,
             end: Alignment.centerLeft,
             colors: [Color(0xff9B22E6), Color(0xff4ff7d3)],
-            stops: [0.0, .7],
+            stops: [0.0, .5],
           ),
         ),
         child: InkWell(
@@ -158,6 +158,46 @@ class FoodItems extends StatefulWidget {
   _FoodItemsState createState() => _FoodItemsState();
 }
 
+List<Widget> _buildExpansionButtons() {
+  return [
+    SizedBox(height: 3),
+    Container(
+      height: 30,
+      width: 150,
+      child: FlatButton(
+        padding: EdgeInsets.all(0),
+        color: Colors.purple.withOpacity(0.5),
+        onPressed: () {},
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            RichText(
+              text: TextSpan(
+                style: TextStyle(color: Colors.white),
+                children: <TextSpan>[
+                  TextSpan(text: 'Quantity '),
+                  TextSpan(text: '1'),
+                ],
+              ),
+            ),
+            Icon(Icons.arrow_drop_down, color: Colors.white.withOpacity(0.3))
+          ],
+        ),
+      ),
+    ),
+    SizedBox(height: 10),
+    Container(
+      height: 30,
+      width: 150,
+      child: FlatButton(
+        color: Colors.teal.withOpacity(0.5),
+        onPressed: () {},
+        child: Text('Add To Meal', style: TextStyle(color: Colors.white)),
+      ),
+    )
+  ];
+}
+
 class _FoodItemsState extends State<FoodItems> {
   @override
   Widget build(BuildContext context) {
@@ -189,34 +229,7 @@ class _FoodItemsState extends State<FoodItems> {
                         child: ExpansionTile(
                           title: Text(meal, style: TextStyle(color: Colors.white, fontSize: 14)),
                           trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
-                          children: <Widget>[
-                            FlatButton.icon(
-                              icon: Icon(Icons.arrow_drop_down, color: Colors.white.withOpacity(0.3)),
-                              color: Colors.purple.withOpacity(0.5),
-                              onPressed: () {},
-                              label: Row(children: [
-                                RichText(
-                                  text: TextSpan(
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                    ),
-                                    children: <TextSpan>[
-                                      TextSpan(text: 'Quantity '),
-                                      TextSpan(text: '1'),
-                                    ],
-                                  ),
-                                ),
-                              ]),
-                            ),
-                            FlatButton(
-                              color: Colors.teal.withOpacity(0.5),
-                              onPressed: () {},
-                              child: Text(
-                                'Add To Meal',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            )
-                          ],
+                          children: _buildExpansionButtons(),
                         ),
                       ),
                     ),
