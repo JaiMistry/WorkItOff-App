@@ -7,6 +7,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:workitoff/widgets.dart';
 
+String _filter; // user input in the searchbar
+
 class FoodPage extends StatefulWidget {
   // const FoodPage({Key key}) : super(key: key);
 
@@ -16,6 +18,15 @@ class FoodPage extends StatefulWidget {
 
 class _FoodPageState extends State<FoodPage> {
   TextEditingController _searchController = new TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      setState(() {
+        _filter = _searchController.text;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +44,7 @@ class _FoodPageState extends State<FoodPage> {
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topCenter,
+          begin: Alignment.topCenter, 
           end: Alignment.bottomCenter,
           colors: [Color(0xff170422), Color(0xff9B22E6)],
           stops: [0.75, 1],
@@ -58,7 +69,7 @@ Widget _builderEnterCaloriesButton() {
             begin: Alignment.centerRight,
             end: Alignment.centerLeft,
             colors: [Color(0xff9B22E6), Color(0xff4ff7d3)],
-            stops: [0.0, .7],
+            stops: [0.01, 0.7],
           ),
         ),
         child: InkWell(
@@ -79,9 +90,9 @@ class FoodBody extends StatefulWidget {
 
 class _FoodBodyState extends State<FoodBody> {
   Widget _makeFoodCard(BuildContext context, DocumentSnapshot restaurant) {
-    if (restaurant == null) {
-      return Container();
-    }
+    // if (restaurant == null) {
+    //   return Container();
+    // }
 
     String imageUrl = restaurant.data['image_url'];
     if (imageUrl == null) {
@@ -138,8 +149,13 @@ class _FoodBodyState extends State<FoodBody> {
                   itemCount: snapshot.data.documents.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
                   itemBuilder: (BuildContext context, int index) {
-                    DocumentSnapshot restaurant = snapshot.data.documents[index];
-                    return _makeFoodCard(context, restaurant);
+                    DocumentSnapshot restaurant =
+                        snapshot.data.documents[index];
+                    return _filter == null || _filter == ''
+                        ? _makeFoodCard(context, snapshot.data.documents[index])
+                        : restaurant.documentID.toLowerCase().contains(_filter.toLowerCase())
+                            ? _makeFoodCard(context, restaurant)
+                            : Container();
                   },
                 );
               },
