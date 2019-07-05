@@ -182,7 +182,7 @@ class FoodItems extends StatefulWidget {
   _FoodItemsState createState() => _FoodItemsState();
 }
 
-List<Widget> _buildExpansionButtons() {
+List<Widget> _buildExpansionButtons(BuildContext context) {
   return [
     SizedBox(height: 3),
     Container(
@@ -191,7 +191,9 @@ List<Widget> _buildExpansionButtons() {
       child: FlatButton(
         padding: EdgeInsets.all(0),
         color: Colors.purple.withOpacity(0.5),
-        onPressed: () {},
+        onPressed: () {
+          _showLogDialog(context);
+        },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -250,10 +252,14 @@ class _FoodItemsState extends State<FoodItems> {
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       child: Material(
                         color: Colors.transparent,
-                        child: ExpansionTile(
-                          title: Text(meal, style: TextStyle(color: Colors.white, fontSize: 14)),
-                          trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
-                          children: _buildExpansionButtons(),
+                        child: Theme(
+                          data: ThemeData(accentColor: Colors.white, unselectedWidgetColor: Colors.white),
+                          child: ExpansionTile(
+                            onExpansionChanged: (bool state) {},
+                            title: Text(meal, style: TextStyle(color: Colors.white, fontSize: 14)),
+                            // trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
+                            children: _buildExpansionButtons(context),
+                          ),
                         ),
                       ),
                     ),
@@ -319,4 +325,78 @@ class _FoodItemPageState extends State<FoodItemPage> {
       ),
     );
   }
+}
+
+class QuantityRadioList extends StatefulWidget {
+  QuantityRadioList({Key key}) : super(key: key);
+
+  _QuantityRadioListState createState() => _QuantityRadioListState();
+}
+
+class _QuantityRadioListState extends State<QuantityRadioList> {
+  int _selected = 0;
+
+  void onRadioChanged(int value) {
+    setState(() {
+      _selected = value;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // height: 250,
+      // width: 200,
+      child: ListView.builder(
+        padding: EdgeInsets.all(0),
+        // shrinkWrap: true,
+        itemCount: 101,
+        itemBuilder: (BuildContext context, int index) {
+          return RadioListTile(
+            dense: true,
+            groupValue: _selected,
+            value: index,
+            title: Text(index == 0 ? '1/2' : index.toString(), style: TextStyle(color: Colors.black)),
+            onChanged: (int value) {
+              onRadioChanged(value);
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+Future<void> _showLogDialog(BuildContext context) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        // title: Container(color: Colors.black, width: 100, height: 1), //Looks ugly, but is in app
+        contentPadding: EdgeInsets.all(0),
+        titlePadding: EdgeInsets.all(5),
+        content: Container(
+          height: 250,
+          width: 200,
+          alignment: Alignment.center,
+          child: QuantityRadioList(),
+        ),
+        actions: <Widget>[
+          FlatButton(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.grey[200],
+              textColor: Colors.black,
+              child: Text('Cancel', style: TextStyle(fontSize: 16),),
+              onPressed: () => Navigator.of(context).pop()),
+          FlatButton(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.grey[200],
+              textColor: Colors.black,
+              child: Text('Select', style: TextStyle(fontSize: 16)),
+              onPressed: () => Navigator.of(context).pop()),
+        ],
+      );
+    },
+  );
 }
