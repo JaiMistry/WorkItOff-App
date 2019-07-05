@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flushbar/flushbar.dart';
 
-// TODO Separate widgets
+import 'package:workitoff/widgets.dart';
 
 bool _isNumeric(String str) {
   if (str == null) {
@@ -13,12 +13,6 @@ bool _isNumeric(String str) {
   return double.tryParse(str) != null;
 }
 
-class NoOverscrollBehavior extends ScrollBehavior {
-  @override
-  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
-    return child;
-  }
-}
 
 class StandardTextInputField extends StatefulWidget {
   final String label;
