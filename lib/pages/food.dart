@@ -186,12 +186,37 @@ class _FoodItemsState extends State<FoodItems> {
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       child: Material(
                         color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () {},
-                          child: ListTile(
-                            title: Text(meal, style: TextStyle(color: Colors.white, fontSize: 14)),
-                            trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
-                          ),
+                        child: ExpansionTile(
+                          title: Text(meal, style: TextStyle(color: Colors.white, fontSize: 14)),
+                          trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
+                          children: <Widget>[
+                            FlatButton.icon(
+                              icon: Icon(Icons.arrow_drop_down, color: Colors.white.withOpacity(0.3)),
+                              color: Colors.purple.withOpacity(0.5),
+                              onPressed: () {},
+                              label: Row(children: [
+                                RichText(
+                                  text: TextSpan(
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                    children: <TextSpan>[
+                                      TextSpan(text: 'Quantity '),
+                                      TextSpan(text: '1'),
+                                    ],
+                                  ),
+                                ),
+                              ]),
+                            ),
+                            FlatButton(
+                              color: Colors.teal.withOpacity(0.5),
+                              onPressed: () {},
+                              child: Text(
+                                'Add To Meal',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            )
+                          ],
                         ),
                       ),
                     ),
