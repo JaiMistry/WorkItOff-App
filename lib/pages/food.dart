@@ -182,7 +182,7 @@ class FoodItems extends StatefulWidget {
   _FoodItemsState createState() => _FoodItemsState();
 }
 
-List<Widget> _buildExpansionButtons(BuildContext context) {
+List<Widget> _buildExpansionButtons(BuildContext context, int quantity, Function setQuantity) {
   return [
     SizedBox(height: 3),
     Container(
@@ -192,7 +192,7 @@ List<Widget> _buildExpansionButtons(BuildContext context) {
         padding: EdgeInsets.all(0),
         color: Colors.purple.withOpacity(0.5),
         onPressed: () {
-          _showLogDialog(context);
+          _showLogDialog(context, setQuantity);
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -202,7 +202,7 @@ List<Widget> _buildExpansionButtons(BuildContext context) {
                 style: TextStyle(color: Colors.white),
                 children: <TextSpan>[
                   TextSpan(text: 'Quantity '),
-                  TextSpan(text: '1'),
+                  TextSpan(text: quantity == 0 ? '1/2' : quantity.toString()),
                 ],
               ),
             ),
@@ -225,6 +225,14 @@ List<Widget> _buildExpansionButtons(BuildContext context) {
 }
 
 class _FoodItemsState extends State<FoodItems> {
+  int quantity = 1;
+
+  void _setQuantity(int newQuantity) {
+    setState(() {
+      quantity = newQuantity;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -258,7 +266,7 @@ class _FoodItemsState extends State<FoodItems> {
                             onExpansionChanged: (bool state) {},
                             title: Text(meal, style: TextStyle(color: Colors.white, fontSize: 14)),
                             // trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
-                            children: _buildExpansionButtons(context),
+                            children: _buildExpansionButtons(context, quantity, _setQuantity),
                           ),
                         ),
                       ),
@@ -328,17 +336,19 @@ class _FoodItemPageState extends State<FoodItemPage> {
 }
 
 class QuantityRadioList extends StatefulWidget {
-  QuantityRadioList({Key key}) : super(key: key);
+  final Function setQuantity;
+  QuantityRadioList(this.setQuantity);
 
   _QuantityRadioListState createState() => _QuantityRadioListState();
 }
 
 class _QuantityRadioListState extends State<QuantityRadioList> {
-  int _selected = 0;
+  int _selected = 1;
 
   void onRadioChanged(int value) {
     setState(() {
       _selected = value;
+      widget.setQuantity(value);
     });
   }
 
@@ -367,7 +377,7 @@ class _QuantityRadioListState extends State<QuantityRadioList> {
   }
 }
 
-Future<void> _showLogDialog(BuildContext context) async {
+Future<void> _showLogDialog(BuildContext context, Function setQuantity) async {
   return showDialog<void>(
     context: context,
     barrierDismissible: false,
@@ -380,14 +390,17 @@ Future<void> _showLogDialog(BuildContext context) async {
           height: 250,
           width: 200,
           alignment: Alignment.center,
-          child: QuantityRadioList(),
+          child: QuantityRadioList(setQuantity),
         ),
         actions: <Widget>[
           FlatButton(
               splashColor: Colors.transparent,
               highlightColor: Colors.grey[200],
               textColor: Colors.black,
-              child: Text('Cancel', style: TextStyle(fontSize: 16),),
+              child: Text(
+                'Cancel',
+                style: TextStyle(fontSize: 16),
+              ),
               onPressed: () => Navigator.of(context).pop()),
           FlatButton(
               splashColor: Colors.transparent,
