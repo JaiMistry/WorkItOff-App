@@ -18,7 +18,7 @@ class StandardTextInputField extends StatefulWidget {
   final String label;
   final String failedValidateText;
 
-  StandardTextInputField({this.label, this.failedValidateText});
+  StandardTextInputField({this.label: '', this.failedValidateText: ''});
 
   _StandardTextInputFieldState createState() => _StandardTextInputFieldState();
 }

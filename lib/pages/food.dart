@@ -1,4 +1,4 @@
-import 'dart:ui' as prefix0;
+// import 'dart:ui' as prefix0;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,8 +11,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:workitoff/widgets.dart';
 
 class FoodPage extends StatefulWidget {
-  // const FoodPage({Key key}) : super(key: key);
-
   @override
   _FoodPageState createState() => _FoodPageState();
 }
@@ -85,7 +83,7 @@ Widget _builderEnterCaloriesButton() {
 class FoodBody extends StatefulWidget {
   final String restuarantSearchFiler; // user input in the searchbar
 
-  FoodBody({Key key, this.restuarantSearchFiler}) : super(key: key);
+  FoodBody({Key key, @required this.restuarantSearchFiler}) : super(key: key);
 
   _FoodBodyState createState() => _FoodBodyState();
 }
@@ -184,7 +182,7 @@ class FoodItems extends StatefulWidget {
   final DocumentSnapshot restaurant;
   final String searchText;
 
-  FoodItems({Key key, this.restaurant, this.searchText}) : super(key: key);
+  FoodItems({Key key, @required this.restaurant, @required this.searchText}) : super(key: key);
 
   _FoodItemsState createState() => _FoodItemsState();
 }
@@ -313,7 +311,7 @@ class _FoodItemsState extends State<FoodItems> {
 class FoodItemPage extends StatefulWidget {
   final DocumentSnapshot restaurant;
 
-  FoodItemPage({this.restaurant});
+  FoodItemPage({@required this.restaurant});
 
   @override
   _FoodItemPageState createState() => _FoodItemPageState();
@@ -364,7 +362,7 @@ class _FoodItemPageState extends State<FoodItemPage> {
 class QuantityRadioList extends StatefulWidget {
   final Function setQuantity;
   final int quantity;
-  QuantityRadioList({this.setQuantity, this.quantity});
+  QuantityRadioList({@required this.setQuantity, @required this.quantity});
 
   _QuantityRadioListState createState() => _QuantityRadioListState();
 }

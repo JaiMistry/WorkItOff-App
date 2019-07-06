@@ -8,7 +8,8 @@ class SearchBar extends StatefulWidget {
   final double topMargin;
   final double bottomMargin;
 
-  SearchBar({Key key, this.hintText: 'Search', this.controller, this.topMargin: 40, this.bottomMargin : 0}) : super(key: key);
+  SearchBar({Key key, this.hintText: 'Search', @required this.controller, this.topMargin: 40, this.bottomMargin: 0})
+      : super(key: key);
 
   _SearchBarState createState() => _SearchBarState();
 }
