@@ -10,8 +10,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:workitoff/widgets.dart';
 
-String _filter; // user input in the searchbar
-
 class FoodPage extends StatefulWidget {
   // const FoodPage({Key key}) : super(key: key);
 
@@ -21,13 +19,14 @@ class FoodPage extends StatefulWidget {
 
 class _FoodPageState extends State<FoodPage> {
   TextEditingController _searchController = new TextEditingController();
+  String _restuarantSearchFilter;
 
   @override
   void initState() {
     super.initState();
     _searchController.addListener(() {
       setState(() {
-        _filter = _searchController.text;
+        _restuarantSearchFilter = _searchController.text;
       });
     });
   }
@@ -39,7 +38,7 @@ class _FoodPageState extends State<FoodPage> {
         children: <Widget>[
           SearchBar(hintText: 'Search', controller: _searchController, bottomMargin: 6),
           Expanded(
-            child: FoodBody(),
+            child: FoodBody(restuarantSearchFiler: _restuarantSearchFilter),
           ),
         ],
       ),
@@ -84,7 +83,9 @@ Widget _builderEnterCaloriesButton() {
 }
 
 class FoodBody extends StatefulWidget {
-  FoodBody({Key key}) : super(key: key);
+  final String restuarantSearchFiler; // user input in the searchbar
+
+  FoodBody({Key key, this.restuarantSearchFiler}) : super(key: key);
 
   _FoodBodyState createState() => _FoodBodyState();
 }
@@ -103,7 +104,8 @@ class _FoodBodyState extends State<FoodBody> {
       padding: EdgeInsets.all(7),
       child: InkWell(
         onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => FoodItemPage(restaurant)));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (BuildContext context) => FoodItemPage(restaurant: restaurant)));
         },
         child: ClipRRect(
           borderRadius: BorderRadius.circular(15.0),
@@ -131,6 +133,7 @@ class _FoodBodyState extends State<FoodBody> {
     List<Widget> _foodCards = [];
 
     snapshot.data.documents.forEach((DocumentSnapshot restaurant) {
+      String _filter = widget.restuarantSearchFiler; // user input in the searchbar
       String restaurantName = restaurant.documentID.toLowerCase();
       if (_filter == null || _filter == '' || restaurantName.contains(_filter.toLowerCase())) {
         // If there is no filter applied or part of the string is in the restaurant name, then return it. Else nothing.
@@ -310,7 +313,7 @@ class _FoodItemsState extends State<FoodItems> {
 class FoodItemPage extends StatefulWidget {
   final DocumentSnapshot restaurant;
 
-  FoodItemPage(this.restaurant);
+  FoodItemPage({this.restaurant});
 
   @override
   _FoodItemPageState createState() => _FoodItemPageState();
@@ -361,7 +364,7 @@ class _FoodItemPageState extends State<FoodItemPage> {
 class QuantityRadioList extends StatefulWidget {
   final Function setQuantity;
   final int quantity;
-  QuantityRadioList(this.setQuantity, this.quantity);
+  QuantityRadioList({this.setQuantity, this.quantity});
 
   _QuantityRadioListState createState() => _QuantityRadioListState();
 }
@@ -417,7 +420,7 @@ Future<void> _showLogDialog(BuildContext context, Function setQuantity, int quan
           height: 250,
           width: 200,
           alignment: Alignment.center,
-          child: QuantityRadioList(setQuantity, quantity),
+          child: QuantityRadioList(setQuantity: setQuantity, quantity: quantity),
         ),
         actions: <Widget>[
           FlatButton(
@@ -426,8 +429,6 @@ Future<void> _showLogDialog(BuildContext context, Function setQuantity, int quan
               textColor: Colors.black,
               child: Text('Cancel', style: TextStyle(fontSize: 16)),
               onPressed: () {
-                
-                print(quantity);
                 setQuantity(quantity);
                 Navigator.of(context).pop();
               }),
