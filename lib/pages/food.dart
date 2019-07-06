@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -173,26 +171,30 @@ class _FoodBodyState extends State<FoodBody> {
   }
 }
 
+//
 //*  FOOD ITEM PAGE //*
+//
 
 class FoodItems extends StatefulWidget {
   final DocumentSnapshot restaurant;
-  FoodItems({Key key, this.restaurant}) : super(key: key);
+  final String searchText;
+
+  FoodItems({Key key, this.restaurant, this.searchText}) : super(key: key);
 
   _FoodItemsState createState() => _FoodItemsState();
 }
 
 List<Widget> _buildExpansionButtons(BuildContext context, int quantity, Function setQuantity) {
   return [
-    SizedBox(height: 3),
+    SizedBox(height: 2),
     Container(
-      height: 30,
+      height: 25,
       width: 150,
       child: FlatButton(
         padding: EdgeInsets.all(0),
         color: Colors.purple.withOpacity(0.5),
         onPressed: () {
-          _showLogDialog(context, setQuantity);
+          _showLogDialog(context, setQuantity, quantity);
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -213,7 +215,7 @@ List<Widget> _buildExpansionButtons(BuildContext context, int quantity, Function
     ),
     SizedBox(height: 10),
     Container(
-      height: 30,
+      height: 25,
       width: 150,
       child: FlatButton(
         color: Colors.teal.withOpacity(0.5),
@@ -255,35 +257,43 @@ class _FoodItemsState extends State<FoodItems> {
 
                 Map<String, int> meals = mealMap.cast<String, int>();
                 meals.forEach((String meal, int cals) {
-                  mealList.add(
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: Theme(
-                          data: ThemeData(accentColor: Colors.white, unselectedWidgetColor: Colors.white),
-                          child: ExpansionTile(
-                            onExpansionChanged: (bool state) {},
-                            title: Text(meal, style: TextStyle(color: Colors.white, fontSize: 14)),
-                            // trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
-                            children: _buildExpansionButtons(context, quantity, _setQuantity),
+                  String searchText = widget.searchText;
+
+                  //Only reutrn the food items that are being searched for
+                  if (searchText == null || searchText == '' || meal.toLowerCase().contains(searchText.toLowerCase())) {
+                    mealList.add(
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Theme(
+                            data: ThemeData(accentColor: Colors.white, unselectedWidgetColor: Colors.white),
+                            child: ExpansionTile(
+                              onExpansionChanged: (bool state) {},
+                              title: Text(meal, style: TextStyle(color: Colors.white, fontSize: 14)),
+                              // trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
+                              children: _buildExpansionButtons(context, quantity, _setQuantity),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  );
+                    );
+                  }
                 });
 
-                widgetList.add(
-                  Column(
-                    children: <Widget>[
-                      ListTile(title: Text(categtory, style: TextStyle(color: Color(0xff4ff7d3), fontSize: 22))),
-                      Column(
-                        children: mealList,
-                      )
-                    ],
-                  ),
-                );
+                // Only return the category if there are food items within
+                if (mealList.length > 0) {
+                  widgetList.add(
+                    Column(
+                      children: <Widget>[
+                        ListTile(title: Text(categtory, style: TextStyle(color: Color(0xff4ff7d3), fontSize: 22))),
+                        Column(
+                          children: mealList,
+                        )
+                      ],
+                    ),
+                  );
+                }
               });
 
               return Column(children: widgetList);
@@ -306,6 +316,17 @@ class FoodItemPage extends StatefulWidget {
 
 class _FoodItemPageState extends State<FoodItemPage> {
   TextEditingController _searchController = new TextEditingController();
+  String searchText;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      setState(() {
+        searchText = _searchController.text;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -327,7 +348,7 @@ class _FoodItemPageState extends State<FoodItemPage> {
         child: Column(
           children: <Widget>[
             SearchBar(controller: _searchController, hintText: 'Search', topMargin: 5, bottomMargin: 6),
-            FoodItems(restaurant: widget.restaurant)
+            FoodItems(restaurant: widget.restaurant, searchText: searchText)
           ],
         ),
       ),
@@ -337,13 +358,20 @@ class _FoodItemPageState extends State<FoodItemPage> {
 
 class QuantityRadioList extends StatefulWidget {
   final Function setQuantity;
-  QuantityRadioList(this.setQuantity);
+  final int quantity;
+  QuantityRadioList(this.setQuantity, this.quantity);
 
   _QuantityRadioListState createState() => _QuantityRadioListState();
 }
 
 class _QuantityRadioListState extends State<QuantityRadioList> {
   int _selected = 1;
+
+  @override
+  void initState() {
+    _selected = widget.quantity;
+    super.initState();
+  }
 
   void onRadioChanged(int value) {
     setState(() {
@@ -355,11 +383,8 @@ class _QuantityRadioListState extends State<QuantityRadioList> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // height: 250,
-      // width: 200,
       child: ListView.builder(
         padding: EdgeInsets.all(0),
-        // shrinkWrap: true,
         itemCount: 101,
         itemBuilder: (BuildContext context, int index) {
           return RadioListTile(
@@ -377,7 +402,7 @@ class _QuantityRadioListState extends State<QuantityRadioList> {
   }
 }
 
-Future<void> _showLogDialog(BuildContext context, Function setQuantity) async {
+Future<void> _showLogDialog(BuildContext context, Function setQuantity, int quantity) async {
   return showDialog<void>(
     context: context,
     barrierDismissible: false,
@@ -390,17 +415,14 @@ Future<void> _showLogDialog(BuildContext context, Function setQuantity) async {
           height: 250,
           width: 200,
           alignment: Alignment.center,
-          child: QuantityRadioList(setQuantity),
+          child: QuantityRadioList(setQuantity, quantity),
         ),
         actions: <Widget>[
           FlatButton(
               splashColor: Colors.transparent,
               highlightColor: Colors.grey[200],
               textColor: Colors.black,
-              child: Text(
-                'Cancel',
-                style: TextStyle(fontSize: 16),
-              ),
+              child: Text('Cancel', style: TextStyle(fontSize: 16)),
               onPressed: () => Navigator.of(context).pop()),
           FlatButton(
               splashColor: Colors.transparent,
