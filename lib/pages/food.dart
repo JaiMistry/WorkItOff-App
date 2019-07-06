@@ -1,3 +1,5 @@
+import 'dart:ui' as prefix0;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -423,7 +425,12 @@ Future<void> _showLogDialog(BuildContext context, Function setQuantity, int quan
               highlightColor: Colors.grey[200],
               textColor: Colors.black,
               child: Text('Cancel', style: TextStyle(fontSize: 16)),
-              onPressed: () => Navigator.of(context).pop()),
+              onPressed: () {
+                
+                print(quantity);
+                setQuantity(quantity);
+                Navigator.of(context).pop();
+              }),
           FlatButton(
               splashColor: Colors.transparent,
               highlightColor: Colors.grey[200],
