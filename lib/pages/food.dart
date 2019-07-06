@@ -155,8 +155,16 @@ class _FoodBodyState extends State<FoodBody> {
             StreamBuilder<QuerySnapshot>(
               stream: Firestore.instance.collection('food').snapshots(),
               builder: (context, snapshot) {
-                if (!snapshot.hasData | snapshot.hasError) {
+                if (!snapshot.hasData || snapshot.hasError) {
                   return Container();
+                } else if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container(
+                    height: 100,
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xff4ff7d3)),
+                    ),
+                  );
                 }
 
                 return GridView(
