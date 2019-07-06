@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flushbar/flushbar.dart';
+// import 'package:flushbar/flushbar.dart';
 
 import 'package:workitoff/widgets.dart';
 
@@ -276,20 +276,7 @@ class ProfilePage extends StatelessWidget {
                 if (_formKey.currentState.validate()) {
                   // If the form validates
                   // Scaffold.of(context).showSnackBar(SnackBar(content: Text('Processing Data')));
-                  Flushbar(
-                    // message: 'Profile Updated!',
-                    messageText: Text(
-                      'Profile Updated!',
-                      style: TextStyle(color: Colors.purple[800]),
-                    ),
-                    isDismissible: true,
-                    backgroundColor: Colors.white,
-                    dismissDirection: FlushbarDismissDirection.HORIZONTAL,
-                    // reverseAnimationCurve: Curves.decelerate,
-                    // forwardAnimationCurve: Curves.easeIn,
-                    duration: Duration(seconds: 3),
-                    flushbarPosition: FlushbarPosition.TOP,
-                  ).show(context);
+                  showDefualtFlushBar(context: context, text: 'Profile Updated!');
                 }
               },
             ),

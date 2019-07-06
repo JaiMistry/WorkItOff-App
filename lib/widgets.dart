@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flushbar/flushbar.dart';
 
 //* Contains helpful commonly used widgets
 
@@ -57,6 +58,20 @@ class _SearchBarState extends State<SearchBar> {
       ),
     );
   }
+}
+
+Future<Object> showDefualtFlushBar({@required BuildContext context, @required String text}) {
+  return Flushbar(
+    // message: 'Profile Updated!',
+    messageText: Text(text, style: TextStyle(color: Colors.purple[800])),
+    isDismissible: true,
+    backgroundColor: Colors.white,
+    dismissDirection: FlushbarDismissDirection.HORIZONTAL,
+    // reverseAnimationCurve: Curves.decelerate,
+    // forwardAnimationCurve: Curves.easeIn,
+    duration: Duration(seconds: 3),
+    flushbarPosition: FlushbarPosition.TOP,
+  ).show(context);
 }
 
 // * Prevent glow effect from overscrolling

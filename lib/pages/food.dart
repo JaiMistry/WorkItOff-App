@@ -187,7 +187,7 @@ class FoodItems extends StatefulWidget {
   _FoodItemsState createState() => _FoodItemsState();
 }
 
-List<Widget> _buildExpansionButtons(BuildContext context, int quantity, Function setQuantity) {
+List<Widget> _buildExpansionButtons(BuildContext context, int quantity, Function setQuantity, String meal) {
   return [
     SizedBox(height: 2),
     Container(
@@ -222,7 +222,9 @@ List<Widget> _buildExpansionButtons(BuildContext context, int quantity, Function
       width: 150,
       child: FlatButton(
         color: Colors.teal.withOpacity(0.5),
-        onPressed: () {},
+        onPressed: () {
+          showDefualtFlushBar(context: context, text: '$quantity $meal added to cart.');
+        },
         child: Text('Add To Meal', style: TextStyle(color: Colors.white)),
       ),
     )
@@ -275,7 +277,7 @@ class _FoodItemsState extends State<FoodItems> {
                               onExpansionChanged: (bool state) {},
                               title: Text(meal, style: TextStyle(color: Colors.white, fontSize: 14)),
                               // trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
-                              children: _buildExpansionButtons(context, quantity, _setQuantity),
+                              children: _buildExpansionButtons(context, quantity, _setQuantity, meal),
                             ),
                           ),
                         ),
