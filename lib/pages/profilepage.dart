@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flushbar/flushbar.dart';
+// import 'package:flushbar/flushbar.dart';
 
-// TODO Separate widgets
+import 'package:workitoff/widgets.dart';
 
 bool _isNumeric(String str) {
   if (str == null) {
@@ -13,18 +13,12 @@ bool _isNumeric(String str) {
   return double.tryParse(str) != null;
 }
 
-class NoOverscrollBehavior extends ScrollBehavior {
-  @override
-  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
-    return child;
-  }
-}
 
 class StandardTextInputField extends StatefulWidget {
   final String label;
   final String failedValidateText;
 
-  StandardTextInputField({this.label, this.failedValidateText});
+  StandardTextInputField({this.label: '', this.failedValidateText: ''});
 
   _StandardTextInputFieldState createState() => _StandardTextInputFieldState();
 }
@@ -282,20 +276,7 @@ class ProfilePage extends StatelessWidget {
                 if (_formKey.currentState.validate()) {
                   // If the form validates
                   // Scaffold.of(context).showSnackBar(SnackBar(content: Text('Processing Data')));
-                  Flushbar(
-                    // message: 'Profile Updated!',
-                    messageText: Text(
-                      'Profile Updated!',
-                      style: TextStyle(color: Colors.purple[800]),
-                    ),
-                    isDismissible: true,
-                    backgroundColor: Colors.white,
-                    dismissDirection: FlushbarDismissDirection.HORIZONTAL,
-                    // reverseAnimationCurve: Curves.decelerate,
-                    // forwardAnimationCurve: Curves.easeIn,
-                    duration: Duration(seconds: 3),
-                    flushbarPosition: FlushbarPosition.TOP,
-                  ).show(context);
+                  showDefualtFlushBar(context: context, text: 'Profile Updated!');
                 }
               },
             ),
