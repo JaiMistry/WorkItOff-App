@@ -9,6 +9,7 @@ import 'package:workitoff/navigation_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:workitoff/widgets.dart';
+import 'package:workitoff/auth/auth.dart';
 
 final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
@@ -149,6 +150,7 @@ class _CustomSliderState extends State<CustomSlider> {
                 trackHeight: 1.0),
             child: Slider(
               value: val,
+              onChangeEnd: _setValue, // Must be present to get most up to date value
               onChanged: _setValue,
               min: widget.minSliderVal,
               max: widget.maxSliderVal,
@@ -163,7 +165,12 @@ class _CustomSliderState extends State<CustomSlider> {
 
 class StartButton extends StatelessWidget {
   final bool startReady; // Indicates whether the user has inputted all data and is ready to proceed
-  const StartButton({Key key, this.startReady}) : super(key: key);
+  final int age;
+  final int weight;
+  final String gender;
+  const StartButton(
+      {Key key, @required this.startReady, @required this.age, @required this.weight, @required this.gender})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +188,9 @@ class StartButton extends StatelessWidget {
           color: Color(0xff3ADEA7),
           disabledColor: Colors.teal[900],
           disabledTextColor: Colors.black,
-          onPressed: this.startReady ? () => _signInAnonymously(context) : null,
+          onPressed: this.startReady
+              ? () => signInAnonymously(context: context, age: age, weight: weight, gender: gender)
+              : null,
         ),
       ],
     );
@@ -245,18 +254,27 @@ class _InputPageState extends State<InputPage> with AutomaticKeepAliveClientMixi
   bool _ageSelected = false;
   bool _allItemsCompleted = false;
 
+  String _gender;
+  int _weight;
+  int _age;
+
   void _genderCallback(String gender) {
     _genderSelected = true;
+    _gender = gender;
     checkProfileCompletion();
   }
 
   void _weightCallback(int weight) {
     _weightSelected = true;
+    print(weight);
+    _weight = weight;
     checkProfileCompletion();
   }
 
   void _ageCallback(int age) {
     _ageSelected = true;
+    print(age);
+    _age = age;
     checkProfileCompletion();
   }
 
@@ -302,7 +320,7 @@ class _InputPageState extends State<InputPage> with AutomaticKeepAliveClientMixi
                 maxSliderVal: 450,
                 callback: _weightCallback,
               ),
-              StartButton(startReady: _allItemsCompleted)
+              StartButton(startReady: _allItemsCompleted, age: _age, weight: _weight, gender: _gender)
             ],
           ),
         ),
@@ -453,51 +471,5 @@ class DotsIndicator extends AnimatedWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List<Widget>.generate(itemCount, _buildDot),
     );
-  }
-}
-
-void _signInAnonymously(BuildContext context) async {
-  final FirebaseUser user = await _firebaseAuth.signInAnonymously();
-  // assert(user != null);
-  // assert(user.isAnonymous);
-  // assert(!user.isEmailVerified);
-  // assert(await user.getIdToken() != null);
-  // if (Platform.isIOS) {
-  //   // Anonymous auth doesn't show up as a provider on iOS
-  //   // assert(user.providerData.isEmpty);
-  // } else if (Platform.isAndroid) {
-  //   // Anonymous auth does show up as a provider on Android
-  //   assert(user.providerData.length == 1);
-  //   assert(user.providerData[0].providerId == 'firebase');
-  //   // assert(user.providerData[0].uid != null);
-  //   // assert(user.providerData[0].displayName == null);
-  //   // assert(user.providerData[0].photoUrl == null);
-  //   // assert(user.providerData[0].email == null);
-  // }
-
-  final FirebaseUser currentUser = await _firebaseAuth.currentUser();
-  assert(user.uid == currentUser.uid);
-  bool _success = true;
-  String _userID = user.uid;
-
-  if (user != null) {
-    _success = true;
-    print(_userID);
-
-    showDefualtFlushBar(context: context, text: 'Successuyfully signed in!');
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => NavigationBar()));
-  } else {
-    _success = false;
-    showDefualtFlushBar(context: context, text: 'Unable to sign in.');
-  }
-
-  void _addNewUser() {
-    Firestore.instance.runTransaction((transaction) async {
-      await transaction.set(Firestore.instance.collection("users").document(), {
-        'replyName': 'replyName',
-        'replyText': 'replyText',
-        'replyVotes': 'replyVotes',
-      });
-    });
   }
 }
