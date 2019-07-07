@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/rendering.dart';
 
 import 'package:url_launcher/url_launcher.dart';
-// import 'package:flushbar/flushbar.dart';
 
 import 'package:workitoff/widgets.dart';
 
@@ -12,7 +12,6 @@ bool _isNumeric(String str) {
   }
   return double.tryParse(str) != null;
 }
-
 
 class StandardTextInputField extends StatefulWidget {
   final String label;
@@ -263,25 +262,58 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            child: FlatButton(
-              // TODO Make button slightly fade in on tab click
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // Removed all padding
-              padding: EdgeInsets.zero,
-              color: Color(0xff4ff7d3),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3.0)),
-              child: Text("Update Profile", style: TextStyle(fontSize: 18.0)),
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  // If the form validates
-                  // Scaffold.of(context).showSnackBar(SnackBar(content: Text('Processing Data')));
-                  showDefualtFlushBar(context: context, text: 'Profile Updated!');
-                }
-              },
-            ),
-          )
+          UpdateProfileBtn(formKey: _formKey)
         ],
+      ),
+    );
+  }
+}
+
+class UpdateProfileBtn extends StatefulWidget {
+  final GlobalKey<FormState> formKey;
+
+  UpdateProfileBtn({Key key, @required this.formKey}) : super(key: key);
+
+  _UpdateProfileBtnState createState() => _UpdateProfileBtnState();
+}
+
+class _UpdateProfileBtnState extends State<UpdateProfileBtn> with SingleTickerProviderStateMixin {
+  AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(duration: Duration(milliseconds: 350), vsync: this);
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: FadeTransition(
+        opacity: CurvedAnimation(parent: _animationController, curve: Curves.linear),
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          child: FlatButton(
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // Removed all padding
+            padding: EdgeInsets.zero,
+            color: Color(0xff4ff7d3),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3.0)),
+            child: Text("Update Profile", style: TextStyle(fontSize: 18.0)),
+            onPressed: () {
+              // If the form validates
+              if (widget.formKey.currentState.validate()) {
+                showDefualtFlushBar(context: context, text: 'Profile Updated!');
+              }
+            },
+          ),
+        ),
       ),
     );
   }

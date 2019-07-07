@@ -9,8 +9,7 @@ import 'package:workitoff/navigation_bar.dart';
 import 'package:workitoff/widgets.dart';
 
 final FirebaseAuth _firebaseAuth = FirebaseAuth.instance; // Create firebase_auth instance
-final Firestore _firestore = Firestore.instance;  // Create firestore instance
-
+final Firestore _firestore = Firestore.instance; // Create firestore instance
 
 void signInAnonymously(
     {@required BuildContext context, @required int weight, @required int age, @required String gender}) async {
@@ -51,5 +50,6 @@ void signInAnonymously(
 }
 
 void addUser(String userID, String gender, int age, int weight) async {
-  _firestore.collection('users').document(userID).setData({'age': age, 'weight': weight, 'gender': gender});
+  _firestore.collection('users').document(userID).setData(
+      {'age': age, 'weight': weight, 'gender': gender, 'date_joined': Timestamp.now(), 'last_login': Timestamp.now()});
 }
