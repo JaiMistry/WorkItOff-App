@@ -49,7 +49,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> with SingleTickerProviderSt
     if (true) {
       _animationController = AnimationController(duration: Duration(milliseconds: 350), vsync: this);
       _animationController.forward();
-    } else {
+    } else { 
       _animationController = AnimationController(vsync: this);
     }
   }

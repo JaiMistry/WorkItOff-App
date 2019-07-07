@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:workitoff/navigation_bar.dart';
 import 'package:workitoff/widgets.dart';
@@ -41,7 +42,11 @@ void signInAnonymously(
     showDefualtFlushBar(context: context, text: 'Successuyfully signed in!');
 
     //Overwrites entire document
-    addUser(_userID, gender, age, weight);
+    _addNewUser(_userID, gender, age, weight);
+    _saveNewUser(_userID);
+    // getUserID().then((String name) {
+    //   print(name);
+    // });
 
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => NavigationBar()));
   } else {
@@ -49,7 +54,17 @@ void signInAnonymously(
   }
 }
 
-void addUser(String userID, String gender, int age, int weight) async {
-  _firestore.collection('users').document(userID).setData(
+Future<void> _addNewUser(String userID, String gender, int age, int weight) async {
+  return await _firestore.collection('users').document(userID).setData(
       {'age': age, 'weight': weight, 'gender': gender, 'date_joined': Timestamp.now(), 'last_login': Timestamp.now()});
+}
+
+Future<bool> _saveNewUser(String userId) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return await prefs.setString('uid', userId);
+}
+
+Future<String> getUserID() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('uid');
 }
