@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:workitoff/navigation_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -457,22 +458,22 @@ class DotsIndicator extends AnimatedWidget {
 
 void _signInAnonymously(BuildContext context) async {
   final FirebaseUser user = await _firebaseAuth.signInAnonymously();
-  assert(user != null);
-  assert(user.isAnonymous);
-  assert(!user.isEmailVerified);
-  assert(await user.getIdToken() != null);
-  if (Platform.isIOS) {
-    // Anonymous auth doesn't show up as a provider on iOS
-    // assert(user.providerData.isEmpty);
-  } else if (Platform.isAndroid) {
-    // Anonymous auth does show up as a provider on Android
-    assert(user.providerData.length == 1);
-    assert(user.providerData[0].providerId == 'firebase');
-    // assert(user.providerData[0].uid != null);
-    // assert(user.providerData[0].displayName == null);
-    // assert(user.providerData[0].photoUrl == null);
-    // assert(user.providerData[0].email == null);
-  }
+  // assert(user != null);
+  // assert(user.isAnonymous);
+  // assert(!user.isEmailVerified);
+  // assert(await user.getIdToken() != null);
+  // if (Platform.isIOS) {
+  //   // Anonymous auth doesn't show up as a provider on iOS
+  //   // assert(user.providerData.isEmpty);
+  // } else if (Platform.isAndroid) {
+  //   // Anonymous auth does show up as a provider on Android
+  //   assert(user.providerData.length == 1);
+  //   assert(user.providerData[0].providerId == 'firebase');
+  //   // assert(user.providerData[0].uid != null);
+  //   // assert(user.providerData[0].displayName == null);
+  //   // assert(user.providerData[0].photoUrl == null);
+  //   // assert(user.providerData[0].email == null);
+  // }
 
   final FirebaseUser currentUser = await _firebaseAuth.currentUser();
   assert(user.uid == currentUser.uid);
@@ -488,5 +489,15 @@ void _signInAnonymously(BuildContext context) async {
   } else {
     _success = false;
     showDefualtFlushBar(context: context, text: 'Unable to sign in.');
+  }
+
+  void _addNewUser() {
+    Firestore.instance.runTransaction((transaction) async {
+      await transaction.set(Firestore.instance.collection("users").document(), {
+        'replyName': 'replyName',
+        'replyText': 'replyText',
+        'replyVotes': 'replyVotes',
+      });
+    });
   }
 }
