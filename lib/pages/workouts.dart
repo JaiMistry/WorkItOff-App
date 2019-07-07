@@ -1,32 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-String _filter;
-RegExp pattern =
-    new RegExp(r'[^\/][\w]+(?=\.)', caseSensitive: false, multiLine: false);
-
-final List<String> cardList = [
-  'assets/cards/running.png',
-  'assets/cards/yoga.png',
-  'assets/cards/weight_lifting.png',
-  'assets/cards/stairs.png',
-];
-
-Widget _buildCardList() {
-  return ListView.builder(
-    shrinkWrap: true,
-    physics: NeverScrollableScrollPhysics(),
-    itemBuilder: (BuildContext context, int index) {
-      return _filter == null || _filter == ''
-          ? MyWorkoutCards(cardList[index])
-          : pattern.stringMatch(cardList[index]).contains(_filter.toLowerCase())
-              ? MyWorkoutCards(cardList[index])
-              : Container();
-    },
-    itemCount: cardList.length,
-  );
-}
-
 class WorkoutsPage extends StatefulWidget {
   @override
   _WorkoutsPageState createState() => _WorkoutsPageState();
@@ -36,6 +10,33 @@ class _WorkoutsPageState extends State<WorkoutsPage>
     with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   TextEditingController _searchController = new TextEditingController();
+  bool isButtonDisabled = false;
+
+  String _filter;
+  RegExp pattern =
+      new RegExp(r'[^\/][\w]+(?=\.)', caseSensitive: false, multiLine: false);
+
+  final List<String> cardList = [
+    'assets/cards/running.png',
+    'assets/cards/yoga.png',
+    'assets/cards/weight_lifting.png',
+    'assets/cards/stairs.png',
+  ];
+
+  Widget _buildCardList() {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemBuilder: (BuildContext context, int index) {
+        return _filter == null || _filter == ''
+            ? MyWorkoutCards(cardList[index])
+            : pattern.stringMatch(cardList[index]).contains(_filter.toLowerCase())
+                ? MyWorkoutCards(cardList[index])
+                : Container();
+      },
+      itemCount: cardList.length,
+    );
+  }
 
   @override
   void initState() {
@@ -46,11 +47,13 @@ class _WorkoutsPageState extends State<WorkoutsPage>
       });
     });
 
-    if (true) {
+    if (false) {
+      isButtonDisabled = false;
       _animationController = AnimationController(
           duration: const Duration(milliseconds: 350), vsync: this);
       _animationController.forward();
     } else {
+      isButtonDisabled = true;
       _animationController = AnimationController(vsync: this);
     }
   }
@@ -108,47 +111,56 @@ class _WorkoutsPageState extends State<WorkoutsPage>
           Expanded(
             child: ScrollConfiguration(
               behavior: NoOverscrollBehavior(),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    _buildCardList(),
-                    SizedBox(height: 20.0),
-                    Container(
-                      padding: EdgeInsets.only(bottom: 50.0),
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                            'We are always adding new workouts!',
-                            style: TextStyle(color: Colors.white),
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: <Widget>[
+                  SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        _buildCardList(),
+                        SizedBox(height: 10.0),
+                        Container(
+                          padding: EdgeInsets.only(bottom: 50.0),
+                          child: Column(
+                            children: <Widget>[
+                              Text(
+                                'We are always adding new workouts!',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              SizedBox(height: 10.0),
+                              Text(
+                                'Calories burned are calculated from your weight and our algorithm.',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 10.0),
+                              ),
+                            ],
                           ),
-                          SizedBox(height: 10.0),
-                          Text(
-                            'Calories burned are calculated from your weight and our algorithm.',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 10.0),
-                          ),
-                        ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    child: FadeTransition(
+                      opacity: CurvedAnimation(
+                          parent: _animationController, curve: Curves.linear),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: FlatButton(
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          color: Color(0xff4ff7d3),
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          child: Text("Enter Workouts",
+                              style: TextStyle(fontSize: 18.0)),
+                          onPressed: () {
+                            return isButtonDisabled ? null : _showLogDialog();
+                          },
+                        ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          FadeTransition(
-            opacity: CurvedAnimation(
-                parent: _animationController, curve: Curves.linear),
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              child: FlatButton(
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                color: Color(0xff4ff7d3),
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                child: Text("Enter Workouts", style: TextStyle(fontSize: 18.0)),
-                onPressed: () {
-                  _showLogDialog();
-                },
+                  ),
+                ],
               ),
             ),
           ),
