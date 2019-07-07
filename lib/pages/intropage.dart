@@ -1,10 +1,17 @@
 import 'dart:math';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:workitoff/navigation_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:workitoff/widgets.dart';
+import 'package:workitoff/auth/auth.dart';
+
+final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
 class GenderSelector extends StatefulWidget {
   final Function(String) genderCallback; // Used to send data back to the parent
@@ -143,6 +150,7 @@ class _CustomSliderState extends State<CustomSlider> {
                 trackHeight: 1.0),
             child: Slider(
               value: val,
+              onChangeEnd: _setValue, // Must be present to get most up to date value
               onChanged: _setValue,
               min: widget.minSliderVal,
               max: widget.maxSliderVal,
@@ -157,7 +165,12 @@ class _CustomSliderState extends State<CustomSlider> {
 
 class StartButton extends StatelessWidget {
   final bool startReady; // Indicates whether the user has inputted all data and is ready to proceed
-  const StartButton({Key key, this.startReady}) : super(key: key);
+  final int age;
+  final int weight;
+  final String gender;
+  const StartButton(
+      {Key key, @required this.startReady, @required this.age, @required this.weight, @required this.gender})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -176,8 +189,7 @@ class StartButton extends StatelessWidget {
           disabledColor: Colors.teal[900],
           disabledTextColor: Colors.black,
           onPressed: this.startReady
-              ? () => Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (BuildContext context) => NavigationBar()))
+              ? () => signInAnonymously(context: context, age: age, weight: weight, gender: gender)
               : null,
         ),
       ],
@@ -242,18 +254,27 @@ class _InputPageState extends State<InputPage> with AutomaticKeepAliveClientMixi
   bool _ageSelected = false;
   bool _allItemsCompleted = false;
 
+  String _gender;
+  int _weight;
+  int _age;
+
   void _genderCallback(String gender) {
     _genderSelected = true;
+    _gender = gender;
     checkProfileCompletion();
   }
 
   void _weightCallback(int weight) {
     _weightSelected = true;
+    print(weight);
+    _weight = weight;
     checkProfileCompletion();
   }
 
   void _ageCallback(int age) {
     _ageSelected = true;
+    print(age);
+    _age = age;
     checkProfileCompletion();
   }
 
@@ -299,7 +320,7 @@ class _InputPageState extends State<InputPage> with AutomaticKeepAliveClientMixi
                 maxSliderVal: 450,
                 callback: _weightCallback,
               ),
-              StartButton(startReady: _allItemsCompleted)
+              StartButton(startReady: _allItemsCompleted, age: _age, weight: _weight, gender: _gender)
             ],
           ),
         ),
