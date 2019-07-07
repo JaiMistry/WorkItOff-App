@@ -1,10 +1,15 @@
 import 'dart:math';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:workitoff/navigation_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:workitoff/widgets.dart';
+
+final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
 class GenderSelector extends StatefulWidget {
   final Function(String) genderCallback; // Used to send data back to the parent
@@ -175,10 +180,7 @@ class StartButton extends StatelessWidget {
           color: Color(0xff3ADEA7),
           disabledColor: Colors.teal[900],
           disabledTextColor: Colors.black,
-          onPressed: this.startReady
-              ? () => Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (BuildContext context) => NavigationBar()))
-              : null,
+          onPressed: this.startReady ? () => _signInAnonymously(context) : null,
         ),
       ],
     );
@@ -450,5 +452,41 @@ class DotsIndicator extends AnimatedWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List<Widget>.generate(itemCount, _buildDot),
     );
+  }
+}
+
+void _signInAnonymously(BuildContext context) async {
+  final FirebaseUser user = await _firebaseAuth.signInAnonymously();
+  assert(user != null);
+  assert(user.isAnonymous);
+  assert(!user.isEmailVerified);
+  assert(await user.getIdToken() != null);
+  if (Platform.isIOS) {
+    // Anonymous auth doesn't show up as a provider on iOS
+    // assert(user.providerData.isEmpty);
+  } else if (Platform.isAndroid) {
+    // Anonymous auth does show up as a provider on Android
+    assert(user.providerData.length == 1);
+    assert(user.providerData[0].providerId == 'firebase');
+    // assert(user.providerData[0].uid != null);
+    // assert(user.providerData[0].displayName == null);
+    // assert(user.providerData[0].photoUrl == null);
+    // assert(user.providerData[0].email == null);
+  }
+
+  final FirebaseUser currentUser = await _firebaseAuth.currentUser();
+  assert(user.uid == currentUser.uid);
+  bool _success = true;
+  String _userID = user.uid;
+
+  if (user != null) {
+    _success = true;
+    print(_userID);
+
+    showDefualtFlushBar(context: context, text: 'Successuyfully signed in!');
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => NavigationBar()));
+  } else {
+    _success = false;
+    showDefualtFlushBar(context: context, text: 'Unable to sign in.');
   }
 }
