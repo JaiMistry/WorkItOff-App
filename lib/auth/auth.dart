@@ -44,9 +44,9 @@ void signInAnonymously(
     //Overwrites entire document
     _addNewUser(_userID, gender, age, weight);
     _saveNewUser(_userID);
-    // getUserID().then((String name) {
-    //   print(name);
-    // });
+    getUserID().then((String name) {
+      // print(name + ' retreived from database.');
+    });
 
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => NavigationBar()));
   } else {
@@ -65,6 +65,11 @@ Future<bool> _saveNewUser(String userId) async {
 }
 
 Future<String> getUserID() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('uid');
+}
+
+Future<String> getUserIDStream() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   return prefs.getString('uid');
 }

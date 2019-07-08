@@ -1,10 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:url_launcher/url_launcher.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:workitoff/widgets.dart';
+import 'package:workitoff/auth/auth.dart';
+
+final Firestore _firestore = Firestore.instance; // Create firestore instance
 
 bool _isNumeric(String str) {
   if (str == null) {
@@ -16,8 +22,9 @@ bool _isNumeric(String str) {
 class StandardTextInputField extends StatefulWidget {
   final String label;
   final String failedValidateText;
+  final String initialVal;
 
-  StandardTextInputField({this.label: '', this.failedValidateText: ''});
+  StandardTextInputField({Key key, this.label: '', this.failedValidateText: '', this.initialVal}) : super(key: key);
 
   _StandardTextInputFieldState createState() => _StandardTextInputFieldState();
 }
@@ -68,6 +75,7 @@ class _StandardTextInputFieldState extends State<StandardTextInputField> {
           TextFormField(
             controller: _controller,
             focusNode: _focusNode,
+            initialValue: widget.initialVal,
             validator: (string) {
               if (string.isEmpty || !_isNumeric(string)) {
                 return widget.failedValidateText;
@@ -105,7 +113,8 @@ class _StandardTextInputFieldState extends State<StandardTextInputField> {
 }
 
 class GenderRadio extends StatefulWidget {
-  GenderRadio({Key key}) : super(key: key);
+  final String initialVal;
+  GenderRadio({Key key, this.initialVal: ''}) : super(key: key);
 
   _GenderRadioState createState() => _GenderRadioState();
 }
@@ -113,6 +122,14 @@ class GenderRadio extends StatefulWidget {
 class _GenderRadioState extends State<GenderRadio> {
   int _selected = 0;
   Map<int, Color> _genderMapping = {0: Colors.white, 1: Colors.white}; // Handles whether item is selected or not
+
+  @override
+  void initState() {
+    if (widget.initialVal == 'female') {
+      onRadioChanged(1);
+    }
+    super.initState();
+  }
 
   void onRadioChanged(int value) {
     setState(() {
@@ -158,6 +175,82 @@ class _GenderRadioState extends State<GenderRadio> {
   }
 }
 
+class BuildProfileForm extends StatefulWidget {
+  final GlobalKey<FormState> formKey;
+  BuildProfileForm({Key key, @required this.formKey}) : super(key: key);
+
+  _BuildProfileFormState createState() => _BuildProfileFormState();
+}
+
+class _BuildProfileFormState extends State<BuildProfileForm> {
+  String _userID = 'null';
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserID();
+  }
+
+  _getUserID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _userID = (prefs.getString('uid') ?? 'null');
+      // print(_userID + ' is the UID first!');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: _firestore.collection('users').document(_userID).snapshots(),
+      builder: (context, snapshot) {
+        String _age = '';
+        String _weight = '';
+        String _gender = '';
+        if (snapshot == null || !snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
+        } else {
+          _age = snapshot.data['age'].toString();
+          _weight = snapshot.data['weight'].toString();
+          _gender = snapshot.data['gender'].toString();
+          // print(snapshot.data.documentID.toString() + " has been found!");
+          // print('$_age + $_weight + $_gender');
+        }
+
+        return Form(
+          key: widget.formKey,
+          child: Container(
+            key: Key(_userID + _age + _weight + _gender),
+            padding: EdgeInsets.all(10.0),
+            child: Column(
+              children: <Widget>[
+                StandardTextInputField(
+                  label: 'Weight',
+                  failedValidateText: 'Enter your weight.',
+                  initialVal: _weight,
+                  // key: Key(_weight),
+                ),
+                SizedBox(height: 15.0),
+                StandardTextInputField(
+                  label: 'Age',
+                  failedValidateText: 'Enter your age.',
+                  initialVal: _age,
+                  // key: Key(_age),
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0, bottom: 19.0),
+                  alignment: Alignment.centerLeft,
+                  child: Text('Gender', style: TextStyle(color: Color(0xff4ff7d3))),
+                ),
+                GenderRadio(initialVal: _gender)
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
 class ProfilePage extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
 
@@ -188,22 +281,7 @@ class ProfilePage extends StatelessWidget {
                   children: <Widget>[
                     Column(
                       children: <Widget>[
-                        Form(
-                          key: _formKey,
-                          child: Container(
-                            padding: EdgeInsets.all(10.0),
-                            child: Column(children: <Widget>[
-                              StandardTextInputField(label: 'Weight', failedValidateText: 'Enter your weight.'),
-                              SizedBox(height: 15.0),
-                              StandardTextInputField(label: 'Age', failedValidateText: 'Enter your age.'),
-                              Container(
-                                  padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0, bottom: 19.0),
-                                  alignment: Alignment.centerLeft,
-                                  child: Text('Gender', style: TextStyle(color: Color(0xff4ff7d3)))),
-                              GenderRadio()
-                            ]),
-                          ),
-                        ),
+                        BuildProfileForm(formKey: _formKey),
                         Container(
                           padding: EdgeInsets.all(10.0),
                           child: Column(
