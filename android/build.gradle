@@ -1,17 +1,19 @@
 buildscript {
     repositories {
-        google()
+        google()  // Google's Maven repository
         jcenter()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:3.4.1'
+        // classpath 'com.google.gms:google-services:4.2.0'  // Google Services plugin 
+        classpath 'com.google.gms:google-services:3.2.1'  // Google Services plugin //! Do not use higher version
     }
 }
 
 allprojects {
     repositories {
-        google()
+        google()  // Google's Maven repository
         jcenter()
     }
 }

@@ -110,7 +110,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
       ),
       child: Column(
         children: <Widget>[
-          _buildSearchBar(),
+          SearchBar(hintText: 'Search Workouts', controller: _searchController, bottomMargin: 6),
           Expanded(
             child: ScrollConfiguration(
               behavior: NoOverscrollBehavior(),
@@ -171,36 +171,6 @@ class _WorkoutsPageState extends State<WorkoutsPage>
       ),
     );
   }
-
-  Widget _buildSearchBar() {
-    return Container(
-      margin: EdgeInsets.only(top: 40.0, left: 8.0, right: 8.0),
-      padding: EdgeInsets.only(bottom: 6.0),
-      decoration: BoxDecoration(
-          border: Border.all(width: 1.0), color: Colors.transparent),
-      child: TextField(
-        controller: _searchController,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
-          hintText: 'Search Workouts',
-          hintStyle: TextStyle(color: Colors.grey, fontSize: 15),
-          prefixIcon: Icon(Icons.search, color: Color(0xff5a5a5a)),
-          suffixIcon: IconButton(
-            icon: Icon(Icons.clear, size: 20, color: Colors.grey),
-            onPressed: () => _searchController.clear(),
-          ),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
-          enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(style: BorderStyle.none)),
-          focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(style: BorderStyle.none)),
-        ),
-        textAlign: TextAlign.left,
-      ),
-    );
-  }
 }
 
 // * Each card needs to have its own individual state
@@ -227,7 +197,7 @@ class _WorkoutCardsState extends State<WorkoutCards> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 305,
+      height: 306,
       child: Card(
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
@@ -272,14 +242,5 @@ class _WorkoutCardsState extends State<WorkoutCards> {
         margin: EdgeInsets.all(10.0),
       ),
     );
-  }
-}
-
-// * Prevent glow effect from overscrolling
-class NoOverscrollBehavior extends ScrollBehavior {
-  @override
-  Widget buildViewportChrome(
-      BuildContext context, Widget child, AxisDirection axisDirection) {
-    return child;
   }
 }
