@@ -69,7 +69,6 @@ Future<String> getUserID() async {
   return prefs.getString('uid');
 }
 
-Future<String> getUserIDStream() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getString('uid');
+Future<void> updateProfile(String userID, String gender, int age, int weight) async {
+  return _firestore.collection('users').document(userID).updateData({'age': age, 'weight': weight, 'gender': gender});
 }

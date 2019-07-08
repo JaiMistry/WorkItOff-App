@@ -23,8 +23,11 @@ class StandardTextInputField extends StatefulWidget {
   final String label;
   final String failedValidateText;
   final String initialVal;
+  final Function updateInputMap;
 
-  StandardTextInputField({Key key, this.label: '', this.failedValidateText: '', this.initialVal}) : super(key: key);
+  StandardTextInputField(
+      {Key key, this.label: '', this.failedValidateText: '', this.initialVal, @required this.updateInputMap})
+      : super(key: key);
 
   _StandardTextInputFieldState createState() => _StandardTextInputFieldState();
 }
@@ -64,13 +67,8 @@ class _StandardTextInputFieldState extends State<StandardTextInputField> {
         children: <Widget>[
           Container(
             alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(
-              bottom: 2.0,
-            ),
-            child: Text(
-              widget.label,
-              style: TextStyle(color: _labelColor),
-            ),
+            padding: EdgeInsets.only(bottom: 2.0),
+            child: Text(widget.label, style: TextStyle(color: _labelColor)),
           ),
           TextFormField(
             controller: _controller,
@@ -100,9 +98,7 @@ class _StandardTextInputFieldState extends State<StandardTextInputField> {
                 borderRadius: BorderRadius.all(Radius.zero),
                 borderSide: BorderSide(style: BorderStyle.none),
               ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.zero),
-              ),
+              border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.zero)),
             ),
             style: TextStyle(color: Colors.white),
           ),
@@ -176,8 +172,9 @@ class _GenderRadioState extends State<GenderRadio> {
 }
 
 class BuildProfileForm extends StatefulWidget {
+  final Function updateInputMap;
   final GlobalKey<FormState> formKey;
-  BuildProfileForm({Key key, @required this.formKey}) : super(key: key);
+  BuildProfileForm({Key key, @required this.formKey, @required this.updateInputMap}) : super(key: key);
 
   _BuildProfileFormState createState() => _BuildProfileFormState();
 }
@@ -227,14 +224,14 @@ class _BuildProfileFormState extends State<BuildProfileForm> {
                   label: 'Weight',
                   failedValidateText: 'Enter your weight.',
                   initialVal: _weight,
-                  // key: Key(_weight),
+                  updateInputMap: widget.updateInputMap,
                 ),
                 SizedBox(height: 15.0),
                 StandardTextInputField(
                   label: 'Age',
                   failedValidateText: 'Enter your age.',
                   initialVal: _age,
-                  // key: Key(_age),
+                  updateInputMap: widget.updateInputMap,
                 ),
                 Container(
                   padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0, bottom: 19.0),
@@ -251,9 +248,123 @@ class _BuildProfileFormState extends State<BuildProfileForm> {
   }
 }
 
-class ProfilePage extends StatelessWidget {
+class WebsiteLinks extends StatelessWidget {
+  const WebsiteLinks({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(10.0),
+      child: Column(
+        children: <Widget>[
+          Container(
+            child: Text(
+              "Visit our website and contact us to suggest new resturaunts or workouts you'd like to see!",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 11.0),
+            ),
+          ),
+          GestureDetector(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+              alignment: Alignment.centerLeft,
+              child: Text("Website", style: TextStyle(color: Color(0xff4ff7d3))),
+            ),
+            onTap: () async {
+              if (await canLaunch("https://workitoffapp.com")) {
+                await launch("https://workitoffapp.com");
+              }
+            },
+          ),
+          GestureDetector(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+              alignment: Alignment.centerLeft,
+              child: Container(
+                child: Text("Terms of Service", style: TextStyle(color: Color(0xff4ff7d3))),
+              ),
+            ),
+            onTap: () async {
+              if (await canLaunch("https://workitoffapp.com/terms.html")) {
+                await launch("https://workitoffapp.com/terms.html");
+              }
+            },
+          ),
+          GestureDetector(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Privacy Policy",
+                style: TextStyle(color: Color(0xff4ff7d3)),
+              ),
+            ),
+            onTap: () async {
+              if (await canLaunch("https://workitoffapp.com/privacy.html")) {
+                await launch("https://workitoffapp.com/privacy.html");
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ProfilePageData extends StatefulWidget {
+  ProfilePageData({Key key}) : super(key: key);
+
+  _ProfilePageDataState createState() => _ProfilePageDataState();
+}
+
+class _ProfilePageDataState extends State<ProfilePageData> {
   final _formKey = GlobalKey<FormState>();
 
+  // TODO Make this work!!
+  Map<String, String> inputMap = {'age': '', 'weight': '', 'gender': ''};
+
+  void _updateInputMap({String age, String weight, String gender}) {
+    if (age != null) {
+      inputMap['age'] = age;
+    }
+    if (weight != null) {
+      inputMap['weight'] = weight;
+    }
+
+    if (gender != null) {
+      inputMap['gender'] = gender;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.only(top: 40.0, bottom: 20.0),
+          child: Text('Profile', style: TextStyle(fontSize: 18.0)),
+        ),
+        Expanded(
+          child: ScrollConfiguration(
+            behavior: NoOverscrollBehavior(),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  BuildProfileForm(formKey: _formKey, updateInputMap: _updateInputMap),
+                  WebsiteLinks(),
+                ],
+              ),
+            ),
+          ),
+        ),
+        UpdateProfileBtn(formKey: _formKey)
+      ],
+    );
+  }
+}
+
+class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -266,82 +377,9 @@ class ProfilePage extends StatelessWidget {
           stops: [0.75, 1],
         ),
       ),
-      child: Column(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(top: 40.0, bottom: 20.0),
-            child: Text('Profile', style: TextStyle(fontSize: 18.0)),
-          ),
-          Expanded(
-            child: ScrollConfiguration(
-              behavior: NoOverscrollBehavior(),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        BuildProfileForm(formKey: _formKey),
-                        Container(
-                          padding: EdgeInsets.all(10.0),
-                          child: Column(
-                            children: <Widget>[
-                              Container(
-                                child: Text(
-                                  "Visit our website and contact us to suggest new resturaunts or workouts you'd like to see!",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 11.0),
-                                ),
-                              ),
-                              GestureDetector(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("Website", style: TextStyle(color: Color(0xff4ff7d3))),
-                                ),
-                                onTap: () async {
-                                  if (await canLaunch("https://workitoffapp.com")) {
-                                    await launch("https://workitoffapp.com");
-                                  }
-                                },
-                              ),
-                              GestureDetector(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
-                                  alignment: Alignment.centerLeft,
-                                  child: Container(
-                                      child: Text("Terms of Service", style: TextStyle(color: Color(0xff4ff7d3)))),
-                                ),
-                                onTap: () async {
-                                  if (await canLaunch("https://workitoffapp.com/terms.html")) {
-                                    await launch("https://workitoffapp.com/terms.html");
-                                  }
-                                },
-                              ),
-                              GestureDetector(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("Privacy Policy", style: TextStyle(color: Color(0xff4ff7d3))),
-                                ),
-                                onTap: () async {
-                                  if (await canLaunch("https://workitoffapp.com/privacy.html")) {
-                                    await launch("https://workitoffapp.com/privacy.html");
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          UpdateProfileBtn(formKey: _formKey)
-        ],
+      child: Container(
+        constraints: BoxConstraints.expand(),
+        child: ProfilePageData(),
       ),
     );
   }
