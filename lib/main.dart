@@ -14,8 +14,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: IntroPage(),
-      // home: NavigationBar(),
+      // home: IntroPage(),
+      home: NavigationBar(),
       // home: AuthPage(),
       theme: ThemeData(textTheme: TextTheme(body1: TextStyle(color: Colors.white))),
     );

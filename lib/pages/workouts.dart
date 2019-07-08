@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:cached_network_image/cached_network_image.dart';
+
+import 'package:workitoff/widgets.dart';
+
 bool _isSliderMoved = false;
 
 class WorkoutsPage extends StatefulWidget {
@@ -13,32 +19,21 @@ class _WorkoutsPageState extends State<WorkoutsPage>
   AnimationController _animationController;
   TextEditingController _searchController = new TextEditingController();
   bool isButtonDisabled = false;
-
   String _filter;
-  RegExp pattern =
-      new RegExp(r'[^\/][\w]+(?=\.)', caseSensitive: false, multiLine: false);
 
-  final List<String> cardList = [
-    'assets/cards/running.png',
-    'assets/cards/yoga.png',
-    'assets/cards/weight_lifting.png',
-    'assets/cards/stairs.png',
-  ];
-
-  Widget _buildCardList() {
+  Widget _buildCardList(AsyncSnapshot snapshot) {
     return ListView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       itemBuilder: (BuildContext context, int index) {
+        DocumentSnapshot workout = snapshot.data.documents[index];
         return _filter == null || _filter == ''
-            ? WorkoutCards(cardList[index])
-            : pattern
-                    .stringMatch(cardList[index])
-                    .contains(_filter.toLowerCase())
-                ? WorkoutCards(cardList[index])
+            ? WorkoutCards(snapshot.data.documents[index])
+            : workout.documentID.contains(_filter.toLowerCase())
+                ? WorkoutCards(workout)
                 : Container();
       },
-      itemCount: cardList.length,
+      itemCount: snapshot.data.documents.length,
     );
   }
 
@@ -110,7 +105,10 @@ class _WorkoutsPageState extends State<WorkoutsPage>
       ),
       child: Column(
         children: <Widget>[
-          SearchBar(hintText: 'Search Workouts', controller: _searchController, bottomMargin: 6),
+          SearchBar(
+              hintText: 'Search Workouts',
+              controller: _searchController,
+              bottomMargin: 6),
           Expanded(
             child: ScrollConfiguration(
               behavior: NoOverscrollBehavior(),
@@ -120,7 +118,17 @@ class _WorkoutsPageState extends State<WorkoutsPage>
                   SingleChildScrollView(
                     child: Column(
                       children: <Widget>[
-                        _buildCardList(),
+                        StreamBuilder<QuerySnapshot>(
+                          stream: Firestore.instance
+                              .collection('workouts')
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData | snapshot.hasError) {
+                              return Container();
+                            }
+                            return _buildCardList(snapshot);
+                          },
+                        ),
                         SizedBox(height: 10.0),
                         Container(
                           padding: EdgeInsets.only(bottom: 50.0),
@@ -175,7 +183,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
 
 // * Each card needs to have its own individual state
 class WorkoutCards extends StatefulWidget {
-  final String data;
+  final DocumentSnapshot data;
   WorkoutCards(this.data) : super();
 
   @override
@@ -207,9 +215,9 @@ class _WorkoutCardsState extends State<WorkoutCards> {
           children: <Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
-              child: Image.asset(
-                this.widget.data,
+              child: CachedNetworkImage(
                 fit: BoxFit.cover,
+                imageUrl: this.widget.data['image_url'],
               ),
             ),
             Padding(
