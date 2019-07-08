@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+bool _isSliderMoved = false;
+
 class WorkoutsPage extends StatefulWidget {
   @override
   _WorkoutsPageState createState() => _WorkoutsPageState();
 }
 
 class _WorkoutsPageState extends State<WorkoutsPage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   AnimationController _animationController;
   TextEditingController _searchController = new TextEditingController();
   bool isButtonDisabled = false;
@@ -29,9 +31,11 @@ class _WorkoutsPageState extends State<WorkoutsPage>
       physics: NeverScrollableScrollPhysics(),
       itemBuilder: (BuildContext context, int index) {
         return _filter == null || _filter == ''
-            ? MyWorkoutCards(cardList[index])
-            : pattern.stringMatch(cardList[index]).contains(_filter.toLowerCase())
-                ? MyWorkoutCards(cardList[index])
+            ? WorkoutCards(cardList[index])
+            : pattern
+                    .stringMatch(cardList[index])
+                    .contains(_filter.toLowerCase())
+                ? WorkoutCards(cardList[index])
                 : Container();
       },
       itemCount: cardList.length,
@@ -46,8 +50,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
         _filter = _searchController.text;
       });
     });
-
-    if (false) {
+    if (_isSliderMoved) {
       isButtonDisabled = false;
       _animationController = AnimationController(
           duration: const Duration(milliseconds: 350), vsync: this);
@@ -201,24 +204,23 @@ class _WorkoutsPageState extends State<WorkoutsPage>
 }
 
 // * Each card needs to have its own individual state
-class MyWorkoutCards extends StatefulWidget {
+class WorkoutCards extends StatefulWidget {
   final String data;
-  MyWorkoutCards(this.data) : super();
+  WorkoutCards(this.data) : super();
 
   @override
   State<StatefulWidget> createState() {
-    return _MyWorkoutCardsState();
+    return _WorkoutCardsState();
   }
 }
 
-class _MyWorkoutCardsState extends State<MyWorkoutCards> {
+class _WorkoutCardsState extends State<WorkoutCards> {
   double _sliderValue = 0.0;
-  bool _isChanged = false;
 
   void _setValue(double value) {
     setState(() {
       _sliderValue = value;
-      _isChanged = true;
+      _isSliderMoved = true;
     });
   }
 
