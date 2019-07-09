@@ -116,14 +116,12 @@ class GenderRadio extends StatefulWidget {
 }
 
 class _GenderRadioState extends State<GenderRadio> {
-  int _selected = 0;
+  int _selected = 0; // 0 = male, 1 = female, 2+ = none
   Map<int, Color> _genderMapping = {0: Colors.white, 1: Colors.white}; // Handles whether item is selected or not
 
   @override
   void initState() {
-    if (widget.initialVal == 'female') {
-      onRadioChanged(1);
-    }
+    widget.initialVal == 'female' ? onRadioChanged(1) : onRadioChanged(0);
     super.initState();
   }
 
