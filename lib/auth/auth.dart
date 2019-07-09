@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:workitoff/navigation_bar.dart';
 import 'package:workitoff/widgets.dart';
+import 'package:workitoff/pages/intropage.dart';
 
 final FirebaseAuth _firebaseAuth = FirebaseAuth.instance; // Create firebase_auth instance
 final Firestore _firestore = Firestore.instance; // Create firestore instance
@@ -44,9 +45,6 @@ void signInAnonymously(
     //Overwrites entire document
     _addNewUser(_userID, gender, age, weight);
     _saveNewUser(_userID);
-    getUserID().then((String name) {
-      // print(name + ' retreived from database.');
-    });
 
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => NavigationBar()));
   } else {
@@ -69,11 +67,57 @@ Future<bool> _saveNewUser(String userId) async {
   return await prefs.setString('uid', userId);
 }
 
-Future<String> getUserID() async {
+Future<String> getUserIDFromPrefs() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   return prefs.getString('uid');
 }
 
 Future<void> updateProfile(String userID, String gender, int age, int weight) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setInt('age', age);
+  prefs.setInt('weight', weight);
+  prefs.setString('gender', gender);
+
   return _firestore.collection('users').document(userID).updateData({'age': age, 'weight': weight, 'gender': gender});
+}
+
+Future<FirebaseUser> getCurrentFireBaseUser() async {
+  return await _firebaseAuth.currentUser();
+}
+
+Future<String> getCurrentFireBaseUserId() async {
+  FirebaseUser user = await _firebaseAuth.currentUser();
+  return user.uid;
+}
+
+enum AuthStatus {
+  notSignedin,
+  signedIn,
+}
+
+class CheckSignOnStatus extends StatefulWidget {
+  CheckSignOnStatus({Key key}) : super(key: key);
+
+  _CheckSignOnStatusState createState() => _CheckSignOnStatusState();
+}
+
+class _CheckSignOnStatusState extends State<CheckSignOnStatus> {
+  AuthStatus _authStatus = AuthStatus.notSignedin;
+
+  @override
+  void initState() {
+    super.initState();
+
+    getCurrentFireBaseUser().then((FirebaseUser user) {
+      setState(() {
+        _authStatus = user.uid == null ? AuthStatus.notSignedin : AuthStatus.signedIn;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // If the user is signed in
+    return _authStatus == AuthStatus.signedIn ? NavigationBar() : IntroPage();
+  }
 }

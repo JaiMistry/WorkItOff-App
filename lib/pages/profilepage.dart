@@ -185,7 +185,6 @@ class BuildProfileForm extends StatefulWidget {
 }
 
 class _BuildProfileFormState extends State<BuildProfileForm> {
-
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -300,10 +299,17 @@ class _ProfilePageDataState extends State<ProfilePageData> {
   }
 
   _getUserID() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _userID = (prefs.getString('uid') ?? 'null');
-    });
+    String uid = await getCurrentFireBaseUserId();
+    if (uid != null) {
+      setState(() {
+        _userID = uid;
+      });
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      setState(() {
+        _userID = (prefs.getString('uid') ?? 'null');
+      });
+    }
   }
 
   @override
@@ -413,6 +419,8 @@ class _UpdateProfileBtnState extends State<UpdateProfileBtn> with SingleTickerPr
 
     await updateProfile(userID, gender, age, weight).then((onValue) {
       showDefualtFlushBar(context: context, text: 'Profile Updated!');
+    }).timeout(const Duration(seconds: 5), onTimeout: () {
+      showDefualtFlushBar(context: context, text: 'Connection timed out.');
     });
   }
 
