@@ -55,6 +55,11 @@ void signInAnonymously(
 }
 
 Future<void> _addNewUser(String userID, String gender, int age, int weight) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setInt('age', age);
+  prefs.setInt('weight', weight);
+  prefs.setString('gender', gender);
+
   return await _firestore.collection('users').document(userID).setData(
       {'age': age, 'weight': weight, 'gender': gender, 'date_joined': Timestamp.now(), 'last_login': Timestamp.now()});
 }
