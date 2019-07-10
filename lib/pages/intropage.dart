@@ -266,14 +266,12 @@ class _InputPageState extends State<InputPage> with AutomaticKeepAliveClientMixi
 
   void _weightCallback(int weight) {
     _weightSelected = true;
-    print(weight);
     _weight = weight;
     checkProfileCompletion();
   }
 
   void _ageCallback(int age) {
     _ageSelected = true;
-    print(age);
     _age = age;
     checkProfileCompletion();
   }
@@ -300,7 +298,7 @@ class _InputPageState extends State<InputPage> with AutomaticKeepAliveClientMixi
                 padding: EdgeInsets.only(top: 8.0),
                 width: 250.0,
                 child: Text(
-                  'Help us tune our algorith to you by entering your basic info.',
+                  'Help us tune our algorithm to you by entering your basic info.',
                   style: TextStyle(color: Colors.white, fontSize: 14.0),
                   textAlign: TextAlign.center,
                 ),

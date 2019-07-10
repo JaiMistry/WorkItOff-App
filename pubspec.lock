@@ -35,7 +35,7 @@ packages:
       name: cloud_firestore
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.12.5+2"
+    version: "0.12.7"
   collection:
     dependency: transitive
     description:
@@ -171,7 +171,7 @@ packages:
       name: path_provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0"
+    version: "1.1.2"
   pedantic:
     dependency: transitive
     description:
@@ -186,6 +186,16 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.3"
+<<<<<<< HEAD
+=======
+  shared_preferences:
+    dependency: "direct main"
+    description:
+      name: shared_preferences
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.3+2"
+>>>>>>> auth
   sky_engine:
     dependency: transitive
     description: flutter
