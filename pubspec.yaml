@@ -21,7 +21,6 @@ dependencies:
     sdk: flutter
   font_awesome_flutter: ^8.4.0
   url_launcher: ^5.0.3
-  flushbar: '1.5.3' # ! Do not update to 1.7.0. Will cause crash. Need newer version with fix implemented before update.
   flutter_swiper: ^1.1.6
   firebase_core: ^0.4.0+6
   cloud_firestore: ^0.12.5+2
@@ -29,6 +28,7 @@ dependencies:
   firebase_auth: ^0.11.1+7
   transparent_image: ^1.0.0
   cached_network_image: ^1.0.0
+  flushbar: ^1.7.0
 
 
   # The following adds the Cupertino Icons font to your application.
