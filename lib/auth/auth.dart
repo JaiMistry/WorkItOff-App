@@ -81,6 +81,10 @@ Future<void> updateProfile(String userID, String gender, int age, int weight) as
   return _firestore.collection('users').document(userID).updateData({'age': age, 'weight': weight, 'gender': gender});
 }
 
+Future<void> updateLastSignedIn(String userID) async {
+  return _firestore.collection('users').document(userID).updateData({'last_login': Timestamp.now()});
+}
+
 Future<FirebaseUser> getCurrentFireBaseUser() async {
   return await _firebaseAuth.currentUser();
 }
@@ -110,7 +114,12 @@ class _CheckSignOnStatusState extends State<CheckSignOnStatus> {
 
     getCurrentFireBaseUser().then((FirebaseUser user) {
       setState(() {
-        _authStatus = user.uid == null ? AuthStatus.notSignedin : AuthStatus.signedIn;
+        if (user.uid != null) {
+          _authStatus = AuthStatus.signedIn;
+          updateLastSignedIn(user.uid);
+        } else {
+          _authStatus = AuthStatus.notSignedin;
+        }
       });
     });
   }
