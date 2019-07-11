@@ -36,18 +36,21 @@ class _StandardTextInputFieldState extends State<StandardTextInputField> {
 
   @override
   void initState() {
-    _focusNode.addListener(() {
-      setState(() {
-        _focusNode.hasFocus ? _labelColor = Color(0xff4ff7d3) : _labelColor = Colors.grey;
-      });
-    });
+    _focusNode.addListener(_updateLabelColor);
     super.initState();
   }
 
   @override
   void dispose() {
+    _focusNode.removeListener(_updateLabelColor); // Clean up listener to prevent memory leak
     _focusNode.dispose(); // Clean up the focus node when the Form is disposed.
     super.dispose();
+  }
+
+  void _updateLabelColor() {
+    setState(() {
+      _focusNode.hasFocus ? _labelColor = Color(0xff4ff7d3) : _labelColor = Colors.grey;
+    });
   }
 
   @override
@@ -305,11 +308,12 @@ class _ProfilePageDataState extends State<ProfilePageData> {
   }
 
   @override
-  void dispose() { 
-    _ageController.dispose();  // Clean up controller when widget is disposed
-    _weightController.dispose();  // Clean up controller when widget is disposed
+  void dispose() {
+    _ageController.dispose(); // Clean up controller when widget is disposed
+    _weightController.dispose(); // Clean up controller when widget is disposed
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
