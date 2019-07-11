@@ -1,17 +1,11 @@
 import 'dart:math';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
-import 'package:workitoff/navigation_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:workitoff/widgets.dart';
 import 'package:workitoff/auth/auth.dart';
 
-final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
 class GenderSelector extends StatefulWidget {
   final Function(String) genderCallback; // Used to send data back to the parent
@@ -36,18 +30,18 @@ class _GenderSelectorState extends State<GenderSelector> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(15.0),
+      padding: const EdgeInsets.all(15.0),
       child: Column(
         children: <Widget>[
           RichText(
             text: TextSpan(
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16.0,
                 color: Colors.white,
               ),
               children: <TextSpan>[
-                TextSpan(text: 'I am '),
-                TextSpan(text: '$_gender', style: TextStyle(color: Color(0xff4ff7d3))),
+                const TextSpan(text: 'I am '),
+                TextSpan(text: '$_gender', style: const TextStyle(color: Color(0xff4ff7d3))),
               ],
             ),
           ),
@@ -59,7 +53,7 @@ class _GenderSelectorState extends State<GenderSelector> {
                   icon: Icon(
                     FontAwesomeIcons.male,
                     size: 45.0,
-                    color: _gender == 'male' ? Color(0xff4ff7d3) : Colors.white,
+                    color: _gender == 'male' ? const Color(0xff4ff7d3) : Colors.white,
                   ),
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
@@ -68,12 +62,12 @@ class _GenderSelectorState extends State<GenderSelector> {
                   },
                 ),
               ),
-              SizedBox(width: 80.0),
+              const SizedBox(width: 80.0),
               IconButton(
                 icon: Icon(
                   FontAwesomeIcons.female,
                   size: 45.0,
-                  color: _gender == 'female' ? Color(0xff4ff7d3) : Colors.white,
+                  color: _gender == 'female' ? const Color(0xff4ff7d3) : Colors.white,
                 ),
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
@@ -120,31 +114,31 @@ class _CustomSliderState extends State<CustomSlider> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 15.0),
+      margin: const EdgeInsets.symmetric(horizontal: 15.0),
       child: Column(
         children: <Widget>[
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           RichText(
             text: TextSpan(
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16.0,
                 color: Colors.white,
               ),
               children: <TextSpan>[
                 TextSpan(text: widget.leadingText),
                 beenTouched
-                    ? TextSpan(text: '${val.toInt()} ', style: TextStyle(color: Color(0xff4ff7d3)))
+                    ? TextSpan(text: '${val.toInt()} ', style: TextStyle(color: const Color(0xff4ff7d3)))
                     : TextSpan(),
                 TextSpan(text: widget.trailingText),
               ],
             ),
           ),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
-                thumbColor: val == widget.minSliderVal ? Colors.white : Color(0xff3ADEA7),
-                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10.0),
-                activeTrackColor: Color(0xff3ADEA7),
+                thumbColor: val == widget.minSliderVal ? Colors.white : const Color(0xff3ADEA7),
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10.0),
+                activeTrackColor: const Color(0xff3ADEA7),
                 inactiveTrackColor: Colors.grey,
                 overlayColor: Colors.transparent,
                 trackHeight: 1.0),
@@ -177,15 +171,15 @@ class StartButton extends StatelessWidget {
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.only(top: 20.0, bottom: 4.0),
+          padding: const EdgeInsets.only(top: 20.0, bottom: 4.0),
           child: this.startReady
-              ? Text("You're all set!", style: TextStyle(fontSize: 18.0))
-              : Text('Almost Done!', style: TextStyle(fontSize: 18.0)),
+              ? Text("You're all set!", style: const TextStyle(fontSize: 18.0))
+              : Text('Almost Done!', style: const TextStyle(fontSize: 18.0)),
         ),
-        SizedBox(height: 4.0),
+        const SizedBox(height: 4.0),
         RaisedButton(
-          child: Text('Start Work It Off'),
-          color: Color(0xff3ADEA7),
+          child: const Text('Start Work It Off'),
+          color: const Color(0xff3ADEA7),
           disabledColor: Colors.teal[900],
           disabledTextColor: Colors.black,
           onPressed: this.startReady
@@ -211,28 +205,28 @@ class PageData extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Image.asset(imagePath, width: 275),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 20.0,
-              color: Color(0xff4ff7d3),
+              color: const Color(0xff4ff7d3),
             ),
           ),
           Container(
-            padding: EdgeInsets.only(top: 10.0),
+            padding: const EdgeInsets.only(top: 10.0),
             width: 260.0,
             child: Text(
               message,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 16.0,
               ),
             ),
           ),
-          SizedBox(height: 30.0),
+          const SizedBox(height: 30.0),
         ],
       ),
     );
@@ -293,13 +287,13 @@ class _InputPageState extends State<InputPage> with AutomaticKeepAliveClientMixi
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text('Profile Info', style: TextStyle(color: Colors.white, fontSize: 18.0)),
+              const Text('Profile Info', style: TextStyle(color: Colors.white, fontSize: 18.0)),
               Container(
-                padding: EdgeInsets.only(top: 8.0),
+                padding: const EdgeInsets.only(top: 8.0),
                 width: 250.0,
                 child: Text(
                   'Help us tune our algorithm to you by entering your basic info.',
-                  style: TextStyle(color: Colors.white, fontSize: 14.0),
+                  style: const TextStyle(color: Colors.white, fontSize: 14.0),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -332,28 +326,28 @@ class IntroPage extends StatelessWidget {
 
   final List<Widget> _pages = [
     Container(
-      child: PageData(
+      child: const PageData(
         title: 'Welcome to Work It Off!',
         message: 'Get started on living healthy without making compromises.',
         imagePath: 'assets/intro_images/page1.jpg',
       ),
     ),
     Container(
-      child: PageData(
+      child: const PageData(
         title: 'Cheat Meals',
         message: 'Indulge in the foods you love and add them to the app.',
         imagePath: 'assets/intro_images/page2.jpg',
       ),
     ),
     Container(
-      child: PageData(
+      child: const PageData(
         title: 'Workouts',
         message: 'Work off those meals by selecting from a wide variety of workouts.',
         imagePath: 'assets/intro_images/page3.jpg',
       ),
     ),
     Container(
-      child: PageData(
+      child: const PageData(
         title: 'Dashboard',
         message: 'Watch your progress as you refocus on enjoying life while living healthy.',
         imagePath: 'assets/intro_images/page4.jpg',
@@ -371,7 +365,7 @@ class IntroPage extends StatelessWidget {
     const _kCurve = Curves.ease;
 
     return Scaffold(
-      backgroundColor: Color(0xff170422),
+      backgroundColor: const Color(0xff170422),
       body: Stack(children: [
         Container(
           child: ScrollConfiguration(

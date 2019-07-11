@@ -4,9 +4,9 @@ import 'package:flutter/rendering.dart';
 import 'package:workitoff/widgets.dart';
 
 String _filter;
-RegExp pattern = new RegExp(r'[^\/][\w]+(?=\.)', caseSensitive: false, multiLine: false);
+RegExp pattern = RegExp(r'[^\/][\w]+(?=\.)', caseSensitive: false, multiLine: false);
 
-final List<String> cardList = [
+final List<String> cardList = const [
   'assets/cards/running.png',
   'assets/cards/yoga.png',
   'assets/cards/weight_lifting.png',
@@ -49,7 +49,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> with SingleTickerProviderSt
     if (true) {
       _animationController = AnimationController(duration: Duration(milliseconds: 350), vsync: this);
       _animationController.forward();
-    } else { 
+    } else {
       _animationController = AnimationController(vsync: this);
     }
   }
@@ -67,23 +67,22 @@ class _WorkoutsPageState extends State<WorkoutsPage> with SingleTickerProviderSt
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Log Workout?'),
+          title: const Text('Log Workout?'),
           actions: <Widget>[
             FlatButton(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.grey[200],
-                textColor: Colors.black,
-                child: Text('Cancel'),
-                onPressed: () => Navigator.of(context).pop()),
+              splashColor: Colors.transparent,
+              highlightColor: Colors.grey[200],
+              textColor: Colors.black,
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
             FlatButton(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.grey[200],
-                textColor: Colors.black,
-                child: Text(
-                  'Log',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                onPressed: () => Navigator.of(context).pop()),
+              splashColor: Colors.transparent,
+              highlightColor: Colors.grey[200],
+              textColor: Colors.black,
+              child: const Text('Log', style: TextStyle(fontWeight: FontWeight.bold)),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
           ],
         );
       },
@@ -93,12 +92,12 @@ class _WorkoutsPageState extends State<WorkoutsPage> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
+      decoration: const BoxDecoration(
+        gradient: const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xff170422), Color(0xff9B22E6)],
-          stops: [0.75, 1],
+          colors: const [Color(0xff170422), Color(0xff9B22E6)],
+          stops: const [0.75, 1],
         ),
       ),
       child: Column(
@@ -111,17 +110,14 @@ class _WorkoutsPageState extends State<WorkoutsPage> with SingleTickerProviderSt
                 child: Column(
                   children: <Widget>[
                     _buildCardList(),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     Container(
-                      padding: EdgeInsets.only(bottom: 50.0),
+                      padding: const EdgeInsets.only(bottom: 50.0),
                       child: Column(
                         children: <Widget>[
-                          Text(
-                            'We are always adding new workouts!',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          SizedBox(height: 10.0),
-                          Text(
+                          const Text('We are always adding new workouts!', style: TextStyle(color: Colors.white)),
+                          const SizedBox(height: 10.0),
+                          const Text(
                             'Calories burned are calculated from your weight and our algorithm.',
                             style: TextStyle(color: Colors.white, fontSize: 10.0),
                           ),
@@ -139,10 +135,10 @@ class _WorkoutsPageState extends State<WorkoutsPage> with SingleTickerProviderSt
               width: MediaQuery.of(context).size.width,
               child: FlatButton(
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                color: Color(0xff4ff7d3),
+                color: const Color(0xff4ff7d3),
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
-                child: Text("Enter Workouts", style: TextStyle(fontSize: 18.0)),
+                child: const Text("Enter Workouts", style: TextStyle(fontSize: 18.0)),
                 onPressed: () {
                   _showLogDialog();
                 },
@@ -168,12 +164,12 @@ class MyWorkoutCards extends StatefulWidget {
 
 class _MyWorkoutCardsState extends State<MyWorkoutCards> {
   double _sliderValue = 0.0;
-  bool _isChanged = false;
+  // bool _isChanged = false;
 
   void _setValue(double value) {
     setState(() {
       _sliderValue = value;
-      _isChanged = true;
+      // _isChanged = true;
     });
   }
 
@@ -205,8 +201,8 @@ class _MyWorkoutCardsState extends State<MyWorkoutCards> {
             SliderTheme(
               data: SliderTheme.of(context).copyWith(
                   thumbColor: Colors.white,
-                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10.0),
-                  activeTrackColor: Color(0xff3ADEA7),
+                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10.0),
+                  activeTrackColor: const Color(0xff3ADEA7),
                   inactiveTrackColor: Colors.grey,
                   overlayColor: Colors.transparent,
                   trackHeight: 1.0),
@@ -222,7 +218,7 @@ class _MyWorkoutCardsState extends State<MyWorkoutCards> {
         ),
         color: Colors.transparent,
         elevation: 0.0,
-        margin: EdgeInsets.symmetric(horizontal: 10),
+        margin: const EdgeInsets.symmetric(horizontal: 10),
       ),
     );
   }

@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workitoff/widgets.dart';
 import 'package:workitoff/auth/auth.dart';
 
-final Firestore _firestore = Firestore.instance; // Create firestore instance
+final _firestore = Firestore.instance; // Create firestore instance
 
 bool _isNumeric(String str) {
   if (str == null) {
@@ -31,22 +31,17 @@ class StandardTextInputField extends StatefulWidget {
 }
 
 class _StandardTextInputFieldState extends State<StandardTextInputField> {
-  FocusNode _focusNode;
+  final _focusNode = FocusNode();
   Color _labelColor = Colors.grey;
 
   @override
   void initState() {
-    _focusNode = FocusNode();
     _focusNode.addListener(() {
       setState(() {
         _focusNode.hasFocus ? _labelColor = Color(0xff4ff7d3) : _labelColor = Colors.grey;
       });
     });
     super.initState();
-  }
-
-  void setFocus() {
-    FocusScope.of(context).requestFocus(_focusNode);
   }
 
   @override
@@ -58,12 +53,12 @@ class _StandardTextInputFieldState extends State<StandardTextInputField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Column(
         children: <Widget>[
           Container(
             alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(bottom: 2.0),
+            padding: const EdgeInsets.only(bottom: 2.0),
             child: Text(widget.label, style: TextStyle(color: _labelColor)),
           ),
           TextFormField(
@@ -77,23 +72,23 @@ class _StandardTextInputFieldState extends State<StandardTextInputField> {
             },
             inputFormatters: [LengthLimitingTextInputFormatter(3)],
             keyboardType: TextInputType.number,
-            cursorColor: Color(0xff4ff7d3),
+            cursorColor: const Color(0xff4ff7d3),
             decoration: InputDecoration(
               focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(style: BorderStyle.none),
                 borderRadius: BorderRadius.all(Radius.zero),
               ),
               filled: true,
-              fillColor: Color(0xffd1d1d1).withOpacity(0.15),
-              labelStyle: TextStyle(color: Colors.grey),
-              contentPadding: EdgeInsets.all(8.0),
-              enabledBorder: OutlineInputBorder(
+              fillColor: const Color(0xffd1d1d1).withOpacity(0.15),
+              labelStyle: const TextStyle(color: Colors.grey),
+              contentPadding: const EdgeInsets.all(8.0),
+              enabledBorder: const OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.zero),
                 borderSide: BorderSide(style: BorderStyle.none),
               ),
-              border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.zero)),
+              border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.zero)),
             ),
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           ),
         ],
       ),
@@ -146,7 +141,7 @@ class _GenderRadioState extends State<GenderRadio> {
             controlAffinity: ListTileControlAffinity.trailing,
             dense: true,
             title: Text(twoGenders.elementAt(i), style: TextStyle(fontSize: 14.0, color: _genderMapping[i])),
-            activeColor: Color(0xff4ff7d3),
+            activeColor: const Color(0xff4ff7d3),
             groupValue: _selected,
             onChanged: (int value) {
               onRadioChanged(value);
@@ -173,13 +168,13 @@ class BuildProfileForm extends StatefulWidget {
   final TextEditingController ageController;
   final TextEditingController weightController;
   final String initialGender;
-  BuildProfileForm(
-      {Key key,
-      @required this.formKey,
-      @required this.ageController,
-      @required this.weightController,
-      @required this.initialGender})
-      : super(key: key);
+  BuildProfileForm({
+    Key key,
+    @required this.formKey,
+    @required this.ageController,
+    @required this.weightController,
+    @required this.initialGender,
+  }) : super(key: key);
 
   _BuildProfileFormState createState() => _BuildProfileFormState();
 }
@@ -190,7 +185,7 @@ class _BuildProfileFormState extends State<BuildProfileForm> {
     return Form(
       key: widget.formKey,
       child: Container(
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
         child: Column(
           children: <Widget>[
             StandardTextInputField(
@@ -198,16 +193,16 @@ class _BuildProfileFormState extends State<BuildProfileForm> {
               failedValidateText: 'Enter your weight.',
               controller: widget.weightController,
             ),
-            SizedBox(height: 15.0),
+            const SizedBox(height: 15.0),
             StandardTextInputField(
               label: 'Age',
               failedValidateText: 'Enter your age.',
               controller: widget.ageController,
             ),
             Container(
-              padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0, bottom: 19.0),
+              padding: const EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0, bottom: 19.0),
               alignment: Alignment.centerLeft,
-              child: Text('Gender', style: TextStyle(color: Color(0xff4ff7d3))),
+              child: const Text('Gender', style: TextStyle(color: Color(0xff4ff7d3))),
             ),
             GenderRadio(initialVal: widget.initialGender)
           ],
@@ -223,21 +218,21 @@ class WebsiteLinks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(10.0),
       child: Column(
         children: <Widget>[
           Container(
-            child: Text(
-              "Visit our website and contact us to suggest new resturaunts or workouts you'd like to see!",
+            child: const Text(
+              "Visit our website and contact us to suggest new restaurants or workouts you'd like to see!",
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 11.0),
+              style: const TextStyle(fontSize: 11.0),
             ),
           ),
           GestureDetector(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
               alignment: Alignment.centerLeft,
-              child: Text("Website", style: TextStyle(color: Color(0xff4ff7d3))),
+              child: const Text("Website", style: TextStyle(color: Color(0xff4ff7d3))),
             ),
             onTap: () async {
               if (await canLaunch("https://workitoffapp.com")) {
@@ -247,10 +242,10 @@ class WebsiteLinks extends StatelessWidget {
           ),
           GestureDetector(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
               alignment: Alignment.centerLeft,
               child: Container(
-                child: Text("Terms of Service", style: TextStyle(color: Color(0xff4ff7d3))),
+                child: const Text("Terms of Service", style: TextStyle(color: Color(0xff4ff7d3))),
               ),
             ),
             onTap: () async {
@@ -261,12 +256,9 @@ class WebsiteLinks extends StatelessWidget {
           ),
           GestureDetector(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
               alignment: Alignment.centerLeft,
-              child: Text(
-                "Privacy Policy",
-                style: TextStyle(color: Color(0xff4ff7d3)),
-              ),
+              child: const Text("Privacy Policy", style: TextStyle(color: Color(0xff4ff7d3))),
             ),
             onTap: () async {
               if (await canLaunch("https://workitoffapp.com/privacy.html")) {
@@ -327,8 +319,8 @@ class _ProfilePageDataState extends State<ProfilePageData> {
           return Column(
             children: <Widget>[
               Container(
-                padding: EdgeInsets.only(top: 40.0, bottom: 20.0),
-                child: Text('Profile', style: TextStyle(fontSize: 18.0)),
+                padding: const EdgeInsets.only(top: 40.0, bottom: 20.0),
+                child: const Text('Profile', style: TextStyle(fontSize: 18.0)),
               ),
               Expanded(
                 child: ScrollConfiguration(
@@ -343,7 +335,7 @@ class _ProfilePageDataState extends State<ProfilePageData> {
                           weightController: _weightController,
                           initialGender: _gender,
                         ),
-                        WebsiteLinks(),
+                        const WebsiteLinks(),
                       ],
                     ),
                   ),
@@ -366,9 +358,9 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints.expand(),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
+      constraints: const BoxConstraints.expand(),
+      decoration: const BoxDecoration(
+        gradient: const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [Color(0xff170422), Color(0xff9B22E6)],
@@ -376,7 +368,7 @@ class ProfilePage extends StatelessWidget {
         ),
       ),
       child: Container(
-        constraints: BoxConstraints.expand(),
+        constraints: const BoxConstraints.expand(),
         child: ProfilePageData(),
       ),
     );
@@ -434,9 +426,9 @@ class _UpdateProfileBtnState extends State<UpdateProfileBtn> with SingleTickerPr
           child: FlatButton(
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // Removed all padding
             padding: EdgeInsets.zero,
-            color: Color(0xff4ff7d3),
+            color: const Color(0xff4ff7d3),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3.0)),
-            child: Text("Update Profile", style: TextStyle(fontSize: 18.0)),
+            child: const Text("Update Profile", style: TextStyle(fontSize: 18.0)),
             onPressed: () {
               // If the form validates
               if (widget.formKey.currentState.validate()) {

@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      // showPerformanceOverlay: true,
       // home: IntroPage(),
       home: CheckSignOnStatus(),
       // home: NavigationBar(),
