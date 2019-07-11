@@ -22,16 +22,20 @@ class _FoodPageState extends State<FoodPage> {
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(() {
-      setState(() {
-        _restuarantSearchFilter = _searchController.text;
-      });
-    });
+    _searchController.addListener(_setSearchFilter);
   }
+
   @override
-  void dispose() { 
+  void dispose() {
+    _searchController.removeListener(_setSearchFilter);
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _setSearchFilter() {
+    setState(() {
+      _restuarantSearchFilter = _searchController.text;
+    });
   }
 
   @override
@@ -346,17 +350,20 @@ class _FoodItemPageState extends State<FoodItemPage> {
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(() {
-      setState(() {
-        searchText = _searchController.text;
-      });
-    });
+    _searchController.addListener(_setSearchText);
   }
 
   @override
   void dispose() {
+    _searchController.removeListener(_setSearchText);
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _setSearchText() {
+    setState(() {
+      searchText = _searchController.text;
+    });
   }
 
   @override

@@ -77,17 +77,17 @@ class _StandardTextInputFieldState extends State<StandardTextInputField> {
             keyboardType: TextInputType.number,
             cursorColor: const Color(0xff4ff7d3),
             decoration: InputDecoration(
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(style: BorderStyle.none),
-                borderRadius: BorderRadius.all(Radius.zero),
+              focusedBorder: const UnderlineInputBorder(
+                borderSide: const BorderSide(style: BorderStyle.none),
+                borderRadius: const BorderRadius.all(Radius.zero),
               ),
               filled: true,
               fillColor: const Color(0xffd1d1d1).withOpacity(0.15),
               labelStyle: const TextStyle(color: Colors.grey),
               contentPadding: const EdgeInsets.all(8.0),
               enabledBorder: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.zero),
-                borderSide: BorderSide(style: BorderStyle.none),
+                borderRadius: const BorderRadius.all(Radius.zero),
+                borderSide: const BorderSide(style: BorderStyle.none),
               ),
               border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.zero)),
             ),
@@ -373,8 +373,8 @@ class ProfilePage extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xff170422), Color(0xff9B22E6)],
-          stops: [0.75, 1],
+          colors: const [Color(0xff170422), Color(0xff9B22E6)],
+          stops: const [0.75, 1],
         ),
       ),
       child: Container(

@@ -40,11 +40,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(() {
-      setState(() {
-        _filter = _searchController.text;
-      });
-    });
+    _searchController.addListener(_setSearchText);
 
     if (true) {
       _animationController = AnimationController(duration: Duration(milliseconds: 350), vsync: this);
@@ -54,9 +50,16 @@ class _WorkoutsPageState extends State<WorkoutsPage> with SingleTickerProviderSt
     }
   }
 
+  void _setSearchText() {
+    setState(() {
+      _filter = _searchController.text;
+    });
+  }
+
   @override
   void dispose() {
     _animationController.dispose();
+    _searchController.removeListener(_setSearchText);
     _searchController.dispose();
     super.dispose();
   }
