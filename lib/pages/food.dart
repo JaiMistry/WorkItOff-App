@@ -28,6 +28,11 @@ class _FoodPageState extends State<FoodPage> {
       });
     });
   }
+  @override
+  void dispose() { 
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -346,6 +351,12 @@ class _FoodItemPageState extends State<FoodItemPage> {
         searchText = _searchController.text;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override

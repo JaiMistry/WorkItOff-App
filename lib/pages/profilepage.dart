@@ -305,6 +305,12 @@ class _ProfilePageDataState extends State<ProfilePageData> {
   }
 
   @override
+  void dispose() { 
+    _ageController.dispose();  // Clean up controller when widget is disposed
+    _weightController.dispose();  // Clean up controller when widget is disposed
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
       stream: _firestore.collection('users').document(_userID).snapshots(),
