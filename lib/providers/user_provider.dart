@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:provider/provider.dart';
 // import 'package:flutter/material.dart';
 
-
 // Create a user object that is easier to work with
 class WorkItOffUser {
   final String id;
@@ -23,6 +22,10 @@ class WorkItOffUser {
       age: data['age'].toString(),
       weight: data['weight'].toString(),
     );
+  }
+
+  set gender(String newGender) {
+    Firestore.instance.collection('users').document(id).updateData({'gender': newGender});
   }
 }
 

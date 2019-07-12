@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -114,11 +115,17 @@ class _GenderRadioState extends State<GenderRadio> {
 
   @override
   void initState() {
-    widget.initialVal == 'female' ? onRadioChanged(1) : onRadioChanged(0);
+    widget.initialVal == 'female' ? _onRadioChanged(1) : _onRadioChanged(0);
     super.initState();
   }
 
-  void onRadioChanged(int value) {
+  @override
+  void didUpdateWidget(GenderRadio oldWidget) {
+    widget.initialVal == 'female' ? _onRadioChanged(1) : _onRadioChanged(0);
+    super.didUpdateWidget(oldWidget);
+  }
+
+  void _onRadioChanged(int value) {
     setState(() {
       _selected = value;
       _genderMapping[value] = Color(0xff4ff7d3); // Change the slected item color
@@ -130,6 +137,7 @@ class _GenderRadioState extends State<GenderRadio> {
   void _setGender() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _selected == 0 ? prefs.setString('gender', 'male') : prefs.setString('gender', 'female');
+    // Provider.of<WorkItOffUser>(context).gender = _selected == 0 ? 'male': 'female';
   }
 
   List<Widget> makeRadios() {
@@ -148,9 +156,7 @@ class _GenderRadioState extends State<GenderRadio> {
             title: Text(twoGenders.elementAt(i), style: TextStyle(fontSize: 14.0, color: _genderMapping[i])),
             activeColor: const Color(0xff4ff7d3),
             groupValue: _selected,
-            onChanged: (int value) {
-              onRadioChanged(value);
-            },
+            onChanged: _onRadioChanged,
           ),
         ),
       ));
@@ -292,6 +298,7 @@ class _ProfilePageDataState extends State<ProfilePageData> {
   void initState() {
     super.initState();
   }
+
   @override
   void dispose() {
     _ageController.dispose(); // Clean up controller when widget is disposed
@@ -390,7 +397,7 @@ class _UpdateProfileBtnState extends State<UpdateProfileBtn> with SingleTickerPr
   void _updateProfile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String gender = prefs.getString('gender'); // Get from local storage
-    String userID = prefs.getString('uid');
+    String userID = Provider.of<FirebaseUser>(context).uid;
     int age = int.parse(widget.ageController.text);
     int weight = int.parse(widget.weightController.text);
 

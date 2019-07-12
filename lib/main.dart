@@ -16,6 +16,7 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // FirebaseAuth.instance.signOut();  //Run this if the app crashes. I deleted all the users in firestore. This will force a new one to be created.
     return MultiProvider(
       providers: [StreamProvider<FirebaseUser>.value(value: FirebaseAuth.instance.onAuthStateChanged)],
       child: MaterialApp(
