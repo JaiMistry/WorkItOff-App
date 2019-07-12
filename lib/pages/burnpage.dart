@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class BurnPage extends StatelessWidget {
   @override
@@ -33,8 +35,12 @@ class BurnPage extends StatelessWidget {
                     SizedBox(
                       width: 60.0,
                       child: OutlineButton(
-                        child: const Text('Go!', style: TextStyle(color: Colors.white)),
-                        onPressed: () {},
+                        child: const Text('Sign out!', style: TextStyle(color: Colors.white)),
+                        onPressed: () {
+                          Scaffold.of(context).showSnackBar(SnackBar(content: Text('You have been signed out!')));
+                          final auth = FirebaseAuth.instance;
+                          auth.signOut();
+                        },
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),

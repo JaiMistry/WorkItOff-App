@@ -3,9 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:workitoff/providers/user_provider.dart';
 
 import 'package:workitoff/widgets.dart';
 import 'package:workitoff/auth/auth.dart';
@@ -285,28 +287,11 @@ class _ProfilePageDataState extends State<ProfilePageData> {
   final _formKey = GlobalKey<FormState>();
   final _ageController = TextEditingController();
   final _weightController = TextEditingController();
-  String _userID = 'null';
 
   @override
   void initState() {
     super.initState();
-    _getUserID();
   }
-
-  _getUserID() async {
-    String uid = await getCurrentFireBaseUserId();
-    if (uid != null) {
-      setState(() {
-        _userID = uid;
-      });
-    } else {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      setState(() {
-        _userID = (prefs.getString('uid') ?? 'null');
-      });
-    }
-  }
-
   @override
   void dispose() {
     _ageController.dispose(); // Clean up controller when widget is disposed
@@ -316,50 +301,40 @@ class _ProfilePageDataState extends State<ProfilePageData> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<DocumentSnapshot>(
-      stream: _firestore.collection('users').document(_userID).snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot == null || !snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
-          return Container();
-        } else {
-          _ageController.text = snapshot.data['age'].toString();
-          _weightController.text = snapshot.data['weight'].toString();
-          String _gender = snapshot.data['gender'].toString();
-
-          return Column(
-            children: <Widget>[
-              Container(
-                padding: const EdgeInsets.only(top: 40.0, bottom: 20.0),
-                child: const Text('Profile', style: TextStyle(fontSize: 18.0)),
-              ),
-              Expanded(
-                child: ScrollConfiguration(
-                  behavior: NoOverscrollBehavior(),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        BuildProfileForm(
-                          formKey: _formKey,
-                          ageController: _ageController,
-                          weightController: _weightController,
-                          initialGender: _gender,
-                        ),
-                        const WebsiteLinks(),
-                      ],
-                    ),
+    WorkItOffUser user = Provider.of<WorkItOffUser>(context);
+    _weightController.text = user.weight;
+    _ageController.text = user.age;
+    return Column(
+      children: <Widget>[
+        Container(
+          padding: const EdgeInsets.only(top: 40.0, bottom: 20.0),
+          child: const Text('Profile', style: TextStyle(fontSize: 18.0)),
+        ),
+        Expanded(
+          child: ScrollConfiguration(
+            behavior: NoOverscrollBehavior(),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  BuildProfileForm(
+                    formKey: _formKey,
+                    ageController: _ageController,
+                    weightController: _weightController,
+                    initialGender: user.gender,
                   ),
-                ),
+                  const WebsiteLinks(),
+                ],
               ),
-              UpdateProfileBtn(
-                formKey: _formKey,
-                ageController: _ageController,
-                weightController: _weightController,
-              )
-            ],
-          );
-        }
-      },
+            ),
+          ),
+        ),
+        UpdateProfileBtn(
+          formKey: _formKey,
+          ageController: _ageController,
+          weightController: _weightController,
+        )
+      ],
     );
   }
 }

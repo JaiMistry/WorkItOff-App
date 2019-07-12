@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
+import 'package:workitoff/providers/user_provider.dart';
 
 import 'package:workitoff/widgets.dart';
 
@@ -143,6 +145,8 @@ class _WorkoutsPageState extends State<WorkoutsPage> with SingleTickerProviderSt
                 highlightColor: Colors.transparent,
                 child: const Text("Enter Workouts", style: TextStyle(fontSize: 18.0)),
                 onPressed: () {
+                  // Access the WorkItOffUser object via the provider
+                  // WorkItOffUser user = Provider.of<WorkItOffUser>(context);
                   _showLogDialog();
                 },
               ),

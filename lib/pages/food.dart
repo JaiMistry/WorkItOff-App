@@ -82,11 +82,7 @@ Widget _builderEnterCaloriesButton() {
         child: InkWell(
           child: const Text(
             'Enter Calories',
-            style: const TextStyle(
-              fontSize: 22,
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 22, color: Colors.black, fontWeight: FontWeight.bold),
           ),
           onTap: () {},
         ),
