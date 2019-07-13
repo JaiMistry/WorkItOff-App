@@ -9,6 +9,7 @@ import 'package:workitoff/widgets.dart';
 
 bool _isSliderMoved = false;
 
+// TODO: preserve state of entire page
 class WorkoutsPage extends StatefulWidget {
   @override
   _WorkoutsPageState createState() => _WorkoutsPageState();
@@ -18,7 +19,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
     with TickerProviderStateMixin {
   AnimationController _animationController;
   TextEditingController _searchController = new TextEditingController();
-  bool isButtonDisabled = false;
+  bool isButtonDisabled = true;
   String _filter;
 
   Widget _buildCardList(AsyncSnapshot snapshot) {
@@ -81,10 +82,10 @@ class _WorkoutsPageState extends State<WorkoutsPage>
                 splashColor: Colors.transparent,
                 highlightColor: Colors.grey[200],
                 textColor: Colors.black,
-                child: Text(
-                  'Log',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                child:
+                    Text('Log', style: TextStyle(fontWeight: FontWeight.bold)),
+                // TODO: check if weight/age has been entered. Redirect to profile page via alert dialog
+                // TODO: send logging data to cloud function, redirect to progress page
                 onPressed: () => Navigator.of(context).pop()),
           ],
         );
@@ -113,7 +114,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
             child: ScrollConfiguration(
               behavior: NoOverscrollBehavior(),
               child: Stack(
-                alignment: Alignment.bottomCenter,
+                alignment: Alignment.topCenter,
                 children: <Widget>[
                   SingleChildScrollView(
                     child: Column(
@@ -130,27 +131,33 @@ class _WorkoutsPageState extends State<WorkoutsPage>
                           },
                         ),
                         SizedBox(height: 10.0),
-                        Container(
-                          padding: EdgeInsets.only(bottom: 50.0),
-                          child: Column(
-                            children: <Widget>[
-                              Text(
-                                'We are always adding new workouts!',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              SizedBox(height: 10.0),
-                              Text(
-                                'Calories burned are calculated from your weight and our algorithm.',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 10.0),
-                              ),
-                            ],
+                        AnimatedOpacity(
+                          opacity: 1.0,
+                          duration: Duration(milliseconds: 200),
+                          child: Container(
+                            padding: EdgeInsets.only(bottom: 50.0),
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                  'We are always adding new workouts!',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                SizedBox(height: 10.0),
+                                Text(
+                                  'Calories burned are calculated from your weight and our algorithm.',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 10.0),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
+                  // TODO: make button fade in realtime when slider is moved
                   Container(
+                    alignment: Alignment.bottomCenter,
                     child: FadeTransition(
                       opacity: CurvedAnimation(
                           parent: _animationController, curve: Curves.linear),
@@ -216,8 +223,12 @@ class _WorkoutCardsState extends State<WorkoutCards> {
             ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
               child: CachedNetworkImage(
-                fit: BoxFit.cover,
                 imageUrl: this.widget.data['image_url'],
+                placeholder: (context, url) => Container(),
+                errorWidget: (context, url, error) =>
+                    Container(child: Text('Error Loading image..')),
+                fit: BoxFit.cover,
+                fadeInCurve: Curves.linear,
               ),
             ),
             Padding(
