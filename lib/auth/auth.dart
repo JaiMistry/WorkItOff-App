@@ -64,7 +64,9 @@ Future<void> updateProfile(String userID, String gender, int age, int weight) as
   // prefs.setInt('age', age);
   // prefs.setInt('weight', weight);
   // prefs.setString('gender', gender);
-
+  if (gender == '' || gender == null) {
+    return _firestore.collection('users').document(userID).updateData({'age': age, 'weight': weight});
+  }
   return _firestore.collection('users').document(userID).updateData({'age': age, 'weight': weight, 'gender': gender});
 }
 

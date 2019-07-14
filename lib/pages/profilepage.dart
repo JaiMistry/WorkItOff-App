@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
@@ -7,13 +6,11 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
 import 'package:url_launcher/url_launcher.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workitoff/providers/user_provider.dart';
 
 import 'package:workitoff/widgets.dart';
 import 'package:workitoff/auth/auth.dart';
 
-final _firestore = Firestore.instance; // Create firestore instance
 
 bool _isNumeric(String str) {
   if (str == null) {
@@ -130,14 +127,7 @@ class _GenderRadioState extends State<GenderRadio> {
       _selected = value;
       _genderMapping[value] = Color(0xff4ff7d3); // Change the slected item color
       value == 0 ? _genderMapping[1] = Colors.white : _genderMapping[0] = Colors.white; // Unslected item
-      _setGender(); // Save to local storage
     });
-  }
-
-  void _setGender() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _selected == 0 ? prefs.setString('gender', 'male') : prefs.setString('gender', 'female');
-    // Provider.of<WorkItOffUser>(context).gender = _selected == 0 ? 'male': 'female';
   }
 
   List<Widget> makeRadios() {
@@ -156,7 +146,10 @@ class _GenderRadioState extends State<GenderRadio> {
             title: Text(twoGenders.elementAt(i), style: TextStyle(fontSize: 14.0, color: _genderMapping[i])),
             activeColor: const Color(0xff4ff7d3),
             groupValue: _selected,
-            onChanged: _onRadioChanged,
+            onChanged: (val) {
+               Provider.of<GenderProvider>(context).gender = val == 1 ? 'female' : 'male';
+              _onRadioChanged(val);
+            },
           ),
         ),
       ));
@@ -283,6 +276,17 @@ class WebsiteLinks extends StatelessWidget {
   }
 }
 
+class GenderProvider with ChangeNotifier {
+  String _gender = '';
+
+  set gender(String newGender) {
+    _gender = newGender;
+    notifyListeners();
+  }
+
+  String get gender => _gender;
+}
+
 class ProfilePageData extends StatefulWidget {
   ProfilePageData({Key key}) : super(key: key);
 
@@ -311,37 +315,40 @@ class _ProfilePageDataState extends State<ProfilePageData> {
     WorkItOffUser user = Provider.of<WorkItOffUser>(context);
     _weightController.text = user.weight;
     _ageController.text = user.age;
-    return Column(
-      children: <Widget>[
-        Container(
-          padding: const EdgeInsets.only(top: 40.0, bottom: 20.0),
-          child: const Text('Profile', style: TextStyle(fontSize: 18.0)),
-        ),
-        Expanded(
-          child: ScrollConfiguration(
-            behavior: NoOverscrollBehavior(),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  BuildProfileForm(
-                    formKey: _formKey,
-                    ageController: _ageController,
-                    weightController: _weightController,
-                    initialGender: user.gender,
-                  ),
-                  const WebsiteLinks(),
-                ],
+    return ChangeNotifierProvider(
+      builder: (context) => GenderProvider(),
+      child: Column(
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.only(top: 40.0, bottom: 20.0),
+            child: const Text('Profile', style: TextStyle(fontSize: 18.0)),
+          ),
+          Expanded(
+            child: ScrollConfiguration(
+              behavior: NoOverscrollBehavior(),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    BuildProfileForm(
+                      formKey: _formKey,
+                      ageController: _ageController,
+                      weightController: _weightController,
+                      initialGender: user.gender,
+                    ),
+                    const WebsiteLinks(),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        UpdateProfileBtn(
-          formKey: _formKey,
-          ageController: _ageController,
-          weightController: _weightController,
-        )
-      ],
+          UpdateProfileBtn(
+            formKey: _formKey,
+            ageController: _ageController,
+            weightController: _weightController,
+          )
+        ],
+      ),
     );
   }
 }
@@ -395,8 +402,7 @@ class _UpdateProfileBtnState extends State<UpdateProfileBtn> with SingleTickerPr
   }
 
   void _updateProfile() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String gender = prefs.getString('gender'); // Get from local storage
+    String gender = Provider.of<GenderProvider>(context).gender;
     String userID = Provider.of<FirebaseUser>(context).uid;
     int age = int.parse(widget.ageController.text);
     int weight = int.parse(widget.weightController.text);
