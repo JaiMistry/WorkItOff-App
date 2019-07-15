@@ -31,39 +31,18 @@ void signInAnonymously({
 
     //Overwrites entire document
     _addNewUser(_userID, gender, age, weight);
-    // _saveNewUser(_userID);
 
-    // Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => NavigationBar()));
   } else {
     showDefualtFlushBar(context: context, text: 'Unable to sign in.');
   }
 }
 
 Future<void> _addNewUser(String userID, String gender, int age, int weight) async {
-  // SharedPreferences prefs = await SharedPreferences.getInstance();
-  // prefs.setInt('age', age);
-  // prefs.setInt('weight', weight);
-  // prefs.setString('gender', gender);
-
   return await _firestore.collection('users').document(userID).setData(
       {'age': age, 'weight': weight, 'gender': gender, 'date_joined': Timestamp.now(), 'last_login': Timestamp.now()});
 }
 
-// Future<bool> _saveNewUser(String userId) async {
-//   SharedPreferences prefs = await SharedPreferences.getInstance();
-//   return await prefs.setString('uid', userId);
-// }
-
-// Future<String> getUserIDFromPrefs() async {
-//   SharedPreferences prefs = await SharedPreferences.getInstance();
-//   return prefs.getString('uid');
-// }
-
 Future<void> updateProfile(String userID, String gender, int age, int weight) async {
-  // SharedPreferences prefs = await SharedPreferences.getInstance();
-  // prefs.setInt('age', age);
-  // prefs.setInt('weight', weight);
-  // prefs.setString('gender', gender);
   if (gender == '' || gender == null) {
     return _firestore.collection('users').document(userID).updateData({'age': age, 'weight': weight});
   }
@@ -82,6 +61,9 @@ Future<String> getCurrentFireBaseUserId() async {
   FirebaseUser user = await _firebaseAuth.currentUser();
   return user.uid;
 }
+
+
+// * Sign on status
 
 enum AuthStatus {
   notSignedin,

@@ -6,7 +6,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:workitoff/widgets.dart';
 import 'package:workitoff/auth/auth.dart';
 
-
 class GenderSelector extends StatefulWidget {
   final Function(String) genderCallback; // Used to send data back to the parent
 
@@ -209,10 +208,7 @@ class PageData extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 20.0,
-              color: const Color(0xff4ff7d3),
-            ),
+            style: const TextStyle(fontSize: 20.0, color: const Color(0xff4ff7d3)),
           ),
           Container(
             padding: const EdgeInsets.only(top: 10.0),
@@ -322,7 +318,7 @@ class _InputPageState extends State<InputPage> with AutomaticKeepAliveClientMixi
 }
 
 class IntroPage extends StatelessWidget {
-  // const IntroPage({Key key}) : super(key: key);
+  IntroPage({Key key}) : super(key: key);
 
   final List<Widget> _pages = [
     Container(
@@ -366,46 +362,48 @@ class IntroPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xff170422),
-      body: Stack(children: [
-        Container(
-          child: ScrollConfiguration(
-            behavior: NoOverscrollBehavior(),
-            child: PageView(
-              physics: BouncingScrollPhysics(),
-              controller: _controller,
-              // onPageChanged: (int page) {
-              //   _selected_Index = page;
-              // },
-              children: _pages,
-              scrollDirection: Axis.horizontal,
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 0.0,
-          left: 0.0,
-          right: 0.0,
-          child: Container(
-            color: Colors.transparent,
-            padding: const EdgeInsets.all(12.0), // Padding of dots from screen bottom
-            child: Center(
-              child: DotsIndicator(
-                mainColor: Colors.purple[200].withOpacity(0.2),
-                selectedColor: Colors.purple[200],
+      body: Stack(
+        children: [
+          Container(
+            child: ScrollConfiguration(
+              behavior: NoOverscrollBehavior(),
+              child: PageView(
+                physics: BouncingScrollPhysics(),
                 controller: _controller,
-                itemCount: _pages.length,
-                onPageSelected: (int page) {
-                  _controller.animateToPage(
-                    page,
-                    duration: _kDuration,
-                    curve: _kCurve,
-                  );
-                },
+                // onPageChanged: (int page) {
+                //   _selected_Index = page;
+                // },
+                children: _pages,
+                scrollDirection: Axis.horizontal,
               ),
             ),
           ),
-        ),
-      ]),
+          Positioned(
+            bottom: 0.0,
+            left: 0.0,
+            right: 0.0,
+            child: Container(
+              color: Colors.transparent,
+              padding: const EdgeInsets.all(12.0), // Padding of dots from screen bottom
+              child: Center(
+                child: DotsIndicator(
+                  mainColor: Colors.purple[200].withOpacity(0.2),
+                  selectedColor: Colors.purple[200],
+                  controller: _controller,
+                  itemCount: _pages.length,
+                  onPageSelected: (int page) {
+                    _controller.animateToPage(
+                      page,
+                      duration: _kDuration,
+                      curve: _kCurve,
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -449,6 +447,7 @@ class DotsIndicator extends AnimatedWidget {
             width: _kDotSize * zoom,
             height: _kDotSize * zoom,
             child: InkWell(
+              borderRadius: BorderRadius.circular(20),
               onTap: () => onPageSelected(index), // Handles button click
             ),
           ),

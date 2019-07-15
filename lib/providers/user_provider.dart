@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 // import 'package:provider/provider.dart';
 // import 'package:flutter/material.dart';
 
@@ -37,13 +38,18 @@ class WorkItOffUser {
     _firestore.collection('users').document(id).updateData({'age': newWeight});
   }
 
-  Future<void> updateProfile(String userID, String gender, int age, int weight) async {
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // prefs.setInt('age', age);
-    // prefs.setInt('weight', weight);
-    // prefs.setString('gender', gender);
-
-    return _firestore.collection('users').document(userID).updateData({'age': age, 'weight': weight, 'gender': gender});
+  Future<void> updateProfile({@required String userID, String gender, int age, int weight}) async {
+    Map<String, dynamic> userMap;
+    if(gender != null || gender != ''){
+      userMap.putIfAbsent('gender', () => gender);
+    }
+    if(age != null || age.toString() != ''){
+      userMap.putIfAbsent('age', () => age);
+    }
+    if(weight != null || weight.toString() != ''){
+      userMap.putIfAbsent('weight', () => weight);
+    }
+    return _firestore.collection('users').document(userID).updateData(userMap);
   }
 }
 
