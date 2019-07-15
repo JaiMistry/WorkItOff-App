@@ -22,10 +22,19 @@ class _FoodPageState extends State<FoodPage> {
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(() {
-      setState(() {
-        _restuarantSearchFilter = _searchController.text;
-      });
+    _searchController.addListener(_setSearchFilter);
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_setSearchFilter);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _setSearchFilter() {
+    setState(() {
+      _restuarantSearchFilter = _searchController.text;
     });
   }
 
@@ -40,12 +49,12 @@ class _FoodPageState extends State<FoodPage> {
           ),
         ],
       ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
+      decoration: const BoxDecoration(
+        gradient: const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xff170422), Color(0xff9B22E6)],
-          stops: [0.75, 1],
+          colors: const [Color(0xff170422), Color(0xff9B22E6)],
+          stops: const [0.75, 1],
         ),
       ),
     );
@@ -55,24 +64,26 @@ class _FoodPageState extends State<FoodPage> {
 Widget _builderEnterCaloriesButton() {
   return Column(
     children: <Widget>[
-      Text("Can't find your cheat meal?", style: TextStyle(fontSize: 20, color: Color(0xff4ff7d3))),
-      SizedBox(height: 12),
+      const Text("Can't find your cheat meal?", style: TextStyle(fontSize: 20, color: Color(0xff4ff7d3))),
+      const SizedBox(height: 12),
       Container(
         alignment: Alignment.center,
         width: 180,
         height: 35,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             begin: Alignment.centerRight,
             end: Alignment.centerLeft,
-            colors: [Color(0xff9B22E6), Color(0xff4ff7d3)],
-            stops: [0.01, 0.7],
+            colors: const [Color(0xff9B22E6), Color(0xff4ff7d3)],
+            stops: const [0.01, 0.7],
           ),
         ),
         child: InkWell(
-          child:
-              Text('Enter Calories', style: TextStyle(fontSize: 22, color: Colors.black, fontWeight: FontWeight.bold)),
+          child: const Text(
+            'Enter Calories',
+            style: const TextStyle(fontSize: 22, color: Colors.black, fontWeight: FontWeight.bold),
+          ),
           onTap: () {},
         ),
       ),
@@ -99,7 +110,7 @@ class _FoodBodyState extends State<FoodBody> {
       imageUrl = 'https://via.placeholder.com/500x500?text=Error+Loading+Image';
     }
     return Container(
-      padding: EdgeInsets.all(7),
+      padding: const EdgeInsets.all(7),
       child: InkWell(
         onTap: () {
           Navigator.push(
@@ -112,13 +123,14 @@ class _FoodBodyState extends State<FoodBody> {
             child: InkWell(
               child: CachedNetworkImage(
                 placeholder: (context, url) => Container(),
-                errorWidget: (context, url, error) => Container(child: Center(child: Text('Error Loading Image..'))),
+                errorWidget: (context, url, error) =>
+                    Container(child: const Center(child: Text('Error Loading Image..'))),
                 // placeholder: kTransparentImage,
                 imageUrl: imageUrl,
                 width: 180,
                 height: 180,
                 fit: BoxFit.contain,
-                fadeInDuration: Duration(milliseconds: 250),
+                fadeInDuration: const Duration(milliseconds: 250),
               ),
             ),
           ),
@@ -139,17 +151,17 @@ class _FoodBodyState extends State<FoodBody> {
       }
     });
 
-    return _foodCards; 
+    return _foodCards;
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 7),
+      padding: const EdgeInsets.symmetric(horizontal: 7),
       child: ScrollConfiguration(
         behavior: NoOverscrollBehavior(),
         child: ListView(
-          padding: EdgeInsets.only(top: 20.0),
+          padding: const EdgeInsets.only(top: 20.0),
           children: <Widget>[
             _builderEnterCaloriesButton(),
             StreamBuilder<QuerySnapshot>(
@@ -161,7 +173,7 @@ class _FoodBodyState extends State<FoodBody> {
                   return Container(
                     height: 100,
                     alignment: Alignment.center,
-                    child: CircularProgressIndicator(
+                    child: const CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(Color(0xff4ff7d3)),
                     ),
                   );
@@ -170,7 +182,7 @@ class _FoodBodyState extends State<FoodBody> {
                 return GridView(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
                   children: _getFoodCards(snapshot),
                 );
               },
@@ -197,12 +209,12 @@ class FoodItems extends StatefulWidget {
 
 List<Widget> _buildExpansionButtons(BuildContext context, int quantity, Function setQuantity, String meal) {
   return [
-    SizedBox(height: 2),
+    const SizedBox(height: 2),
     Container(
       height: 25,
       width: 150,
       child: FlatButton(
-        padding: EdgeInsets.all(0),
+        padding: const EdgeInsets.all(0),
         color: Colors.purple.withOpacity(0.5),
         onPressed: () {
           _showLogDialog(context, setQuantity, quantity);
@@ -212,9 +224,9 @@ List<Widget> _buildExpansionButtons(BuildContext context, int quantity, Function
           children: [
             RichText(
               text: TextSpan(
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
                 children: <TextSpan>[
-                  TextSpan(text: 'Quantity '),
+                  const TextSpan(text: 'Quantity '),
                   TextSpan(text: quantity == 0 ? '1/2' : quantity.toString()),
                 ],
               ),
@@ -224,7 +236,7 @@ List<Widget> _buildExpansionButtons(BuildContext context, int quantity, Function
         ),
       ),
     ),
-    SizedBox(height: 10),
+    const SizedBox(height: 10),
     Container(
       height: 25,
       width: 150,
@@ -233,7 +245,7 @@ List<Widget> _buildExpansionButtons(BuildContext context, int quantity, Function
         onPressed: () {
           showDefualtFlushBar(context: context, text: '$quantity $meal added to cart.');
         },
-        child: Text('Add To Meal', style: TextStyle(color: Colors.white)),
+        child: const Text('Add To Meal', style: TextStyle(color: Colors.white)),
       ),
     )
   ];
@@ -276,7 +288,7 @@ class _FoodItemsState extends State<FoodItems> {
                   if (searchText == null || searchText == '' || meal.toLowerCase().contains(searchText.toLowerCase())) {
                     mealList.add(
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Material(
                           color: Colors.transparent,
                           child: Theme(
@@ -334,10 +346,19 @@ class _FoodItemPageState extends State<FoodItemPage> {
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(() {
-      setState(() {
-        searchText = _searchController.text;
-      });
+    _searchController.addListener(_setSearchText);
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_setSearchText);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _setSearchText() {
+    setState(() {
+      searchText = _searchController.text;
     });
   }
 
@@ -350,12 +371,12 @@ class _FoodItemPageState extends State<FoodItemPage> {
         elevation: 0,
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
+        decoration: const BoxDecoration(
+          gradient: const LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xff170422), Color(0xff9B22E6)],
-            stops: [0.75, 1],
+            colors: const [Color(0xff170422), Color(0xff9B22E6)],
+            stops: const [0.75, 1],
           ),
         ),
         child: Column(
@@ -397,7 +418,7 @@ class _QuantityRadioListState extends State<QuantityRadioList> {
   Widget build(BuildContext context) {
     return Container(
       child: ListView.builder(
-        padding: EdgeInsets.all(0),
+        padding: const EdgeInsets.all(0),
         itemCount: 101,
         itemBuilder: (BuildContext context, int index) {
           return RadioListTile(
@@ -422,8 +443,8 @@ Future<void> _showLogDialog(BuildContext context, Function setQuantity, int quan
     builder: (BuildContext context) {
       return AlertDialog(
         // title: Container(color: Colors.black, width: 100, height: 1), //Looks ugly, but is in app
-        contentPadding: EdgeInsets.all(0),
-        titlePadding: EdgeInsets.all(5),
+        contentPadding: const EdgeInsets.all(0),
+        titlePadding: const EdgeInsets.all(5),
         content: Container(
           height: 250,
           width: 200,
@@ -435,7 +456,7 @@ Future<void> _showLogDialog(BuildContext context, Function setQuantity, int quan
               splashColor: Colors.transparent,
               highlightColor: Colors.grey[200],
               textColor: Colors.black,
-              child: Text('Cancel', style: TextStyle(fontSize: 16)),
+              child: const Text('Cancel', style: TextStyle(fontSize: 16)),
               onPressed: () {
                 setQuantity(quantity);
                 Navigator.of(context).pop();
@@ -444,7 +465,7 @@ Future<void> _showLogDialog(BuildContext context, Function setQuantity, int quan
               splashColor: Colors.transparent,
               highlightColor: Colors.grey[200],
               textColor: Colors.black,
-              child: Text('Select', style: TextStyle(fontSize: 16)),
+              child: const Text('Select', style: TextStyle(fontSize: 16)),
               onPressed: () => Navigator.of(context).pop()),
         ],
       );

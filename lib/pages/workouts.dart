@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
+import 'package:workitoff/providers/user_provider.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -57,9 +59,16 @@ class _WorkoutsPageState extends State<WorkoutsPage>
     }
   }
 
+  void _setSearchText() {
+    setState(() {
+      _filter = _searchController.text;
+    });
+  }
+
   @override
   void dispose() {
     _animationController.dispose();
+    _searchController.removeListener(_setSearchText);
     _searchController.dispose();
     super.dispose();
   }
@@ -70,14 +79,15 @@ class _WorkoutsPageState extends State<WorkoutsPage>
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Log Workout?'),
+          title: const Text('Log Workout?'),
           actions: <Widget>[
             FlatButton(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.grey[200],
-                textColor: Colors.black,
-                child: Text('Cancel'),
-                onPressed: () => Navigator.of(context).pop()),
+              splashColor: Colors.transparent,
+              highlightColor: Colors.grey[200],
+              textColor: Colors.black,
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
             FlatButton(
                 splashColor: Colors.transparent,
                 highlightColor: Colors.grey[200],
@@ -96,12 +106,12 @@ class _WorkoutsPageState extends State<WorkoutsPage>
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
+      decoration: const BoxDecoration(
+        gradient: const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xff170422), Color(0xff9B22E6)],
-          stops: [0.75, 1],
+          colors: const [Color(0xff170422), Color(0xff9B22E6)],
+          stops: const [0.75, 1],
         ),
       ),
       child: Column(
@@ -212,7 +222,7 @@ class _WorkoutCardsState extends State<WorkoutCards> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 306,
+      height: 316,
       child: Card(
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
@@ -241,8 +251,8 @@ class _WorkoutCardsState extends State<WorkoutCards> {
             SliderTheme(
               data: SliderTheme.of(context).copyWith(
                   thumbColor: Colors.white,
-                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10.0),
-                  activeTrackColor: Color(0xff3ADEA7),
+                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10.0),
+                  activeTrackColor: const Color(0xff3ADEA7),
                   inactiveTrackColor: Colors.grey,
                   overlayColor: Colors.transparent,
                   trackHeight: 1.0),
@@ -258,7 +268,7 @@ class _WorkoutCardsState extends State<WorkoutCards> {
         ),
         color: Colors.transparent,
         elevation: 0.0,
-        margin: EdgeInsets.all(10.0),
+        margin: const EdgeInsets.symmetric(horizontal: 10),
       ),
     );
   }

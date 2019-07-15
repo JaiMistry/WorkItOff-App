@@ -1,16 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class BurnPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints.expand(),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
+      constraints: const BoxConstraints.expand(),
+      decoration: const BoxDecoration(
+        gradient: const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xff170422), Color(0xff9B22E6)],
-          stops: [0.75, 1],
+          colors: const [Color(0xff170422), Color(0xff9B22E6)],
+          stops: const [0.75, 1],
         ),
       ),
       child: Column(
@@ -18,40 +20,33 @@ class BurnPage extends StatelessWidget {
           Column(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(top: 40.0),
+                padding: const EdgeInsets.only(top: 40.0),
                 child: Image.asset('assets/text_logo.png', width: 80),
               ),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               Image.asset('assets/logo_transparent.png', height: 300),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               Container(
                 child: Column(
                   children: <Widget>[
-                    Text(
-                      'Enjoy something',
-                      style: TextStyle(color: Colors.white, fontSize: 25.0),
-                    ),
-                    Text(
-                      'delicious... come back and',
-                      style: TextStyle(color: Colors.white, fontSize: 25.0),
-                    ),
-                    Text(
-                      'Work It Off!',
-                      style:
-                          TextStyle(color: Color(0xff3ADEA7), fontSize: 25.0),
-                    ),
+                    const Text('Enjoy something', style: const TextStyle(color: Colors.white, fontSize: 25.0)),
+                    const Text('delicious... come back and', style: TextStyle(color: Colors.white, fontSize: 25.0)),
+                    const Text('Work It Off!', style: const TextStyle(color: Color(0xff3ADEA7), fontSize: 25.0)),
                     SizedBox(
                       width: 60.0,
                       child: OutlineButton(
-                        child:
-                            Text('Go!', style: TextStyle(color: Colors.white)),
-                        onPressed: () {},
-                        shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(20.0),
+                        child: const Text('Sign out!', style: TextStyle(color: Colors.white)),
+                        onPressed: () {
+                          Scaffold.of(context).showSnackBar(SnackBar(content: Text('You have been signed out!')));
+                          final auth = FirebaseAuth.instance;
+                          auth.signOut();
+                        },
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
                         ),
-                        borderSide: BorderSide(color: Color(0xff17e3f1)),
-                        highlightColor: Color(0xff17e3f1),
-                        highlightedBorderColor: Color(0xff17e3f1),
+                        borderSide: const BorderSide(color: Color(0xff17e3f1)),
+                        highlightColor: const Color(0xff17e3f1),
+                        highlightedBorderColor: const Color(0xff17e3f1),
                         splashColor: Colors.transparent,
                       ),
                     )

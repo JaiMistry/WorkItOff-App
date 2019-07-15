@@ -18,6 +18,13 @@ class SearchBar extends StatefulWidget {
 class _SearchBarState extends State<SearchBar> {
   bool empty = true; // Is the textfield empty or not?
 
+  void _clearController() {
+    setState(() {
+      widget.controller.clear();
+      empty = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -35,24 +42,19 @@ class _SearchBarState extends State<SearchBar> {
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.white,
-          contentPadding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
+          contentPadding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
           hintText: widget.hintText,
-          hintStyle: TextStyle(color: Colors.grey, fontSize: 15),
-          prefixIcon: Icon(Icons.search, color: Color(0xff5a5a5a)),
+          hintStyle: const TextStyle(color: Colors.grey, fontSize: 15),
+          prefixIcon: const Icon(Icons.search, color: Color(0xff5a5a5a)),
           suffixIcon: empty
               ? null
               : IconButton(
                   icon: Icon(Icons.clear, size: 20, color: Colors.grey),
-                  onPressed: () {
-                    setState(() {
-                      widget.controller.clear();
-                      empty = true;
-                    });
-                  },
+                  onPressed: _clearController
                 ),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
-          enabledBorder: OutlineInputBorder(borderSide: BorderSide(style: BorderStyle.none)),
-          focusedBorder: OutlineInputBorder(borderSide: BorderSide(style: BorderStyle.none)),
+          enabledBorder: const OutlineInputBorder(borderSide: const BorderSide(style: BorderStyle.none)),
+          focusedBorder: const OutlineInputBorder(borderSide: const BorderSide(style: BorderStyle.none)),
         ),
         textAlign: TextAlign.left,
       ),
@@ -69,7 +71,7 @@ Future<Object> showDefualtFlushBar({@required BuildContext context, @required St
     dismissDirection: FlushbarDismissDirection.HORIZONTAL,
     // reverseAnimationCurve: Curves.decelerate,
     // forwardAnimationCurve: Curves.easeIn,
-    duration: Duration(seconds: 3),
+    duration: const Duration(seconds: 3),
     flushbarPosition: FlushbarPosition.TOP,
   ).show(context);
 }
