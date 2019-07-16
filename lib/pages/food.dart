@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:workitoff/navigation_bar.dart';
 
 // import 'package:transparent_image/transparent_image.dart';
 
@@ -370,6 +371,7 @@ class _FoodItemPageState extends State<FoodItemPage> {
         title: Text(widget.restaurant.documentID),
         elevation: 0,
       ),
+      bottomNavigationBar: BottomNavBar(),  // TODO: This doesnt really work....
       body: Container(
         decoration: const BoxDecoration(
           gradient: const LinearGradient(

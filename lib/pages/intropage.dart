@@ -276,6 +276,7 @@ class _InputPageState extends State<InputPage> with AutomaticKeepAliveClientMixi
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Must be here? MustCallSuper?
     return Container(
       child: Container(
         color: Colors.transparent,

@@ -11,14 +11,12 @@ import 'package:workitoff/widgets.dart';
 
 bool _isSliderMoved = false;
 
-// TODO: preserve state of entire page
 class WorkoutsPage extends StatefulWidget {
   @override
   _WorkoutsPageState createState() => _WorkoutsPageState();
 }
 
-class _WorkoutsPageState extends State<WorkoutsPage>
-    with TickerProviderStateMixin {
+class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMixin {
   AnimationController _animationController;
   TextEditingController _searchController = new TextEditingController();
   bool isButtonDisabled = true;
@@ -32,9 +30,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
         DocumentSnapshot workout = snapshot.data.documents[index];
         return _filter == null || _filter == ''
             ? WorkoutCards(snapshot.data.documents[index])
-            : workout.documentID.contains(_filter.toLowerCase())
-                ? WorkoutCards(workout)
-                : Container();
+            : workout.documentID.contains(_filter.toLowerCase()) ? WorkoutCards(workout) : Container();
       },
       itemCount: snapshot.data.documents.length,
     );
@@ -50,8 +46,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
     });
     if (_isSliderMoved) {
       isButtonDisabled = false;
-      _animationController = AnimationController(
-          duration: const Duration(milliseconds: 350), vsync: this);
+      _animationController = AnimationController(duration: const Duration(milliseconds: 350), vsync: this);
       _animationController.forward();
     } else {
       isButtonDisabled = true;
@@ -92,8 +87,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
                 splashColor: Colors.transparent,
                 highlightColor: Colors.grey[200],
                 textColor: Colors.black,
-                child:
-                    Text('Log', style: TextStyle(fontWeight: FontWeight.bold)),
+                child: Text('Log', style: TextStyle(fontWeight: FontWeight.bold)),
                 // TODO: check if weight/age has been entered. Redirect to profile page via alert dialog
                 // TODO: send logging data to cloud function, redirect to progress page
                 onPressed: () => Navigator.of(context).pop()),
@@ -116,10 +110,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
       ),
       child: Column(
         children: <Widget>[
-          SearchBar(
-              hintText: 'Search Workouts',
-              controller: _searchController,
-              bottomMargin: 6),
+          SearchBar(hintText: 'Search Workouts', controller: _searchController, bottomMargin: 6),
           Expanded(
             child: ScrollConfiguration(
               behavior: NoOverscrollBehavior(),
@@ -130,9 +121,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
                     child: Column(
                       children: <Widget>[
                         StreamBuilder<QuerySnapshot>(
-                          stream: Firestore.instance
-                              .collection('workouts')
-                              .snapshots(),
+                          stream: Firestore.instance.collection('workouts').snapshots(),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData | snapshot.hasError) {
                               return Container();
@@ -155,8 +144,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
                                 SizedBox(height: 10.0),
                                 Text(
                                   'Calories burned are calculated from your weight and our algorithm.',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 10.0),
+                                  style: TextStyle(color: Colors.white, fontSize: 10.0),
                                 ),
                               ],
                             ),
@@ -169,18 +157,16 @@ class _WorkoutsPageState extends State<WorkoutsPage>
                   Container(
                     alignment: Alignment.bottomCenter,
                     child: FadeTransition(
-                      opacity: CurvedAnimation(
-                          parent: _animationController, curve: Curves.linear),
+                      opacity: CurvedAnimation(parent: _animationController, curve: Curves.linear),
                       child: Container(
-                        width: MediaQuery.of(context).size.width,
+                        // width: MediaQuery.of(context).size.width, // Less efficient
+                        width: double.infinity,
                         child: FlatButton(
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           color: Color(0xff4ff7d3),
                           splashColor: Colors.transparent,
                           highlightColor: Colors.transparent,
-                          child: Text("Enter Workouts",
-                              style: TextStyle(fontSize: 18.0)),
+                          child: Text("Enter Workouts", style: TextStyle(fontSize: 18.0)),
                           onPressed: () {
                             return isButtonDisabled ? null : _showLogDialog();
                           },
@@ -235,8 +221,7 @@ class _WorkoutCardsState extends State<WorkoutCards> {
               child: CachedNetworkImage(
                 imageUrl: this.widget.data['image_url'],
                 placeholder: (context, url) => Container(),
-                errorWidget: (context, url, error) =>
-                    Container(child: Text('Error Loading image..')),
+                errorWidget: (context, url, error) => Container(child: Text('Error Loading image..')),
                 fit: BoxFit.cover,
                 fadeInCurve: Curves.linear,
               ),

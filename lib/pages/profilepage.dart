@@ -426,7 +426,8 @@ class _UpdateProfileBtnState extends State<UpdateProfileBtn> with SingleTickerPr
       child: FadeTransition(
         opacity: CurvedAnimation(parent: _animationController, curve: Curves.linear),
         child: Container(
-          width: MediaQuery.of(context).size.width,
+          // width: MediaQuery.of(context).size.width, // Less efficient
+          width: double.infinity,
           child: FlatButton(
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // Removed all padding
             padding: EdgeInsets.zero,
