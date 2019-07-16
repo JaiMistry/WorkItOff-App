@@ -17,8 +17,7 @@ class WorkoutsPage extends StatefulWidget {
   _WorkoutsPageState createState() => _WorkoutsPageState();
 }
 
-class _WorkoutsPageState extends State<WorkoutsPage>
-    with TickerProviderStateMixin {
+class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMixin {
   AnimationController _animationController;
   TextEditingController _searchController = new TextEditingController();
   bool isButtonDisabled = true;
@@ -50,8 +49,8 @@ class _WorkoutsPageState extends State<WorkoutsPage>
     });
     if (_isSliderMoved) {
       isButtonDisabled = false;
-      _animationController = AnimationController(
-          duration: const Duration(milliseconds: 350), vsync: this);
+      _animationController =
+          AnimationController(duration: const Duration(milliseconds: 350), vsync: this);
       _animationController.forward();
     } else {
       isButtonDisabled = true;
@@ -74,6 +73,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
   }
 
   Future<void> _showLogDialog() async {
+    WorkItOffUser user = Provider.of<WorkItOffUser>(context);
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -92,10 +92,49 @@ class _WorkoutsPageState extends State<WorkoutsPage>
                 splashColor: Colors.transparent,
                 highlightColor: Colors.grey[200],
                 textColor: Colors.black,
-                child:
-                    Text('Log', style: TextStyle(fontWeight: FontWeight.bold)),
-                // TODO: check if weight/age has been entered. Redirect to profile page via alert dialog
+                child: Text('Log', style: TextStyle(fontWeight: FontWeight.bold)),
                 // TODO: send logging data to cloud function, redirect to progress page
+                onPressed: () {
+                  if (user.getAge() == null || user.getAge().isEmpty) {
+                    Navigator.of(context).pop();
+                    _showMissingDataDialog('Age');
+                  }
+                  if (user.getGender() == null || user.getGender().isEmpty) {
+                    Navigator.of(context).pop();
+                    _showMissingDataDialog('Gender');
+                  }
+                  if (user.getWeight() != null || user.getWeight().isEmpty) {
+                    Navigator.of(context).pop();
+                    _showMissingDataDialog('Weight');
+                  }
+                }),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showMissingDataDialog(String data) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('You have not set your $data yet.'),
+          actions: <Widget>[
+            FlatButton(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.grey[200],
+              textColor: Colors.black,
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            FlatButton(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.grey[200],
+                textColor: Colors.black,
+                child: Text('Set $data', style: TextStyle(fontWeight: FontWeight.bold)),
+                // TODO: Redirect to profile page
                 onPressed: () => Navigator.of(context).pop()),
           ],
         );
@@ -130,9 +169,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
                     child: Column(
                       children: <Widget>[
                         StreamBuilder<QuerySnapshot>(
-                          stream: Firestore.instance
-                              .collection('workouts')
-                              .snapshots(),
+                          stream: Firestore.instance.collection('workouts').snapshots(),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData | snapshot.hasError) {
                               return Container();
@@ -155,8 +192,7 @@ class _WorkoutsPageState extends State<WorkoutsPage>
                                 SizedBox(height: 10.0),
                                 Text(
                                   'Calories burned are calculated from your weight and our algorithm.',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 10.0),
+                                  style: TextStyle(color: Colors.white, fontSize: 10.0),
                                 ),
                               ],
                             ),
@@ -174,13 +210,11 @@ class _WorkoutsPageState extends State<WorkoutsPage>
                       child: Container(
                         width: MediaQuery.of(context).size.width,
                         child: FlatButton(
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           color: Color(0xff4ff7d3),
                           splashColor: Colors.transparent,
                           highlightColor: Colors.transparent,
-                          child: Text("Enter Workouts",
-                              style: TextStyle(fontSize: 18.0)),
+                          child: Text("Enter Workouts", style: TextStyle(fontSize: 18.0)),
                           onPressed: () {
                             return isButtonDisabled ? null : _showLogDialog();
                           },
