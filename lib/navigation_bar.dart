@@ -37,8 +37,13 @@ class _NavigationBarState extends State<NavigationBar> {
     return MultiProvider(
       providers: [StreamProvider<WorkItOffUser>.value(value: DatabaseService().streamUser(userID))],
       child: Scaffold(
-        // resizeToAvoidBottomPadding: false,
-        body: _pageOptions.elementAt(_selectedIndex),
+        body: SafeArea(
+          top: false,
+          bottom: true,
+          left: false,
+          right: false,
+          child: _pageOptions.elementAt(_selectedIndex),
+        ),
         bottomNavigationBar: Theme(
           data: Theme.of(context).copyWith(
             canvasColor: Color(0xff271037).withOpacity(0.90),
