@@ -37,14 +37,20 @@ class _NavigationBarState extends State<NavigationBar> {
     return MultiProvider(
       providers: [StreamProvider<WorkItOffUser>.value(value: DatabaseService().streamUser(userID))],
       child: Scaffold(
-        // resizeToAvoidBottomPadding: false,
-        body: _pageOptions.elementAt(_selectedIndex),
+        body: IndexedStack(
+          children: _pageOptions,
+          index: _selectedIndex,
+        ),
         bottomNavigationBar: Theme(
           data: Theme.of(context).copyWith(
             canvasColor: Color(0xff271037).withOpacity(0.90),
             splashColor: Colors.transparent,
           ),
           child: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            unselectedItemColor: Colors.white,
+            selectedItemColor: Color(0xff3ADEA7),
             type: BottomNavigationBarType.fixed,
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
@@ -64,10 +70,6 @@ class _NavigationBarState extends State<NavigationBar> {
                 title: Icon(Icons.person, color: Colors.white),
               )
             ],
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-            unselectedItemColor: Colors.white,
-            selectedItemColor: Color(0xff3ADEA7),
           ),
         ),
       ),

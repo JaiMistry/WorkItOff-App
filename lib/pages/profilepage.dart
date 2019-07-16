@@ -11,7 +11,6 @@ import 'package:workitoff/providers/user_provider.dart';
 import 'package:workitoff/widgets.dart';
 import 'package:workitoff/auth/auth.dart';
 
-
 bool _isNumeric(String str) {
   if (str == null) {
     return false;
@@ -150,7 +149,7 @@ class _GenderRadioState extends State<GenderRadio> {
             activeColor: const Color(0xff4ff7d3),
             groupValue: _selected,
             onChanged: (val) {
-               Provider.of<GenderProvider>(context).gender = val == 1 ? 'female' : 'male';
+              Provider.of<GenderProvider>(context).gender = val == 1 ? 'female' : 'male';
               _onRadioChanged(val);
             },
           ),
@@ -316,8 +315,8 @@ class _ProfilePageDataState extends State<ProfilePageData> {
   @override
   Widget build(BuildContext context) {
     WorkItOffUser user = Provider.of<WorkItOffUser>(context);
-    _weightController.text = user.weight;
-    _ageController.text = user.age;
+    _weightController.text = user != null ? user.weight : '0';
+    _ageController.text = user != null ? user.age : '0';
     return ChangeNotifierProvider(
       builder: (context) => GenderProvider(),
       child: Column(
@@ -337,7 +336,7 @@ class _ProfilePageDataState extends State<ProfilePageData> {
                       formKey: _formKey,
                       ageController: _ageController,
                       weightController: _weightController,
-                      initialGender: user.gender,
+                      initialGender: user != null ? user.gender : 'male',
                     ),
                     const WebsiteLinks(),
                   ],
@@ -382,8 +381,12 @@ class UpdateProfileBtn extends StatefulWidget {
   final TextEditingController ageController;
   final TextEditingController weightController;
 
-  UpdateProfileBtn({Key key, @required this.formKey, @required this.ageController, @required this.weightController})
-      : super(key: key);
+  UpdateProfileBtn({
+    Key key,
+    @required this.formKey,
+    @required this.ageController,
+    @required this.weightController,
+  }) : super(key: key);
 
   _UpdateProfileBtnState createState() => _UpdateProfileBtnState();
 }

@@ -27,18 +27,18 @@ void signInAnonymously({
   String _userID = user.uid;
 
   if (user != null) {
-    debugPrint(_userID + " has sucessfully signed in!");
-
     //Overwrites entire document
-    _addNewUser(_userID, gender, age, weight);
-
+    await _addNewUser(_userID, gender, age, weight).catchError((e) {
+      showDefualtFlushBar(context: context, text: 'Unable to sign in.');
+    });
+    debugPrint(_userID + " has sucessfully signed in!");
   } else {
     showDefualtFlushBar(context: context, text: 'Unable to sign in.');
   }
 }
 
 Future<void> _addNewUser(String userID, String gender, int age, int weight) async {
-  return await _firestore.collection('users').document(userID).setData(
+  return _firestore.collection('users').document(userID).setData(
       {'age': age, 'weight': weight, 'gender': gender, 'date_joined': Timestamp.now(), 'last_login': Timestamp.now()});
 }
 
@@ -54,14 +54,13 @@ Future<void> updateLastSignedIn(String userID) async {
 }
 
 Future<FirebaseUser> getCurrentFireBaseUser() async {
-  return await _firebaseAuth.currentUser();
+  return _firebaseAuth.currentUser();
 }
 
 Future<String> getCurrentFireBaseUserId() async {
   FirebaseUser user = await _firebaseAuth.currentUser();
   return user.uid;
 }
-
 
 // * Sign on status
 
