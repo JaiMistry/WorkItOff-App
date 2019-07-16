@@ -22,6 +22,7 @@ class _NavigationBarState extends State<NavigationBar> {
     FoodPage(),
     WorkoutsPage(),
     ProfilePage(),
+    // FoodItemPage()  // TODO: Maybe make this a global page and pass parameters??
   ];
 
   void _onItemTapped(int index) {
