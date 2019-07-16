@@ -315,8 +315,8 @@ class _ProfilePageDataState extends State<ProfilePageData> {
   @override
   Widget build(BuildContext context) {
     WorkItOffUser user = Provider.of<WorkItOffUser>(context);
-    _weightController.text = user.weight;
-    _ageController.text = user.age;
+    _weightController.text = user != null ? user.weight : '0';
+    _ageController.text = user != null ? user.age : '0';
     return ChangeNotifierProvider(
       builder: (context) => GenderProvider(),
       child: Column(
@@ -336,7 +336,7 @@ class _ProfilePageDataState extends State<ProfilePageData> {
                       formKey: _formKey,
                       ageController: _ageController,
                       weightController: _weightController,
-                      initialGender: user.gender,
+                      initialGender: user != null ? user.gender : 'male',
                     ),
                     const WebsiteLinks(),
                   ],
