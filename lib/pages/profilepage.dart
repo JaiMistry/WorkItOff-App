@@ -125,8 +125,11 @@ class _GenderRadioState extends State<GenderRadio> {
   void _onRadioChanged(int value) {
     setState(() {
       _selected = value;
-      _genderMapping[value] = Color(0xff4ff7d3); // Change the slected item color
-      value == 0 ? _genderMapping[1] = Colors.white : _genderMapping[0] = Colors.white; // Unslected item
+      _genderMapping[value] =
+          Color(0xff4ff7d3); // Change the slected item color
+      value == 0
+          ? _genderMapping[1] = Colors.white
+          : _genderMapping[0] = Colors.white; // Unslected item
     });
   }
 
