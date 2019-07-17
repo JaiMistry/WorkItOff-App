@@ -5,11 +5,27 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:workitoff/navigation_bar.dart';
+import 'package:provider/provider.dart';
+// import 'package:workitoff/navigation_bar.dart';
 
 // import 'package:transparent_image/transparent_image.dart';
 
 import 'package:workitoff/widgets.dart';
+
+class FoodItemProvider extends ChangeNotifier {
+  DocumentSnapshot _currentRestaurant;
+
+  set currentRestuarant(DocumentSnapshot snap) {
+    _currentRestaurant = snap;
+    notifyListeners();
+  }
+
+  DocumentSnapshot get currentRestuarant {
+    return _currentRestaurant;
+  }
+}
+
+// class FoodPage
 
 class FoodPage extends StatefulWidget {
   @override
@@ -19,6 +35,7 @@ class FoodPage extends StatefulWidget {
 class _FoodPageState extends State<FoodPage> {
   TextEditingController _searchController = new TextEditingController();
   String _restuarantSearchFilter;
+  int _selectedPage = 0;
 
   @override
   void initState() {
@@ -39,24 +56,39 @@ class _FoodPageState extends State<FoodPage> {
     });
   }
 
+  void _setPage(int newPageId) {
+    setState(() {
+      _selectedPage = newPageId;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
+    return ChangeNotifierProvider(
+      builder: (ctx) => FoodItemProvider(),
+      child: IndexedStack(
+        index: _selectedPage,
         children: <Widget>[
-          SearchBar(hintText: 'Search', controller: _searchController, bottomMargin: 6),
-          Expanded(
-            child: FoodBody(restuarantSearchFiler: _restuarantSearchFilter),
+          Container(
+            child: Column(
+              children: <Widget>[
+                SearchBar(hintText: 'Search', controller: _searchController, bottomMargin: 6),
+                Expanded(
+                  child: FoodBody(restuarantSearchFiler: _restuarantSearchFilter, setPage: _setPage),
+                ),
+              ],
+            ),
+            decoration: const BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: const [Color(0xff170422), Color(0xff9B22E6)],
+                stops: const [0.75, 1],
+              ),
+            ),
           ),
+          FoodItemPage(setPage: _setPage),
         ],
-      ),
-      decoration: const BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: const [Color(0xff170422), Color(0xff9B22E6)],
-          stops: const [0.75, 1],
-        ),
       ),
     );
   }
@@ -94,18 +126,15 @@ Widget _builderEnterCaloriesButton() {
 
 class FoodBody extends StatefulWidget {
   final String restuarantSearchFiler; // user input in the searchbar
+  final Function setPage;
 
-  FoodBody({Key key, @required this.restuarantSearchFiler}) : super(key: key);
+  FoodBody({Key key, @required this.restuarantSearchFiler, @required this.setPage}) : super(key: key);
 
   _FoodBodyState createState() => _FoodBodyState();
 }
 
 class _FoodBodyState extends State<FoodBody> {
   Widget _makeFoodCard(BuildContext context, DocumentSnapshot restaurant) {
-    // if (restaurant == null) {
-    //   return Container();
-    // }
-
     String imageUrl = restaurant.data['image_url'];
     if (imageUrl == null) {
       imageUrl = 'https://via.placeholder.com/500x500?text=Error+Loading+Image';
@@ -114,8 +143,9 @@ class _FoodBodyState extends State<FoodBody> {
       padding: const EdgeInsets.all(7),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (BuildContext context) => FoodItemPage(restaurant: restaurant)));
+          Provider.of<FoodItemProvider>(context)._currentRestaurant = restaurant;
+          widget.setPage(1);
+          // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => FoodItemPage(restaurant: restaurant)));
         },
         child: ClipRRect(
           borderRadius: BorderRadius.circular(15.0),
@@ -263,6 +293,9 @@ class _FoodItemsState extends State<FoodItems> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.restaurant == null) {
+      return Container();
+    }
     return Container(
       child: Expanded(
         child: ScrollConfiguration(
@@ -332,9 +365,10 @@ class _FoodItemsState extends State<FoodItems> {
 }
 
 class FoodItemPage extends StatefulWidget {
-  final DocumentSnapshot restaurant;
+  final Function setPage;
+  // final DocumentSnapshot restaurant;
 
-  FoodItemPage({@required this.restaurant});
+  FoodItemPage({@required this.setPage});
 
   @override
   _FoodItemPageState createState() => _FoodItemPageState();
@@ -365,28 +399,44 @@ class _FoodItemPageState extends State<FoodItemPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xff170422),
-        title: Text(widget.restaurant.documentID),
-        elevation: 0,
-      ),
-      bottomNavigationBar: BottomNavBar(),  // TODO: This doesnt really work....
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: const [Color(0xff170422), Color(0xff9B22E6)],
-            stops: const [0.75, 1],
+    DocumentSnapshot _restuarant = Provider.of<FoodItemProvider>(context)._currentRestaurant;
+    return WillPopScope(
+      onWillPop: () {
+        widget.setPage(0);
+        return Future.value(false); // Dont actually go back. I only want to run the function above
+      },
+      child: Column(
+        children: <Widget>[
+          AppBar(
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                widget.setPage(0);
+              },
+            ),
+            backgroundColor: Color(0xff170422),
+            title: Text(_restuarant == null ? 'Placeholder' : _restuarant.documentID),
+            elevation: 0,
           ),
-        ),
-        child: Column(
-          children: <Widget>[
-            SearchBar(controller: _searchController, hintText: 'Search', topMargin: 5, bottomMargin: 6),
-            FoodItems(restaurant: widget.restaurant, searchText: searchText)
-          ],
-        ),
+          Flexible(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: const [Color(0xff170422), Color(0xff9B22E6)],
+                  stops: const [0.75, 1],
+                ),
+              ),
+              child: Column(
+                children: <Widget>[
+                  SearchBar(controller: _searchController, hintText: 'Search', topMargin: 5, bottomMargin: 6),
+                  FoodItems(restaurant: _restuarant, searchText: searchText)
+                ],
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -455,20 +505,22 @@ Future<void> _showLogDialog(BuildContext context, Function setQuantity, int quan
         ),
         actions: <Widget>[
           FlatButton(
-              splashColor: Colors.transparent,
-              highlightColor: Colors.grey[200],
-              textColor: Colors.black,
-              child: const Text('Cancel', style: TextStyle(fontSize: 16)),
-              onPressed: () {
-                setQuantity(quantity);
-                Navigator.of(context).pop();
-              }),
+            splashColor: Colors.transparent,
+            highlightColor: Colors.grey[200],
+            textColor: Colors.black,
+            child: const Text('Cancel', style: TextStyle(fontSize: 16)),
+            onPressed: () {
+              setQuantity(quantity);
+              Navigator.of(context).pop();
+            },
+          ),
           FlatButton(
-              splashColor: Colors.transparent,
-              highlightColor: Colors.grey[200],
-              textColor: Colors.black,
-              child: const Text('Select', style: TextStyle(fontSize: 16)),
-              onPressed: () => Navigator.of(context).pop()),
+            splashColor: Colors.transparent,
+            highlightColor: Colors.grey[200],
+            textColor: Colors.black,
+            child: const Text('Select', style: TextStyle(fontSize: 16)),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ],
       );
     },
