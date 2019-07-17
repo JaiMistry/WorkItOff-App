@@ -12,6 +12,9 @@ import 'package:provider/provider.dart';
 
 import 'package:workitoff/widgets.dart';
 
+// ? https://medium.com/coding-with-flutter/flutter-case-study-multiple-navigators-with-bottomnavigationbar-90eb6caa6dbf
+// This is probably the way to do it.
+
 class FoodItemProvider extends ChangeNotifier {
   DocumentSnapshot _currentRestaurant;
 
