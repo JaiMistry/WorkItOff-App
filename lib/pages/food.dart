@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -207,7 +208,8 @@ class FoodItems extends StatefulWidget {
   _FoodItemsState createState() => _FoodItemsState();
 }
 
-List<Widget> _buildExpansionButtons(BuildContext context, int quantity, Function setQuantity, String meal) {
+List<Widget> _buildExpansionButtons(
+    BuildContext context, int quantity, Function setQuantity, String meal, Function addToCart) {
   return [
     const SizedBox(height: 2),
     Container(
@@ -243,6 +245,7 @@ List<Widget> _buildExpansionButtons(BuildContext context, int quantity, Function
       child: FlatButton(
         color: Colors.teal.withOpacity(0.5),
         onPressed: () {
+          addToCart(meal, quantity);
           showDefualtFlushBar(context: context, text: '$quantity $meal added to cart.');
         },
         child: const Text('Add To Meal', style: TextStyle(color: Colors.white)),
@@ -251,12 +254,137 @@ List<Widget> _buildExpansionButtons(BuildContext context, int quantity, Function
   ];
 }
 
-class _FoodItemsState extends State<FoodItems> {
+Widget _enterMealsButton(BuildContext context, AnimationController controller, bool isButtonDisabled, int count,
+    Function resetCart, List<String> meals, List<int> quantities) {
+  return FadeTransition(
+    opacity: CurvedAnimation(parent: controller, curve: Curves.linear),
+    child: Container(
+      width: MediaQuery.of(context).size.width,
+      child: FlatButton(
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        color: const Color(0xff4ff7d3),
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        child: Text("Enter Meal ($count)", style: TextStyle(fontSize: 18.0)),
+        onPressed: () {
+          return isButtonDisabled ? null : _mealDialog(context, controller, resetCart, meals, quantities);
+        },
+      ),
+    ),
+  );
+}
+
+Future<void> _mealDialog(BuildContext context, AnimationController controller, Function resetCart, List<String> meals,
+    List<int> quantities) async {
+  if (Platform.isIOS) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text('Log Meal?'),
+          content: Text('Cart: ${meals.join(", ")} (${quantities.join(",")})'),
+          actions: <Widget>[
+            CupertinoDialogAction(
+                child: Text('Empty Cart', style: TextStyle(color: Colors.black)),
+                onPressed: () {
+                  resetCart();
+                  Navigator.of(context).pop();
+                }),
+            CupertinoDialogAction(
+                child: Text('Cancel', style: TextStyle(color: Colors.black)),
+                onPressed: () => Navigator.of(context).pop()),
+            CupertinoDialogAction(
+              child: Text('Log', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+              // TODO: Send total calories of all food items to Progress Page
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  } else if (Platform.isAndroid) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Log Meal?'),
+          content: Text('Cart: ${meals.join(", ")} (${quantities.join(",")})'),
+          actions: <Widget>[
+            FlatButton(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.grey[200],
+                textColor: Colors.black,
+                child: Text('Empty Cart'),
+                onPressed: () {
+                  resetCart();
+                  Navigator.of(context).pop();
+                }),
+            FlatButton(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.grey[200],
+                textColor: Colors.black,
+                child: Text('Cancel'),
+                onPressed: () => Navigator.of(context).pop()),
+            FlatButton(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.grey[200],
+              textColor: Colors.black,
+              child: Text('Log', style: TextStyle(fontWeight: FontWeight.bold)),
+              // TODO: Send total calories of all food items to Progress Page
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _FoodItemsState extends State<FoodItems> with SingleTickerProviderStateMixin {
+  AnimationController _animationController;
+  List<String> listOfMeals = [];
+  List<int> quantityOfMeals = [];
+  bool isButtonDisabled = true;
   int quantity = 1;
+  int count = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(duration: const Duration(milliseconds: 350), vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   void _setQuantity(int newQuantity) {
     setState(() {
       quantity = newQuantity;
+    });
+  }
+
+  void _addToCart(String meal, int quantity) {
+    setState(() {
+      count++;
+      listOfMeals.add(meal);
+      quantityOfMeals.add(quantity);
+      _animationController.forward();
+      isButtonDisabled = false;
+    });
+  }
+
+  void _resetCart() {
+    setState(() {
+      listOfMeals.clear();
+      quantityOfMeals.clear();
+      _animationController.reverse();
+      isButtonDisabled = true;
+      count = 0;
     });
   }
 
@@ -266,63 +394,73 @@ class _FoodItemsState extends State<FoodItems> {
       child: Expanded(
         child: ScrollConfiguration(
           behavior: NoOverscrollBehavior(),
-          child: ListView.builder(
-            // shrinkWrap: true,
-            itemCount: 1,
-            itemBuilder: (BuildContext contect, int index) {
-              if (widget.restaurant.data['meals'] == null || widget.restaurant.data['meals'].toString() == '{}') {
-                return Container(padding: EdgeInsets.only(top: 20), child: Center(child: Text('No Meals Found.')));
-              }
+          child: SafeArea(
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: <Widget>[
+                ListView.builder(
+                  // shrinkWrap: true,
+                  itemCount: 1,
+                  itemBuilder: (BuildContext contect, int index) {
+                    if (widget.restaurant.data['meals'] == null || widget.restaurant.data['meals'].toString() == '{}') {
+                      return Container(
+                          padding: EdgeInsets.only(top: 20), child: Center(child: Text('No Meals Found.')));
+                    }
 
-              Map<String, Map> categories = widget.restaurant.data['meals'].cast<String, Map>();
-              List<Widget> widgetList = [];
+                    Map<String, Map> categories = widget.restaurant.data['meals'].cast<String, Map>();
+                    List<Widget> widgetList = [];
 
-              categories.forEach((categtory, mealMap) {
-                List<Widget> mealList = [];
+                    categories.forEach((categtory, mealMap) {
+                      List<Widget> mealList = [];
 
-                Map<String, int> meals = mealMap.cast<String, int>();
-                meals.forEach((String meal, int cals) {
-                  String searchText = widget.searchText;
+                      Map<String, int> meals = mealMap.cast<String, int>();
+                      meals.forEach((String meal, int cals) {
+                        String searchText = widget.searchText;
 
-                  //Only reutrn the food items that are being searched for
-                  if (searchText == null || searchText == '' || meal.toLowerCase().contains(searchText.toLowerCase())) {
-                    mealList.add(
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: Theme(
-                            data: ThemeData(accentColor: Colors.white, unselectedWidgetColor: Colors.white),
-                            child: ExpansionTile(
-                              onExpansionChanged: (bool state) {},
-                              title: Text(meal, style: TextStyle(color: Colors.white, fontSize: 14)),
-                              // trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
-                              children: _buildExpansionButtons(context, quantity, _setQuantity, meal),
+                        //Only reutrn the food items that are being searched for
+                        if (searchText == null ||
+                            searchText == '' ||
+                            meal.toLowerCase().contains(searchText.toLowerCase())) {
+                          mealList.add(
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: Theme(
+                                  data: ThemeData(accentColor: Colors.white, unselectedWidgetColor: Colors.white),
+                                  child: ExpansionTile(
+                                    onExpansionChanged: (bool state) {},
+                                    title: Text(meal, style: TextStyle(color: Colors.white, fontSize: 14)),
+                                    // trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
+                                    children: _buildExpansionButtons(context, quantity, _setQuantity, meal, _addToCart),
+                                  ),
+                                ),
+                              ),
                             ),
+                          );
+                        }
+                      });
+
+                      // Only return the category if there are food items within
+                      if (mealList.length > 0) {
+                        widgetList.add(
+                          Column(
+                            children: <Widget>[
+                              ListTile(
+                                  title: Text(categtory, style: TextStyle(color: Color(0xff4ff7d3), fontSize: 22))),
+                              Column(children: mealList)
+                            ],
                           ),
-                        ),
-                      ),
-                    );
-                  }
-                });
-
-                // Only return the category if there are food items within
-                if (mealList.length > 0) {
-                  widgetList.add(
-                    Column(
-                      children: <Widget>[
-                        ListTile(title: Text(categtory, style: TextStyle(color: Color(0xff4ff7d3), fontSize: 22))),
-                        Column(
-                          children: mealList,
-                        )
-                      ],
-                    ),
-                  );
-                }
-              });
-
-              return Column(children: widgetList);
-            },
+                        );
+                      }
+                    });
+                    return Column(children: widgetList);
+                  },
+                ),
+                _enterMealsButton(
+                    context, _animationController, isButtonDisabled, count, _resetCart, listOfMeals, quantityOfMeals)
+              ],
+            ),
           ),
         ),
       ),
