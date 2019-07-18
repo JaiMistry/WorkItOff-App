@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 // import './navigation_bar.dart';
 // import './pages/intropage.dart';
+import 'package:workitoff/providers/navbar_provider.dart';
 import 'auth/auth.dart';
 
 void main() {
@@ -18,7 +19,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // FirebaseAuth.instance.signOut();  //Run this if the app crashes. I deleted all the users in firestore. This will force a new one to be created.
     return MultiProvider(
-      providers: [StreamProvider<FirebaseUser>.value(value: FirebaseAuth.instance.onAuthStateChanged)],
+      providers: [
+        StreamProvider<FirebaseUser>.value(value: FirebaseAuth.instance.onAuthStateChanged),
+        ChangeNotifierProvider<NavBarProvider>.value(value: NavBarProvider())
+      ],
       child: MaterialApp(
         // showPerformanceOverlay: true,
         // home: IntroPage(),

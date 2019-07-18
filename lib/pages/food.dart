@@ -3,12 +3,33 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
+// import 'package:workitoff/navigation_bar.dart';
 
 // import 'package:transparent_image/transparent_image.dart';
 
 import 'package:workitoff/widgets.dart';
+
+// ? https://medium.com/coding-with-flutter/flutter-case-study-multiple-navigators-with-bottomnavigationbar-90eb6caa6dbf
+// This is probably the way to do it.
+
+class FoodItemProvider extends ChangeNotifier {
+  DocumentSnapshot _currentRestaurant;
+
+  set currentRestuarant(DocumentSnapshot snap) {
+    _currentRestaurant = snap;
+    notifyListeners();
+  }
+
+  DocumentSnapshot get currentRestuarant {
+    return _currentRestaurant;
+  }
+}
+
+// class FoodPage
 
 class FoodPage extends StatefulWidget {
   @override
@@ -18,6 +39,7 @@ class FoodPage extends StatefulWidget {
 class _FoodPageState extends State<FoodPage> {
   TextEditingController _searchController = new TextEditingController();
   String _restuarantSearchFilter;
+  int _selectedPage = 0;
 
   @override
   void initState() {
@@ -38,24 +60,42 @@ class _FoodPageState extends State<FoodPage> {
     });
   }
 
+  void _setPage(int newPageId) {
+    if (_selectedPage == newPageId) {
+      return;
+    }
+
+    setState(() {
+      _selectedPage = newPageId;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
+    return ChangeNotifierProvider(
+      builder: (ctx) => FoodItemProvider(),
+      // TODO: Instantiate widgets, this might preserve state better
+      child: IndexedStack(
+        index: _selectedPage,
         children: <Widget>[
-          SearchBar(hintText: 'Search', controller: _searchController, bottomMargin: 6),
-          Expanded(
-            child: FoodBody(restuarantSearchFiler: _restuarantSearchFilter),
+          Container(
+            child: Column(
+              children: <Widget>[
+                SearchBar(hintText: 'Search', controller: _searchController, bottomMargin: 6),
+                Expanded(child: FoodBody(restuarantSearchFiler: _restuarantSearchFilter, setPage: _setPage)),
+              ],
+            ),
+            decoration: const BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: const [Color(0xff170422), Color(0xff9B22E6)],
+                stops: const [0.75, 1],
+              ),
+            ),
           ),
+          FoodItemPage(setPage: _setPage),
         ],
-      ),
-      decoration: const BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: const [Color(0xff170422), Color(0xff9B22E6)],
-          stops: const [0.75, 1],
-        ),
       ),
     );
   }
@@ -93,18 +133,15 @@ Widget _builderEnterCaloriesButton() {
 
 class FoodBody extends StatefulWidget {
   final String restuarantSearchFiler; // user input in the searchbar
+  final Function setPage;
 
-  FoodBody({Key key, @required this.restuarantSearchFiler}) : super(key: key);
+  FoodBody({Key key, @required this.restuarantSearchFiler, @required this.setPage}) : super(key: key);
 
   _FoodBodyState createState() => _FoodBodyState();
 }
 
 class _FoodBodyState extends State<FoodBody> {
   Widget _makeFoodCard(BuildContext context, DocumentSnapshot restaurant) {
-    // if (restaurant == null) {
-    //   return Container();
-    // }
-
     String imageUrl = restaurant.data['image_url'];
     if (imageUrl == null) {
       imageUrl = 'https://via.placeholder.com/500x500?text=Error+Loading+Image';
@@ -113,8 +150,9 @@ class _FoodBodyState extends State<FoodBody> {
       padding: const EdgeInsets.all(7),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (BuildContext context) => FoodItemPage(restaurant: restaurant)));
+          Provider.of<FoodItemProvider>(context)._currentRestaurant = restaurant;
+          widget.setPage(1);
+          // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => FoodItemPage(restaurant: restaurant)));
         },
         child: ClipRRect(
           borderRadius: BorderRadius.circular(15.0),
@@ -207,7 +245,8 @@ class FoodItems extends StatefulWidget {
   _FoodItemsState createState() => _FoodItemsState();
 }
 
-List<Widget> _buildExpansionButtons(BuildContext context, int quantity, Function setQuantity, String meal) {
+List<Widget> _buildExpansionButtons(
+    BuildContext context, int quantity, Function setQuantity, String meal, Function addToCart) {
   return [
     const SizedBox(height: 2),
     Container(
@@ -243,6 +282,7 @@ List<Widget> _buildExpansionButtons(BuildContext context, int quantity, Function
       child: FlatButton(
         color: Colors.teal.withOpacity(0.5),
         onPressed: () {
+          addToCart(meal, quantity);
           showDefualtFlushBar(context: context, text: '$quantity $meal added to cart.');
         },
         child: const Text('Add To Meal', style: TextStyle(color: Colors.white)),
@@ -251,8 +291,113 @@ List<Widget> _buildExpansionButtons(BuildContext context, int quantity, Function
   ];
 }
 
-class _FoodItemsState extends State<FoodItems> {
+Widget _enterMealsButton(BuildContext context, AnimationController controller, bool isButtonDisabled, int count,
+    Function resetCart, List<String> meals, List<int> quantities) {
+  return FadeTransition(
+    opacity: CurvedAnimation(parent: controller, curve: Curves.linear),
+    child: Container(
+      width: MediaQuery.of(context).size.width,
+      child: FlatButton(
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        color: const Color(0xff4ff7d3),
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        child: Text("Enter Meal ($count)", style: TextStyle(fontSize: 18.0)),
+        onPressed: () {
+          return isButtonDisabled ? null : _mealDialog(context, controller, resetCart, meals, quantities);
+        },
+      ),
+    ),
+  );
+}
+
+Future<void> _mealDialog(BuildContext context, AnimationController controller, Function resetCart, List<String> meals,
+    List<int> quantities) async {
+  if (Platform.isIOS) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text('Log Meal?'),
+          content: Text('Cart: ${meals.join(", ")} (${quantities.join(",")})'),
+          actions: <Widget>[
+            CupertinoDialogAction(
+                child: Text('Empty Cart', style: TextStyle(color: Colors.black)),
+                onPressed: () {
+                  resetCart();
+                  Navigator.of(context).pop();
+                }),
+            CupertinoDialogAction(
+                child: Text('Cancel', style: TextStyle(color: Colors.black)),
+                onPressed: () => Navigator.of(context).pop()),
+            CupertinoDialogAction(
+              child: Text('Log', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+              // TODO: Send total calories of all food items to Progress Page
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  } else if (Platform.isAndroid) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Log Meal?'),
+          content: Text('Cart: ${meals.join(", ")} (${quantities.join(",")})'),
+          actions: <Widget>[
+            FlatButton(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.grey[200],
+                textColor: Colors.black,
+                child: Text('Empty Cart'),
+                onPressed: () {
+                  resetCart();
+                  Navigator.of(context).pop();
+                }),
+            FlatButton(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.grey[200],
+                textColor: Colors.black,
+                child: Text('Cancel'),
+                onPressed: () => Navigator.of(context).pop()),
+            FlatButton(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.grey[200],
+              textColor: Colors.black,
+              child: Text('Log', style: TextStyle(fontWeight: FontWeight.bold)),
+              // TODO: Send total calories of all food items to Progress Page
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _FoodItemsState extends State<FoodItems> with SingleTickerProviderStateMixin {
+  AnimationController _animationController;
+  List<String> listOfMeals = [];
+  List<int> quantityOfMeals = [];
+  bool isButtonDisabled = true;
   int quantity = 1;
+  int count = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(duration: const Duration(milliseconds: 350), vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   void _setQuantity(int newQuantity) {
     setState(() {
@@ -260,69 +405,102 @@ class _FoodItemsState extends State<FoodItems> {
     });
   }
 
+  void _addToCart(String meal, int quantity) {
+    setState(() {
+      count++;
+      listOfMeals.add(meal);
+      quantityOfMeals.add(quantity);
+      _animationController.forward();
+      isButtonDisabled = false;
+    });
+  }
+
+  void _resetCart() {
+    setState(() {
+      listOfMeals.clear();
+      quantityOfMeals.clear();
+      _animationController.reverse();
+      isButtonDisabled = true;
+      count = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (widget.restaurant == null) {
+      return Container();
+    }
     return Container(
       child: Expanded(
         child: ScrollConfiguration(
           behavior: NoOverscrollBehavior(),
-          child: ListView.builder(
-            // shrinkWrap: true,
-            itemCount: 1,
-            itemBuilder: (BuildContext contect, int index) {
-              if (widget.restaurant.data['meals'] == null || widget.restaurant.data['meals'].toString() == '{}') {
-                return Container(padding: EdgeInsets.only(top: 20), child: Center(child: Text('No Meals Found.')));
-              }
+          child: SafeArea(
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: <Widget>[
+                ListView.builder(
+                  // shrinkWrap: true,
+                  itemCount: 1,
+                  itemBuilder: (BuildContext contect, int index) {
+                    if (widget.restaurant.data['meals'] == null || widget.restaurant.data['meals'].toString() == '{}') {
+                      return Container(
+                          padding: EdgeInsets.only(top: 20), child: Center(child: Text('No Meals Found.')));
+                    }
 
-              Map<String, Map> categories = widget.restaurant.data['meals'].cast<String, Map>();
-              List<Widget> widgetList = [];
+                    Map<String, Map> categories = widget.restaurant.data['meals'].cast<String, Map>();
+                    List<Widget> widgetList = [];
 
-              categories.forEach((categtory, mealMap) {
-                List<Widget> mealList = [];
+                    categories.forEach((categtory, mealMap) {
+                      List<Widget> mealList = [];
 
-                Map<String, int> meals = mealMap.cast<String, int>();
-                meals.forEach((String meal, int cals) {
-                  String searchText = widget.searchText;
+                      Map<String, int> meals = mealMap.cast<String, int>();
+                      meals.forEach((String meal, int cals) {
+                        String searchText = widget.searchText;
 
-                  //Only reutrn the food items that are being searched for
-                  if (searchText == null || searchText == '' || meal.toLowerCase().contains(searchText.toLowerCase())) {
-                    mealList.add(
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: Theme(
-                            data: ThemeData(accentColor: Colors.white, unselectedWidgetColor: Colors.white),
-                            child: ExpansionTile(
-                              onExpansionChanged: (bool state) {},
-                              title: Text(meal, style: TextStyle(color: Colors.white, fontSize: 14)),
-                              // trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
-                              children: _buildExpansionButtons(context, quantity, _setQuantity, meal),
+                        //Only reutrn the food items that are being searched for
+                        if (searchText == null ||
+                            searchText == '' ||
+                            meal.toLowerCase().contains(searchText.toLowerCase())) {
+                          mealList.add(
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: Theme(
+                                  data: ThemeData(accentColor: Colors.white, unselectedWidgetColor: Colors.white),
+                                  child: ExpansionTile(
+                                    onExpansionChanged: (bool state) {},
+                                    title: Text(meal, style: TextStyle(color: Colors.white, fontSize: 14)),
+                                    // trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
+                                    children: _buildExpansionButtons(context, quantity, _setQuantity, meal, _addToCart),
+                                  ),
+                                ),
+                              ),
                             ),
+                          );
+                        }
+                      });
+
+                      // Only return the category if there are food items within
+                      if (mealList.length > 0) {
+                        widgetList.add(
+                          Column(
+                            children: <Widget>[
+                              ListTile(
+                                  title: Text(categtory, style: TextStyle(color: Color(0xff4ff7d3), fontSize: 22))),
+                              Column(children: mealList)
+                            ],
                           ),
-                        ),
-                      ),
-                    );
-                  }
-                });
-
-                // Only return the category if there are food items within
-                if (mealList.length > 0) {
-                  widgetList.add(
-                    Column(
-                      children: <Widget>[
-                        ListTile(title: Text(categtory, style: TextStyle(color: Color(0xff4ff7d3), fontSize: 22))),
-                        Column(
-                          children: mealList,
-                        )
-                      ],
-                    ),
-                  );
-                }
-              });
-
-              return Column(children: widgetList);
-            },
+                        );
+                      }
+                    });
+                    return Column(children: widgetList);
+                  },
+                ),
+                _enterMealsButton(
+                    context, _animationController, isButtonDisabled, count, _resetCart, listOfMeals, quantityOfMeals)
+              ],
+            ),
           ),
         ),
       ),
@@ -331,9 +509,10 @@ class _FoodItemsState extends State<FoodItems> {
 }
 
 class FoodItemPage extends StatefulWidget {
-  final DocumentSnapshot restaurant;
+  final Function setPage;
+  // final DocumentSnapshot restaurant;
 
-  FoodItemPage({@required this.restaurant});
+  FoodItemPage({@required this.setPage});
 
   @override
   _FoodItemPageState createState() => _FoodItemPageState();
@@ -364,31 +543,115 @@ class _FoodItemPageState extends State<FoodItemPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xff170422),
-        title: Text(widget.restaurant.documentID),
-        elevation: 0,
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: const [Color(0xff170422), Color(0xff9B22E6)],
-            stops: const [0.75, 1],
+    DocumentSnapshot _restuarant = Provider.of<FoodItemProvider>(context)._currentRestaurant;
+    return WillPopScope(
+      onWillPop: () {
+        widget.setPage(0);
+        return Future.value(false); // Dont actually go back. I only want to run the function above
+      },
+      child: Column(
+        children: <Widget>[
+          AppBar(
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                widget.setPage(0);
+              },
+            ),
+            backgroundColor: Color(0xff170422),
+            title: Text(_restuarant == null ? 'Placeholder' : _restuarant.documentID),
+            elevation: 0,
           ),
-        ),
-        child: Column(
-          children: <Widget>[
-            SearchBar(controller: _searchController, hintText: 'Search', topMargin: 5, bottomMargin: 6),
-            FoodItems(restaurant: widget.restaurant, searchText: searchText)
-          ],
-        ),
+          Flexible(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: const [Color(0xff170422), Color(0xff9B22E6)],
+                  stops: const [0.75, 1],
+                ),
+              ),
+              child: Column(
+                children: <Widget>[
+                  SearchBar(controller: _searchController, hintText: 'Search', topMargin: 5, bottomMargin: 6),
+                  FoodItems(restaurant: _restuarant, searchText: searchText)
+                ],
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
 }
+
+class ExpansionBtn extends StatefulWidget {
+  final String meal;
+  ExpansionBtn({Key key, @required this.meal}) : super(key: key);
+
+  _ExpansionBtnState createState() => _ExpansionBtnState();
+}
+
+class _ExpansionBtnState extends State<ExpansionBtn> {
+  int _quantity = 1;
+
+  void _setQuantity(int newQuantity) {
+    setState(() {
+      _quantity = newQuantity;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ExpansionTile(
+      onExpansionChanged: (bool state) {},
+      title: Text(widget.meal, style: TextStyle(color: Colors.white, fontSize: 14)),
+      children: [
+        const SizedBox(height: 2),
+        Container(
+          height: 25,
+          width: 150,
+          child: FlatButton(
+            padding: const EdgeInsets.all(0),
+            color: Colors.purple.withOpacity(0.5),
+            onPressed: () {
+              _showLogDialog(context, _setQuantity, _quantity);
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    style: const TextStyle(color: Colors.white),
+                    children: <TextSpan>[
+                      const TextSpan(text: 'Quantity '),
+                      TextSpan(text: _quantity == 0 ? '1/2' : _quantity.toString()),
+                    ],
+                  ),
+                ),
+                Icon(Icons.arrow_drop_down, color: Colors.white.withOpacity(0.3))
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Container(
+          height: 25,
+          width: 150,
+          child: FlatButton(
+            color: Colors.teal.withOpacity(0.5),
+            onPressed: () {
+              showDefualtFlushBar(context: context, text: '$_quantity ${widget.meal} added to cart.');
+            },
+            child: const Text('Add To Meal', style: TextStyle(color: Colors.white)),
+          ),
+        )
+      ],
+    );
+  }
+}
+
 
 class QuantityRadioList extends StatefulWidget {
   final Function setQuantity;
@@ -453,20 +716,22 @@ Future<void> _showLogDialog(BuildContext context, Function setQuantity, int quan
         ),
         actions: <Widget>[
           FlatButton(
-              splashColor: Colors.transparent,
-              highlightColor: Colors.grey[200],
-              textColor: Colors.black,
-              child: const Text('Cancel', style: TextStyle(fontSize: 16)),
-              onPressed: () {
-                setQuantity(quantity);
-                Navigator.of(context).pop();
-              }),
+            splashColor: Colors.transparent,
+            highlightColor: Colors.grey[200],
+            textColor: Colors.black,
+            child: const Text('Cancel', style: TextStyle(fontSize: 16)),
+            onPressed: () {
+              setQuantity(quantity);
+              Navigator.of(context).pop();
+            },
+          ),
           FlatButton(
-              splashColor: Colors.transparent,
-              highlightColor: Colors.grey[200],
-              textColor: Colors.black,
-              child: const Text('Select', style: TextStyle(fontSize: 16)),
-              onPressed: () => Navigator.of(context).pop()),
+            splashColor: Colors.transparent,
+            highlightColor: Colors.grey[200],
+            textColor: Colors.black,
+            child: const Text('Select', style: TextStyle(fontSize: 16)),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ],
       );
     },

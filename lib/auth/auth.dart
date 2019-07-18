@@ -1,5 +1,3 @@
-// import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,18 +18,21 @@ void signInAnonymously({
   @required int age,
   @required String gender,
 }) async {
-  final FirebaseUser user = await _firebaseAuth.signInAnonymously();
-
-  final FirebaseUser currentUser = await _firebaseAuth.currentUser();
-  assert(user.uid == currentUser.uid);
-  String _userID = user.uid;
-
+  // TODO: There is no exception handling when there is a network timeout!
+  final FirebaseUser user = await _firebaseAuth.signInAnonymously().timeout(Duration(seconds: 2), onTimeout: () {
+    showDefualtFlushBar(context: context, text: 'Unable to sign in.');
+    return;
+  }).catchError((e) {
+    // ! This doesnt work :(
+    showDefualtFlushBar(context: context, text: 'Unable to sign in.');
+    return;
+  });
   if (user != null) {
     //Overwrites entire document
-    await _addNewUser(_userID, gender, age, weight).catchError((e) {
+    await _addNewUser(user.uid, gender, age, weight).catchError((e) {
       showDefualtFlushBar(context: context, text: 'Unable to sign in.');
     });
-    debugPrint(_userID + " has sucessfully signed in!");
+    debugPrint(user.uid + " has sucessfully signed in!");
   } else {
     showDefualtFlushBar(context: context, text: 'Unable to sign in.');
   }
