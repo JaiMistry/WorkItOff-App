@@ -26,6 +26,11 @@ class WorkItOffUser {
     );
   }
 
+  String getID() => this.id;
+  String getGender() => this.gender;
+  String getAge() => this.age;
+  String getWeight() => this.weight;
+
   set gender(String newGender) {
     _firestore.collection('users').document(id).updateData({'gender': newGender});
   }
