@@ -22,6 +22,10 @@ void signInAnonymously({
   final FirebaseUser user = await _firebaseAuth.signInAnonymously().timeout(Duration(seconds: 2), onTimeout: () {
     showDefualtFlushBar(context: context, text: 'Unable to sign in.');
     return;
+  }).catchError((e) {
+    // ! This doesnt work :(
+    showDefualtFlushBar(context: context, text: 'Unable to sign in.');
+    return;
   });
   if (user != null) {
     //Overwrites entire document
