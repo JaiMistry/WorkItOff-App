@@ -245,52 +245,6 @@ class FoodItems extends StatefulWidget {
   _FoodItemsState createState() => _FoodItemsState();
 }
 
-List<Widget> _buildExpansionButtons(
-    BuildContext context, int quantity, Function setQuantity, String meal, Function addToCart) {
-  return [
-    const SizedBox(height: 2),
-    Container(
-      height: 25,
-      width: 150,
-      child: FlatButton(
-        padding: const EdgeInsets.all(0),
-        color: Colors.purple.withOpacity(0.5),
-        onPressed: () {
-          _showLogDialog(context, setQuantity, quantity);
-        },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            RichText(
-              text: TextSpan(
-                style: const TextStyle(color: Colors.white),
-                children: <TextSpan>[
-                  const TextSpan(text: 'Quantity '),
-                  TextSpan(text: quantity == 0 ? '1/2' : quantity.toString()),
-                ],
-              ),
-            ),
-            Icon(Icons.arrow_drop_down, color: Colors.white.withOpacity(0.3))
-          ],
-        ),
-      ),
-    ),
-    const SizedBox(height: 10),
-    Container(
-      height: 25,
-      width: 150,
-      child: FlatButton(
-        color: Colors.teal.withOpacity(0.5),
-        onPressed: () {
-          addToCart(meal, quantity);
-          showDefualtFlushBar(context: context, text: '$quantity $meal added to cart.');
-        },
-        child: const Text('Add To Meal', style: TextStyle(color: Colors.white)),
-      ),
-    )
-  ];
-}
-
 Widget _enterMealsButton(BuildContext context, AnimationController controller, bool isButtonDisabled, int count,
     Function resetCart, List<String> meals, List<int> quantities) {
   return FadeTransition(
@@ -466,7 +420,7 @@ class _FoodItemsState extends State<FoodItems> with SingleTickerProviderStateMix
                               padding: const EdgeInsets.symmetric(horizontal: 10),
                               child: Material(
                                 color: Colors.transparent,
-                                child: ExpansionBtn(meal: meal, key: Key('$meal')),
+                                child: ExpansionBtn(meal: meal, key: Key('$meal'), addToCart: _addToCart),
                               ),
                             ),
                           );
@@ -580,7 +534,8 @@ class _FoodItemPageState extends State<FoodItemPage> {
 
 class ExpansionBtn extends StatefulWidget {
   final String meal;
-  ExpansionBtn({Key key, @required this.meal}) : super(key: key);
+  final Function addToCart;
+  ExpansionBtn({Key key, @required this.meal, this.addToCart}) : super(key: key);
 
   _ExpansionBtnState createState() => _ExpansionBtnState();
 }
@@ -634,6 +589,7 @@ class _ExpansionBtnState extends State<ExpansionBtn> {
           child: FlatButton(
             color: Colors.teal.withOpacity(0.5),
             onPressed: () {
+              widget.addToCart(widget.meal, _quantity);
               showDefualtFlushBar(context: context, text: '$_quantity ${widget.meal} added to cart.');
             },
             child: const Text('Add To Meal', style: TextStyle(color: Colors.white)),
