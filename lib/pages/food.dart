@@ -466,15 +466,7 @@ class _FoodItemsState extends State<FoodItems> with SingleTickerProviderStateMix
                               padding: const EdgeInsets.symmetric(horizontal: 10),
                               child: Material(
                                 color: Colors.transparent,
-                                child: Theme(
-                                  data: ThemeData(accentColor: Colors.white, unselectedWidgetColor: Colors.white),
-                                  child: ExpansionTile(
-                                    onExpansionChanged: (bool state) {},
-                                    title: Text(meal, style: TextStyle(color: Colors.white, fontSize: 14)),
-                                    // trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
-                                    children: _buildExpansionButtons(context, quantity, _setQuantity, meal, _addToCart),
-                                  ),
-                                ),
+                                child: ExpansionBtn(meal: meal, key: Key('$meal')),
                               ),
                             ),
                           );
@@ -651,7 +643,6 @@ class _ExpansionBtnState extends State<ExpansionBtn> {
     );
   }
 }
-
 
 class QuantityRadioList extends StatefulWidget {
   final Function setQuantity;
