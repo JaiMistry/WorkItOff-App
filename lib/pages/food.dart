@@ -60,6 +60,10 @@ class _FoodPageState extends State<FoodPage> {
   }
 
   void _setPage(int newPageId) {
+    if (_selectedPage == newPageId) {
+      return;
+    }
+
     setState(() {
       _selectedPage = newPageId;
     });
@@ -69,6 +73,7 @@ class _FoodPageState extends State<FoodPage> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       builder: (ctx) => FoodItemProvider(),
+      // TODO: Instantiate widgets, this might preserve state better
       child: IndexedStack(
         index: _selectedPage,
         children: <Widget>[
@@ -76,9 +81,7 @@ class _FoodPageState extends State<FoodPage> {
             child: Column(
               children: <Widget>[
                 SearchBar(hintText: 'Search', controller: _searchController, bottomMargin: 6),
-                Expanded(
-                  child: FoodBody(restuarantSearchFiler: _restuarantSearchFilter, setPage: _setPage),
-                ),
+                Expanded(child: FoodBody(restuarantSearchFiler: _restuarantSearchFilter, setPage: _setPage)),
               ],
             ),
             decoration: const BoxDecoration(
@@ -403,6 +406,7 @@ class _FoodItemPageState extends State<FoodItemPage> {
   @override
   Widget build(BuildContext context) {
     DocumentSnapshot _restuarant = Provider.of<FoodItemProvider>(context)._currentRestaurant;
+    // TODO This solution breaks the android back button from working in other parts of the app
     return WillPopScope(
       onWillPop: () {
         widget.setPage(0);
