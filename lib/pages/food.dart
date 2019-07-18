@@ -244,59 +244,7 @@ class FoodItems extends StatefulWidget {
   _FoodItemsState createState() => _FoodItemsState();
 }
 
-List<Widget> _buildExpansionButtons(BuildContext context, int quantity, Function setQuantity, String meal) {
-  return [
-    const SizedBox(height: 2),
-    Container(
-      height: 25,
-      width: 150,
-      child: FlatButton(
-        padding: const EdgeInsets.all(0),
-        color: Colors.purple.withOpacity(0.5),
-        onPressed: () {
-          _showLogDialog(context, setQuantity, quantity);
-        },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            RichText(
-              text: TextSpan(
-                style: const TextStyle(color: Colors.white),
-                children: <TextSpan>[
-                  const TextSpan(text: 'Quantity '),
-                  TextSpan(text: quantity == 0 ? '1/2' : quantity.toString()),
-                ],
-              ),
-            ),
-            Icon(Icons.arrow_drop_down, color: Colors.white.withOpacity(0.3))
-          ],
-        ),
-      ),
-    ),
-    const SizedBox(height: 10),
-    Container(
-      height: 25,
-      width: 150,
-      child: FlatButton(
-        color: Colors.teal.withOpacity(0.5),
-        onPressed: () {
-          showDefualtFlushBar(context: context, text: '$quantity $meal added to cart.');
-        },
-        child: const Text('Add To Meal', style: TextStyle(color: Colors.white)),
-      ),
-    )
-  ];
-}
-
 class _FoodItemsState extends State<FoodItems> {
-  int quantity = 1;
-
-  void _setQuantity(int newQuantity) {
-    setState(() {
-      quantity = newQuantity;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     if (widget.restaurant == null) {
@@ -331,15 +279,7 @@ class _FoodItemsState extends State<FoodItems> {
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Material(
                           color: Colors.transparent,
-                          child: Theme(
-                            data: ThemeData(accentColor: Colors.white, unselectedWidgetColor: Colors.white),
-                            child: ExpansionTile(
-                              onExpansionChanged: (bool state) {},
-                              title: Text(meal, style: TextStyle(color: Colors.white, fontSize: 14)),
-                              // trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
-                              children: _buildExpansionButtons(context, quantity, _setQuantity, meal),
-                            ),
-                          ),
+                          child: ExpansionBtn(key: Key('${widget.restaurant.documentID}'),meal: meal),
                         ),
                       ),
                     );
@@ -406,7 +346,6 @@ class _FoodItemPageState extends State<FoodItemPage> {
   @override
   Widget build(BuildContext context) {
     DocumentSnapshot _restuarant = Provider.of<FoodItemProvider>(context)._currentRestaurant;
-    // TODO This solution breaks the android back button from working in other parts of the app
     return WillPopScope(
       onWillPop: () {
         widget.setPage(0);
@@ -448,6 +387,73 @@ class _FoodItemPageState extends State<FoodItemPage> {
     );
   }
 }
+
+class ExpansionBtn extends StatefulWidget {
+  final String meal;
+  ExpansionBtn({Key key, @required this.meal}) : super(key: key);
+
+  _ExpansionBtnState createState() => _ExpansionBtnState();
+}
+
+class _ExpansionBtnState extends State<ExpansionBtn> {
+  int _quantity = 1;
+
+  void _setQuantity(int newQuantity) {
+    setState(() {
+      _quantity = newQuantity;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ExpansionTile(
+      onExpansionChanged: (bool state) {},
+      title: Text(widget.meal, style: TextStyle(color: Colors.white, fontSize: 14)),
+      children: [
+        const SizedBox(height: 2),
+        Container(
+          height: 25,
+          width: 150,
+          child: FlatButton(
+            padding: const EdgeInsets.all(0),
+            color: Colors.purple.withOpacity(0.5),
+            onPressed: () {
+              _showLogDialog(context, _setQuantity, _quantity);
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    style: const TextStyle(color: Colors.white),
+                    children: <TextSpan>[
+                      const TextSpan(text: 'Quantity '),
+                      TextSpan(text: _quantity == 0 ? '1/2' : _quantity.toString()),
+                    ],
+                  ),
+                ),
+                Icon(Icons.arrow_drop_down, color: Colors.white.withOpacity(0.3))
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Container(
+          height: 25,
+          width: 150,
+          child: FlatButton(
+            color: Colors.teal.withOpacity(0.5),
+            onPressed: () {
+              showDefualtFlushBar(context: context, text: '$_quantity ${widget.meal} added to cart.');
+            },
+            child: const Text('Add To Meal', style: TextStyle(color: Colors.white)),
+          ),
+        )
+      ],
+    );
+  }
+}
+
 
 class QuantityRadioList extends StatefulWidget {
   final Function setQuantity;
