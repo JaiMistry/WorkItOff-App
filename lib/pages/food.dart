@@ -232,37 +232,43 @@ class _FoodBodyState extends State<FoodBody> {
                   child: Text('Enter your own calories', style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold)),
                   alignment: Alignment.bottomCenter,
                 ),
-                // TODO: Textfield and Button need proper spacing/centering between them
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Flexible(
-                      child: Container(
-                        margin: const EdgeInsets.only(left: 30.0, right: 30.0),
-                        // TODO: Textfield needs styling
-                        child: TextField(
-                          textAlign: TextAlign.center,
-                          decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
-                              border: InputBorder.none,
-                              hintText: '0',
-                              fillColor: Colors.white,
-                              filled: true),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 25),
+                  alignment: Alignment.center,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Flexible(
+                        child: Container(
+                          width: 150,
+                          child: TextField(
+                            cursorColor: Colors.white,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(color: Colors.white.withOpacity(0.9)),
+                            textAlign: TextAlign.left,
+                            decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.symmetric(vertical: 8.5, horizontal: 10),
+                                border: InputBorder.none,
+                                hintText: '0',
+                                hintStyle: TextStyle(color: Colors.white.withOpacity(0.9)),
+                                fillColor: Colors.grey.withOpacity(0.2),
+                                filled: true),
+                          ),
                         ),
                       ),
-                    ),
-                    RaisedButton(
-                      child: Text('Enter Calories', style: TextStyle(fontSize: 20.0)),
-                      onPressed: () {},
-                      color: Color(0xff3ADEA7),
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      elevation: 0.0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5.0),
+                      RaisedButton(
+                        child: Text('Enter Calories', style: TextStyle(fontSize: 20.0)),
+                        onPressed: () {},
+                        color: Color(0xff3ADEA7),
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        elevation: 0.0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 SizedBox(height: 30.0),
                 Image.asset('assets/logo_transparent.png', height: MediaQuery.of(context).size.height * 0.2),
