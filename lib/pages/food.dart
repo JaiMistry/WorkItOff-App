@@ -225,6 +225,58 @@ class _FoodBodyState extends State<FoodBody> {
                 );
               },
             ),
+            Column(
+              children: <Widget>[
+                Container(
+                  margin: const EdgeInsets.only(top: 60.0, bottom: 35.0),
+                  child: Text('Enter your own calories', style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold)),
+                  alignment: Alignment.bottomCenter,
+                ),
+                // TODO: Textfield and Button need proper spacing/centering between them
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Flexible(
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 30.0, right: 30.0),
+                        // TODO: Textfield needs styling
+                        child: TextField(
+                          textAlign: TextAlign.center,
+                          decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
+                              border: InputBorder.none,
+                              hintText: '0',
+                              fillColor: Colors.white,
+                              filled: true),
+                        ),
+                      ),
+                    ),
+                    RaisedButton(
+                      child: Text('Enter Calories', style: TextStyle(fontSize: 20.0)),
+                      onPressed: () {},
+                      color: Color(0xff3ADEA7),
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      elevation: 0.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 30.0),
+                Image.asset('assets/logo_transparent.png', height: MediaQuery.of(context).size.height * 0.2),
+                SizedBox(height: 50.0),
+                Text('We are always adding new restaurants!'),
+                SizedBox(height: 10.0),
+                Text(
+                  'There is no relationship between the Work It Off app and the restaurants',
+                  style: TextStyle(fontSize: 10.0),
+                ),
+                Text('displayed on this page.', style: TextStyle(fontSize: 10.0)),
+                SizedBox(height: 30.0)
+              ],
+            )
           ],
         ),
       ),
@@ -246,7 +298,7 @@ class FoodItems extends StatefulWidget {
 }
 
 Widget _enterMealsButton(BuildContext context, AnimationController controller, bool isButtonDisabled, int count,
-    Function resetCart, List<String> meals, List<int> quantities) {
+    Function resetCart, List<String> meals, List<dynamic> quantities) {
   return FadeTransition(
     opacity: CurvedAnimation(parent: controller, curve: Curves.linear),
     child: Container(
@@ -266,7 +318,7 @@ Widget _enterMealsButton(BuildContext context, AnimationController controller, b
 }
 
 Future<void> _mealDialog(BuildContext context, AnimationController controller, Function resetCart, List<String> meals,
-    List<int> quantities) async {
+    List<dynamic> quantities) async {
   if (Platform.isIOS) {
     showDialog<void>(
       context: context,
@@ -336,9 +388,8 @@ Future<void> _mealDialog(BuildContext context, AnimationController controller, F
 class _FoodItemsState extends State<FoodItems> with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   List<String> listOfMeals = [];
-  List<int> quantityOfMeals = [];
+  List<dynamic> quantityOfMeals = [];
   bool isButtonDisabled = true;
-  int quantity = 1;
   int count = 0;
 
   @override
@@ -353,13 +404,7 @@ class _FoodItemsState extends State<FoodItems> with SingleTickerProviderStateMix
     super.dispose();
   }
 
-  void _setQuantity(int newQuantity) {
-    setState(() {
-      quantity = newQuantity;
-    });
-  }
-
-  void _addToCart(String meal, int quantity) {
+  void _addToCart(String meal, dynamic quantity) {
     setState(() {
       count++;
       listOfMeals.add(meal);
@@ -589,8 +634,10 @@ class _ExpansionBtnState extends State<ExpansionBtn> {
           child: FlatButton(
             color: Colors.teal.withOpacity(0.5),
             onPressed: () {
-              widget.addToCart(widget.meal, _quantity);
-              showDefualtFlushBar(context: context, text: '$_quantity ${widget.meal} added to cart.');
+              widget.addToCart(widget.meal, _quantity == 0 ? 0.5 : _quantity);
+              showDefualtFlushBar(
+                  context: context,
+                  text: '${_quantity == 0 ? '1/2' : _quantity.toString()} ${widget.meal} added to cart.');
             },
             child: const Text('Add To Meal', style: TextStyle(color: Colors.white)),
           ),
