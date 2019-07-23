@@ -9,6 +9,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import 'package:workitoff/navigation_bar.dart';
 import 'package:workitoff/providers/progress_provider.dart';
+import 'package:workitoff/providers/user_provider.dart';
 // import 'package:workitoff/navigation_bar.dart';
 
 // import 'package:transparent_image/transparent_image.dart';
@@ -347,8 +348,15 @@ Widget _enterMealsButton(BuildContext context, AnimationController controller, b
   );
 }
 
-Future<void> _mealDialog(BuildContext context, AnimationController controller, Function resetCart, List<String> meals,
-    List<dynamic> quantities) async {
+Future<void> _mealDialog(
+  BuildContext context,
+  AnimationController controller,
+  Function resetCart,
+  List<String> meals,
+  List<dynamic> quantities,
+) async {
+  WorkItOffUser user = Provider.of<WorkItOffUser>(context, listen: false);
+
   if (Platform.isIOS) {
     showDialog<void>(
       context: context,
@@ -369,8 +377,9 @@ Future<void> _mealDialog(BuildContext context, AnimationController controller, F
                 onPressed: () => Navigator.of(context).pop()),
             CupertinoDialogAction(
               child: Text('Log', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-              // TODO: Send total calories of all food items to Progress Page
               onPressed: () {
+                // TODO: Send meals to cloud function. These are placeholder calories
+                user.calsAdded = 500 * meals.length; // TODO
                 Navigator.of(context).pop();
                 navBar.onTap(0);
               },
@@ -408,8 +417,9 @@ Future<void> _mealDialog(BuildContext context, AnimationController controller, F
               highlightColor: Colors.grey[200],
               textColor: Colors.black,
               child: Text('Log', style: TextStyle(fontWeight: FontWeight.bold)),
-              // TODO: Send total calories of all food items to Progress Page
               onPressed: () {
+                // TODO: Send meals to cloud function. These are placeholder calories
+                user.calsAdded = 500 * meals.length; // TODO
                 Navigator.of(context).pop();
                 Provider.of<ProgressProvider>(context).showProgress = true;
                 navBar.onTap(0);

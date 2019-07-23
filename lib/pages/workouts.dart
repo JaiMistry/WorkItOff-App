@@ -116,6 +116,8 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                     _showMissingDataDialog('Weight');
                     return;
                   }
+                  // TODO: Send workouts to cloud function. These are placeholder calories
+                  user.calsBurned = 500;  // TODO
                   _sliderMoved(false); // Reset the slider
                   Navigator.of(context).pop(); // Pop the alertDialog
                   Provider.of<ProgressProvider>(context).showProgress = true;
