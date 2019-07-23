@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import 'package:workitoff/navigation_bar.dart';
+import 'package:workitoff/providers/progress_provider.dart';
 // import 'package:workitoff/navigation_bar.dart';
 
 // import 'package:transparent_image/transparent_image.dart';
@@ -411,7 +412,11 @@ Future<void> _mealDialog(BuildContext context, AnimationController controller, F
               textColor: Colors.black,
               child: Text('Log', style: TextStyle(fontWeight: FontWeight.bold)),
               // TODO: Send total calories of all food items to Progress Page
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Provider.of<ProgressProvider>(context).showProgress = true;
+                navBar.onTap(0);
+              },
             ),
           ],
         );

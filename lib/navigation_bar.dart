@@ -5,9 +5,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:workitoff/pages/profilepage.dart';
 import 'package:workitoff/pages/burnpage.dart';
+import 'package:workitoff/pages/progress.dart';
 import 'package:workitoff/pages/workouts.dart';
 import 'package:workitoff/pages/food.dart';
 import 'package:workitoff/providers/user_provider.dart';
+import 'package:workitoff/providers/progress_provider.dart';
 
 // Much easier and better to use this instead of a NavBarProvider.
 GlobalKey navBarGlobalKey = GlobalKey(debugLabel: 'bottomAppBar');
@@ -19,12 +21,25 @@ class NavigationBar extends StatefulWidget {
 
 class _NavigationBarState extends State<NavigationBar> {
   int _selectedIndex = 0;
-  final List<Widget> _pageOptions = <Widget>[
+  List<Widget> _pageOptions = <Widget>[
     BurnPage(),
     FoodPage(),
     WorkoutsPage(),
     ProfilePage(),
   ];
+
+  void updatePageOptions() {
+    setState(() {
+      if (Provider.of<ProgressProvider>(context).showProgress != null ||
+          Provider.of<ProgressProvider>(context).showProgress == true) {
+        print('value is true!');
+        _pageOptions[0] = ProgressPage();
+      } else {
+        _pageOptions[0] = BurnPage();
+        print('value is false/null!');
+      }
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -34,6 +49,7 @@ class _NavigationBarState extends State<NavigationBar> {
 
   @override
   Widget build(BuildContext context) {
+    updatePageOptions();
     String userID =
         Provider.of<FirebaseUser>(context, listen: false) != null ? Provider.of<FirebaseUser>(context).uid : 'null';
 
