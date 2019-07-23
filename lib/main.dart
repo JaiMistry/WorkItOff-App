@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 
 // import './navigation_bar.dart';
 // import './pages/intropage.dart';
-import 'package:workitoff/providers/navbar_provider.dart';
 import 'auth/auth.dart';
 
 void main() {
@@ -21,7 +20,6 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         StreamProvider<FirebaseUser>.value(value: FirebaseAuth.instance.onAuthStateChanged),
-        ChangeNotifierProvider<NavBarProvider>.value(value: NavBarProvider())
       ],
       child: MaterialApp(
         // showPerformanceOverlay: true,

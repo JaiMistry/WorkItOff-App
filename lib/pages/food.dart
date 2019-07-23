@@ -7,6 +7,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
+import 'package:workitoff/navigation_bar.dart';
 // import 'package:workitoff/navigation_bar.dart';
 
 // import 'package:transparent_image/transparent_image.dart';
@@ -15,6 +16,8 @@ import 'package:workitoff/widgets.dart';
 
 // ? https://medium.com/coding-with-flutter/flutter-case-study-multiple-navigators-with-bottomnavigationbar-90eb6caa6dbf
 // This is probably the way to do it.
+
+final BottomNavigationBar navBar = navBarGlobalKey.currentWidget;
 
 class FoodItemProvider extends ChangeNotifier {
   DocumentSnapshot _currentRestaurant;
@@ -74,7 +77,6 @@ class _FoodPageState extends State<FoodPage> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       builder: (ctx) => FoodItemProvider(),
-      // TODO: Instantiate widgets, this might preserve state better
       child: IndexedStack(
         index: _selectedPage,
         children: <Widget>[
@@ -101,7 +103,7 @@ class _FoodPageState extends State<FoodPage> {
   }
 }
 
-Widget _builderEnterCaloriesButton() {
+Widget _builderEnterCaloriesButton(BuildContext context, ScrollController controller) {
   return Column(
     children: <Widget>[
       const Text("Can't find your cheat meal?", style: TextStyle(fontSize: 20, color: Color(0xff4ff7d3))),
@@ -124,7 +126,13 @@ Widget _builderEnterCaloriesButton() {
             'Enter Calories',
             style: const TextStyle(fontSize: 22, color: Colors.black, fontWeight: FontWeight.bold),
           ),
-          onTap: () {},
+          onTap: () {
+            controller.animateTo(
+              controller.position.maxScrollExtent,
+              curve: Curves.easeOut,
+              duration: const Duration(milliseconds: 1000),
+            );
+          },
         ),
       ),
     ],
@@ -141,6 +149,20 @@ class FoodBody extends StatefulWidget {
 }
 
 class _FoodBodyState extends State<FoodBody> {
+  ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+  }
+
   Widget _makeFoodCard(BuildContext context, DocumentSnapshot restaurant) {
     String imageUrl = restaurant.data['image_url'];
     if (imageUrl == null) {
@@ -199,9 +221,10 @@ class _FoodBodyState extends State<FoodBody> {
       child: ScrollConfiguration(
         behavior: NoOverscrollBehavior(),
         child: ListView(
+          controller: _scrollController,
           padding: const EdgeInsets.only(top: 20.0),
           children: <Widget>[
-            _builderEnterCaloriesButton(),
+            _builderEnterCaloriesButton(context, _scrollController),
             StreamBuilder<QuerySnapshot>(
               stream: Firestore.instance.collection('food').snapshots(),
               builder: (context, snapshot) {
@@ -216,7 +239,6 @@ class _FoodBodyState extends State<FoodBody> {
                     ),
                   );
                 }
-
                 return GridView(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
@@ -225,6 +247,65 @@ class _FoodBodyState extends State<FoodBody> {
                 );
               },
             ),
+            Column(
+              children: <Widget>[
+                Container(
+                  margin: const EdgeInsets.only(top: 60.0, bottom: 35.0),
+                  child: Text('Enter your own calories', style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold)),
+                  alignment: Alignment.bottomCenter,
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 25),
+                  alignment: Alignment.center,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Flexible(
+                        child: Container(
+                          width: 150,
+                          child: TextField(
+                            cursorColor: Colors.white,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(color: Colors.white.withOpacity(0.9)),
+                            textAlign: TextAlign.center,
+                            decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.symmetric(vertical: 8.5, horizontal: 10),
+                                border: InputBorder.none,
+                                hintText: '0',
+                                hintStyle: TextStyle(color: Colors.white.withOpacity(0.9)),
+                                fillColor: Colors.grey.withOpacity(0.2),
+                                filled: true),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 10.0),
+                      RaisedButton(
+                        child: Text('Enter Calories', style: TextStyle(fontSize: 20.0)),
+                        onPressed: () {},
+                        color: Color(0xff3ADEA7),
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        elevation: 0.0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 30.0),
+                Image.asset('assets/logo_transparent.png', height: MediaQuery.of(context).size.height * 0.2),
+                SizedBox(height: 50.0),
+                Text('We are always adding new restaurants!'),
+                SizedBox(height: 10.0),
+                Text(
+                  'There is no relationship between the Work It Off app and the restaurants',
+                  style: TextStyle(fontSize: 10.0),
+                ),
+                Text('displayed on this page.', style: TextStyle(fontSize: 10.0)),
+                SizedBox(height: 30.0)
+              ],
+            )
           ],
         ),
       ),
@@ -246,7 +327,7 @@ class FoodItems extends StatefulWidget {
 }
 
 Widget _enterMealsButton(BuildContext context, AnimationController controller, bool isButtonDisabled, int count,
-    Function resetCart, List<String> meals, List<int> quantities) {
+    Function resetCart, List<String> meals, List<dynamic> quantities) {
   return FadeTransition(
     opacity: CurvedAnimation(parent: controller, curve: Curves.linear),
     child: Container(
@@ -266,7 +347,7 @@ Widget _enterMealsButton(BuildContext context, AnimationController controller, b
 }
 
 Future<void> _mealDialog(BuildContext context, AnimationController controller, Function resetCart, List<String> meals,
-    List<int> quantities) async {
+    List<dynamic> quantities) async {
   if (Platform.isIOS) {
     showDialog<void>(
       context: context,
@@ -288,7 +369,10 @@ Future<void> _mealDialog(BuildContext context, AnimationController controller, F
             CupertinoDialogAction(
               child: Text('Log', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
               // TODO: Send total calories of all food items to Progress Page
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                Navigator.of(context).pop();
+                navBar.onTap(0);
+              },
             ),
           ],
         );
@@ -336,9 +420,8 @@ Future<void> _mealDialog(BuildContext context, AnimationController controller, F
 class _FoodItemsState extends State<FoodItems> with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   List<String> listOfMeals = [];
-  List<int> quantityOfMeals = [];
+  List<dynamic> quantityOfMeals = [];
   bool isButtonDisabled = true;
-  int quantity = 1;
   int count = 0;
 
   @override
@@ -353,13 +436,7 @@ class _FoodItemsState extends State<FoodItems> with SingleTickerProviderStateMix
     super.dispose();
   }
 
-  void _setQuantity(int newQuantity) {
-    setState(() {
-      quantity = newQuantity;
-    });
-  }
-
-  void _addToCart(String meal, int quantity) {
+  void _addToCart(String meal, dynamic quantity) {
     setState(() {
       count++;
       listOfMeals.add(meal);
@@ -589,8 +666,10 @@ class _ExpansionBtnState extends State<ExpansionBtn> {
           child: FlatButton(
             color: Colors.teal.withOpacity(0.5),
             onPressed: () {
-              widget.addToCart(widget.meal, _quantity);
-              showDefualtFlushBar(context: context, text: '$_quantity ${widget.meal} added to cart.');
+              widget.addToCart(widget.meal, _quantity == 0 ? 0.5 : _quantity);
+              showDefualtFlushBar(
+                  context: context,
+                  text: '${_quantity == 0 ? '1/2' : _quantity.toString()} ${widget.meal} added to cart.');
             },
             child: const Text('Add To Meal', style: TextStyle(color: Colors.white)),
           ),
