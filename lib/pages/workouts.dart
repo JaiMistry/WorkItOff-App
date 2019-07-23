@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:workitoff/navigation_bar.dart';
+import 'package:workitoff/providers/progress_provider.dart';
 import 'package:workitoff/providers/user_provider.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -98,7 +99,6 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                 highlightColor: Colors.grey[200],
                 textColor: Colors.black,
                 child: Text('Log', style: TextStyle(fontWeight: FontWeight.bold)),
-                // TODO: send logging data to cloud function, redirect to progress page
                 onPressed: () {
                   if (user.getAge() == null || user.getAge().isEmpty) {
                     Navigator.of(context).pop();
