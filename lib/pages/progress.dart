@@ -70,6 +70,7 @@ class _ProgressPageState extends State<ProgressPage> {
               child: Image.asset('assets/text_logo.png', width: 80),
             ),
             const SizedBox(height: 30),
+            // TODO: Use flex to contorl height of widgets.
             CircularPercentIndicator(
               radius: size.width * 0.75,
               lineWidth: 21.0,

@@ -22,14 +22,15 @@ class NavigationBar extends StatefulWidget {
 class _NavigationBarState extends State<NavigationBar> {
   int _selectedIndex = 0;
   List<Widget> _pageOptions = <Widget>[
-    // BurnPage(),
-    ProgressPage(),
+    // BurnPage(), //TODO: Change Comments to revert to normal
+    ProgressPage(), //!
     FoodPage(),
     WorkoutsPage(),
     ProfilePage(),
   ];
 
   void updatePageOptions() {
+    // TODO: Remove comments to revert to normal
     // setState(() {
     //   if (Provider.of<ProgressProvider>(context).showProgress != null ||
     //       Provider.of<ProgressProvider>(context).showProgress == true) {
