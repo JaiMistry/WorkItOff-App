@@ -32,11 +32,11 @@ class _NavigationBarState extends State<NavigationBar> {
     setState(() {
       if (Provider.of<ProgressProvider>(context).showProgress != null ||
           Provider.of<ProgressProvider>(context).showProgress == true) {
-        print('value is true!');
+        // print('value is true!');
         _pageOptions[0] = ProgressPage();
       } else {
         _pageOptions[0] = BurnPage();
-        print('value is false/null!');
+        // print('value is false/null!');
       }
     });
   }

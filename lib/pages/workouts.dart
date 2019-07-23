@@ -100,7 +100,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                 textColor: Colors.black,
                 child: Text('Log', style: TextStyle(fontWeight: FontWeight.bold)),
                 onPressed: () {
-                  if (user.getAge() == null || user.getAge().isEmpty) {
+                  if (user.getAge() == null || user.getAge().toString().isEmpty) {
                     Navigator.of(context).pop();
                     _showMissingDataDialog('Age');
                     return;
@@ -111,7 +111,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                     return;
                   }
                   // TODO: Change so the user can sucessfully reset
-                  if (user.getWeight() == null || user.getWeight().isEmpty) {
+                  if (user.getWeight() == null || user.getWeight().toString().isEmpty) {
                     Navigator.of(context).pop();
                     _showMissingDataDialog('Weight');
                     return;

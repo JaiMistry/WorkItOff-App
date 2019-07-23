@@ -10,10 +10,19 @@ class WorkItOffUser {
   final Firestore _firestore = Firestore.instance; // Create firestore instance
   final String id;
   final String gender;
-  final String age;
-  final String weight;
+  final int age;
+  final int weight;
+  final int calsBurned;
+  final int calsAdded;
 
-  WorkItOffUser({this.id, this.gender, this.age, this.weight});
+  WorkItOffUser({
+    this.id,
+    this.gender,
+    this.age,
+    this.weight,
+    this.calsAdded,
+    this.calsBurned,
+  });
 
   // Injest the firestore document snapshot and return a WorkItOffUser object
   factory WorkItOffUser.fromFirestore(DocumentSnapshot doc) {
@@ -21,39 +30,65 @@ class WorkItOffUser {
     return WorkItOffUser(
       id: doc.documentID,
       gender: data['gender'],
-      age: data['age'].toString(),
-      weight: data['weight'].toString(),
+      age: data['age'] == null ? 0 : data['age'],
+      weight: data['weight'] == null ? 0 : data['weight'],
+      calsAdded: data['cals_added'] == null ? 0 : data['cals_added'],
+      calsBurned: data['cals_burned'] == null ? 0 : data['cals_burned'],
     );
   }
 
   String getID() => this.id;
   String getGender() => this.gender;
-  String getAge() => this.age;
-  String getWeight() => this.weight;
+  int getAge() => this.age;
+  int getWeight() => this.weight;
+  int getCalsAdded() => this.calsAdded;
+  int getCalsBurned() => this.calsBurned;
 
   set gender(String newGender) {
     _firestore.collection('users').document(id).updateData({'gender': newGender});
   }
 
-  set age(String newAge) {
+  set age(int newAge) {
     _firestore.collection('users').document(id).updateData({'age': newAge});
   }
 
-  set weight(String newWeight) {
+  set weight(int newWeight) {
     _firestore.collection('users').document(id).updateData({'age': newWeight});
   }
 
-  Future<void> updateProfile({@required String userID, String gender, int age, int weight}) async {
+  set calsAdded(int newCalsAdded) {
+    _firestore.collection('users').document(id).updateData({'cals_added': newCalsAdded});
+  }
+
+  set calsBurned(int newCalsBurned) {
+    _firestore.collection('users').document(id).updateData({'cals_burned': newCalsBurned});
+  }
+
+  Future<void> updateProfile({
+    @required String userID,
+    String gender,
+    int age,
+    int weight,
+    int calsBurned,
+    int calsAdded,
+  }) async {
     Map<String, dynamic> userMap;
-    if(gender != null || gender != ''){
+    if (gender != null || gender != '') {
       userMap.putIfAbsent('gender', () => gender);
     }
-    if(age != null || age.toString() != ''){
+    if (age != null || age.toString() != '' || age == 0) {
       userMap.putIfAbsent('age', () => age);
     }
-    if(weight != null || weight.toString() != ''){
+    if (weight != null || weight.toString() != '' || weight == 0) {
       userMap.putIfAbsent('weight', () => weight);
     }
+    if (calsAdded != null || calsAdded.toString() != '' || calsAdded == 0) {
+      userMap.putIfAbsent('cals_added', () => calsAdded);
+    }
+    if (calsBurned != null || calsBurned.toString() != '' || calsBurned == 0) {
+      userMap.putIfAbsent('cals_burned', () => calsBurned);
+    }
+
     return _firestore.collection('users').document(userID).updateData(userMap);
   }
 }
