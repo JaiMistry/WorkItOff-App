@@ -11,7 +11,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:workitoff/widgets.dart';
 
 final BottomNavigationBar navBar = navBarGlobalKey.currentWidget;
-bool _isSliderMoved = false;
 
 class WorkoutsPage extends StatefulWidget {
   @override
@@ -21,8 +20,8 @@ class WorkoutsPage extends StatefulWidget {
 class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMixin {
   AnimationController _animationController;
   TextEditingController _searchController = new TextEditingController();
-  bool isButtonDisabled = true;
   String _filter;
+  bool _isSliderMoved = false;
 
   Widget _buildCardList(AsyncSnapshot snapshot) {
     return ListView.builder(
@@ -31,11 +30,20 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
       itemBuilder: (BuildContext context, int index) {
         DocumentSnapshot workout = snapshot.data.documents[index];
         return _filter == null || _filter == ''
-            ? WorkoutCards(snapshot.data.documents[index])
-            : workout.documentID.contains(_filter.toLowerCase()) ? WorkoutCards(workout) : Container();
+            ? WorkoutCards(snapshot.data.documents[index], _sliderMoved)
+            : workout.documentID.contains(_filter.toLowerCase()) ? WorkoutCards(workout, _sliderMoved) : Container();
       },
       itemCount: snapshot.data.documents.length,
     );
+  }
+
+  void _sliderMoved(bool isSliderMoved) {
+    if (isSliderMoved != _isSliderMoved) {
+      setState(() {
+        _isSliderMoved = isSliderMoved;
+        _animationController.forward();
+      });
+    }
   }
 
   @override
@@ -46,14 +54,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
         _filter = _searchController.text;
       });
     });
-    if (!_isSliderMoved) {
-      isButtonDisabled = false;
-      _animationController = AnimationController(duration: const Duration(milliseconds: 350), vsync: this);
-      _animationController.forward();
-    } else {
-      isButtonDisabled = true;
-      _animationController = AnimationController(vsync: this);
-    }
+    _animationController = AnimationController(duration: const Duration(milliseconds: 350), vsync: this);
   }
 
   void _setSearchText() {
@@ -213,7 +214,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                           highlightColor: Colors.transparent,
                           child: Text("Enter Workouts", style: TextStyle(fontSize: 18.0)),
                           onPressed: () {
-                            return isButtonDisabled ? null : _showLogDialog();
+                            return _isSliderMoved ? _showLogDialog() : null;
                           },
                         ),
                       ),
@@ -232,7 +233,8 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
 // * Each card needs to have its own individual state
 class WorkoutCards extends StatefulWidget {
   final DocumentSnapshot data;
-  WorkoutCards(this.data) : super();
+  final Function sliderMoved;
+  WorkoutCards(this.data, this.sliderMoved) : super();
 
   @override
   State<StatefulWidget> createState() {
@@ -246,7 +248,8 @@ class _WorkoutCardsState extends State<WorkoutCards> {
   void _setValue(double value) {
     setState(() {
       _sliderValue = value;
-      _isSliderMoved = true;
+      // _isSliderMoved = true;
+      widget.sliderMoved(true);
     });
   }
 
