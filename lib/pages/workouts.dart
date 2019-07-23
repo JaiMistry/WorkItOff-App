@@ -30,8 +30,10 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
       itemBuilder: (BuildContext context, int index) {
         DocumentSnapshot workout = snapshot.data.documents[index];
         return _filter == null || _filter == ''
-            ? WorkoutCards(snapshot.data.documents[index], _sliderMoved)
-            : workout.documentID.contains(_filter.toLowerCase()) ? WorkoutCards(workout, _sliderMoved) : Container();
+            ? WorkoutCards(snapshot.data.documents[index], _sliderMoved, _isSliderMoved)
+            : workout.documentID.contains(_filter.toLowerCase())
+                ? WorkoutCards(workout, _sliderMoved, _isSliderMoved)
+                : Container();
       },
       itemCount: snapshot.data.documents.length,
     );
@@ -41,7 +43,11 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
     if (isSliderMoved != _isSliderMoved) {
       setState(() {
         _isSliderMoved = isSliderMoved;
-        _animationController.forward();
+        if (_isSliderMoved == true) {
+          _animationController.forward();
+        } else {
+          _animationController.reverse();
+        }
       });
     }
   }
@@ -97,15 +103,22 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                   if (user.getAge() == null || user.getAge().isEmpty) {
                     Navigator.of(context).pop();
                     _showMissingDataDialog('Age');
+                    return;
                   }
                   if (user.getGender() == null || user.getGender().isEmpty) {
                     Navigator.of(context).pop();
                     _showMissingDataDialog('Gender');
+                    return;
                   }
+                  // TODO: Change so the user can sucessfully reset
                   if (user.getWeight() != null || user.getWeight().isEmpty) {
                     Navigator.of(context).pop();
                     _showMissingDataDialog('Weight');
+                    return;
                   }
+                  _sliderMoved(false); // Reset the slider
+                  Navigator.of(context).pop(); // Pop the alertDialog
+                  navBar.onTap(0); // Redirect to burn page
                 }),
           ],
         );
@@ -129,14 +142,15 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
               onPressed: () => Navigator.of(context).pop(),
             ),
             FlatButton(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.grey[200],
-                textColor: Colors.black,
-                child: Text('Set $data', style: TextStyle(fontWeight: FontWeight.bold)),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  navBar.onTap(3);
-                }),
+              splashColor: Colors.transparent,
+              highlightColor: Colors.grey[200],
+              textColor: Colors.black,
+              child: Text('Set $data', style: TextStyle(fontWeight: FontWeight.bold)),
+              onPressed: () {
+                Navigator.of(context).pop();
+                navBar.onTap(3);
+              },
+            ),
           ],
         );
       },
@@ -199,7 +213,6 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                       ],
                     ),
                   ),
-                  // TODO: make button fade in realtime when slider is moved
                   Container(
                     alignment: Alignment.bottomCenter,
                     child: FadeTransition(
@@ -234,7 +247,8 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
 class WorkoutCards extends StatefulWidget {
   final DocumentSnapshot data;
   final Function sliderMoved;
-  WorkoutCards(this.data, this.sliderMoved) : super();
+  final bool isSliderMoved;
+  WorkoutCards(this.data, this.sliderMoved, this.isSliderMoved) : super();
 
   @override
   State<StatefulWidget> createState() {
@@ -248,9 +262,18 @@ class _WorkoutCardsState extends State<WorkoutCards> {
   void _setValue(double value) {
     setState(() {
       _sliderValue = value;
-      // _isSliderMoved = true;
       widget.sliderMoved(true);
     });
+  }
+
+  @override
+  void didUpdateWidget(WorkoutCards oldWidget) {
+    if (widget.isSliderMoved == false && _sliderValue > 0.0) {
+      setState(() {
+        _sliderValue = 0.0;
+      });
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
