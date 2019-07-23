@@ -22,23 +22,24 @@ class NavigationBar extends StatefulWidget {
 class _NavigationBarState extends State<NavigationBar> {
   int _selectedIndex = 0;
   List<Widget> _pageOptions = <Widget>[
-    BurnPage(),
+    // BurnPage(),
+    ProgressPage(),
     FoodPage(),
     WorkoutsPage(),
     ProfilePage(),
   ];
 
   void updatePageOptions() {
-    setState(() {
-      if (Provider.of<ProgressProvider>(context).showProgress != null ||
-          Provider.of<ProgressProvider>(context).showProgress == true) {
-        // print('value is true!');
-        _pageOptions[0] = ProgressPage();
-      } else {
-        _pageOptions[0] = BurnPage();
-        // print('value is false/null!');
-      }
-    });
+    // setState(() {
+    //   if (Provider.of<ProgressProvider>(context).showProgress != null ||
+    //       Provider.of<ProgressProvider>(context).showProgress == true) {
+    //     // print('value is true!');
+    //     _pageOptions[0] = ProgressPage();
+    //   } else {
+    //     _pageOptions[0] = BurnPage();
+    //     // print('value is false/null!');
+    //   }
+    // });
   }
 
   void _onItemTapped(int index) {
