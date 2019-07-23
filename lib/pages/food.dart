@@ -101,7 +101,7 @@ class _FoodPageState extends State<FoodPage> {
   }
 }
 
-Widget _builderEnterCaloriesButton() {
+Widget _builderEnterCaloriesButton(BuildContext context, ScrollController controller) {
   return Column(
     children: <Widget>[
       const Text("Can't find your cheat meal?", style: TextStyle(fontSize: 20, color: Color(0xff4ff7d3))),
@@ -124,7 +124,15 @@ Widget _builderEnterCaloriesButton() {
             'Enter Calories',
             style: const TextStyle(fontSize: 22, color: Colors.black, fontWeight: FontWeight.bold),
           ),
-          onTap: () {},
+          onTap: () {
+            controller.animateTo(
+              // TODO: mess with this value below. People say to use controller.position.maxScrollExtent
+              // TODO: but it does a weird jump thing.
+              MediaQuery.of(context).size.height,
+              curve: Curves.easeOut,
+              duration: const Duration(milliseconds: 1000),
+            );
+          },
         ),
       ),
     ],
@@ -141,6 +149,20 @@ class FoodBody extends StatefulWidget {
 }
 
 class _FoodBodyState extends State<FoodBody> {
+  ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+  }
+
   Widget _makeFoodCard(BuildContext context, DocumentSnapshot restaurant) {
     String imageUrl = restaurant.data['image_url'];
     if (imageUrl == null) {
@@ -199,9 +221,10 @@ class _FoodBodyState extends State<FoodBody> {
       child: ScrollConfiguration(
         behavior: NoOverscrollBehavior(),
         child: ListView(
+          controller: _scrollController,
           padding: const EdgeInsets.only(top: 20.0),
           children: <Widget>[
-            _builderEnterCaloriesButton(),
+            _builderEnterCaloriesButton(context, _scrollController),
             StreamBuilder<QuerySnapshot>(
               stream: Firestore.instance.collection('food').snapshots(),
               builder: (context, snapshot) {
@@ -216,7 +239,6 @@ class _FoodBodyState extends State<FoodBody> {
                     ),
                   );
                 }
-
                 return GridView(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
@@ -245,7 +267,7 @@ class _FoodBodyState extends State<FoodBody> {
                             cursorColor: Colors.white,
                             keyboardType: TextInputType.number,
                             style: TextStyle(color: Colors.white.withOpacity(0.9)),
-                            textAlign: TextAlign.left,
+                            textAlign: TextAlign.center,
                             decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(vertical: 8.5, horizontal: 10),
                                 border: InputBorder.none,
@@ -256,6 +278,7 @@ class _FoodBodyState extends State<FoodBody> {
                           ),
                         ),
                       ),
+                      SizedBox(width: 10.0),
                       RaisedButton(
                         child: Text('Enter Calories', style: TextStyle(fontSize: 20.0)),
                         onPressed: () {},
