@@ -70,7 +70,6 @@ enum AuthStatus {
   signedIn,
 }
 
-//TODO: Hot reload always directs the user back to the main page. It no longer maintains state in app for an quick reload.
 class CheckSignOnStatus extends StatefulWidget {
   CheckSignOnStatus({Key key}) : super(key: key);
 

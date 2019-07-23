@@ -48,8 +48,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
     });
     if (!_isSliderMoved) {
       isButtonDisabled = false;
-      _animationController =
-          AnimationController(duration: const Duration(milliseconds: 350), vsync: this);
+      _animationController = AnimationController(duration: const Duration(milliseconds: 350), vsync: this);
       _animationController.forward();
     } else {
       isButtonDisabled = true;
@@ -133,7 +132,6 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                 highlightColor: Colors.grey[200],
                 textColor: Colors.black,
                 child: Text('Set $data', style: TextStyle(fontWeight: FontWeight.bold)),
-                // TODO: Redirect to profile page
                 onPressed: () {
                   Navigator.of(context).pop();
                   navBar.onTap(3);
@@ -255,53 +253,46 @@ class _WorkoutCardsState extends State<WorkoutCards> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 316,
-      child: Card(
-        clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: Column(
-          children: <Widget>[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10.0),
-              child: CachedNetworkImage(
-                imageUrl: this.widget.data['image_url'],
-                placeholder: (context, url) => Container(),
-                errorWidget: (context, url, error) => Container(child: Text('Error Loading image..')),
-                fit: BoxFit.cover,
-                fadeInCurve: Curves.linear,
-              ),
+      height: MediaQuery.of(context).size.height * 0.38,
+      child: Column(
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10.0),
+            child: CachedNetworkImage(
+              imageUrl: this.widget.data['image_url'],
+              placeholder: (context, url) => Container(),
+              errorWidget: (context, url, error) => Container(child: Text('Error Loading image..')),
+              fit: BoxFit.cover,
+              fadeInCurve: Curves.linear,
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 15.0),
-              child: Text(
-                '${_sliderValue.round()}' + ' MINUTES',
-                style: TextStyle(color: Colors.white, fontSize: 15.0),
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 15.0),
+            child: Text(
+              '${_sliderValue.round()}' + ' MINUTES',
+              style: TextStyle(color: Colors.white, fontSize: 15.0),
             ),
-            SliderTheme(
-              data: SliderTheme.of(context).copyWith(
-                  thumbColor: Colors.white,
-                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10.0),
-                  activeTrackColor: const Color(0xff3ADEA7),
-                  inactiveTrackColor: Colors.grey,
-                  overlayColor: Colors.transparent,
-                  trackHeight: 1.0),
-              child: Slider(
-                value: _sliderValue,
-                onChanged: _setValue,
-                min: 0.0,
-                max: 150.0,
-                divisions: 30,
-              ),
+          ),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+                thumbColor: Colors.white,
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10.0),
+                activeTrackColor: const Color(0xff3ADEA7),
+                inactiveTrackColor: Colors.grey,
+                overlayColor: Colors.transparent,
+                trackHeight: 1.0),
+            child: Slider(
+              value: _sliderValue,
+              onChanged: _setValue,
+              min: 0.0,
+              max: 150.0,
+              divisions: 30,
             ),
-          ],
-        ),
-        color: Colors.transparent,
-        elevation: 0.0,
-        margin: const EdgeInsets.symmetric(horizontal: 10),
+          ),
+        ],
       ),
+      color: Colors.transparent,
+      margin: const EdgeInsets.symmetric(horizontal: 10),
     );
   }
 }

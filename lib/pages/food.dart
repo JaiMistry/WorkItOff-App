@@ -130,7 +130,7 @@ Widget _builderEnterCaloriesButton(BuildContext context, ScrollController contro
           onTap: () {
             controller.animateTo(
               // TODO: mess with this value below. People say to use controller.position.maxScrollExtent
-              // TODO: but it does a weird jump thing.
+              // but it does a weird jump thing.
               MediaQuery.of(context).size.height,
               curve: Curves.easeOut,
               duration: const Duration(milliseconds: 1000),
