@@ -63,10 +63,6 @@ class _ProgressPageState extends State<ProgressPage> {
       _currentPercentage = (user.calsBurned / user.calsAdded * 100).round();
     }
 
-    // print(user.calsAdded);
-    // print(user.calsBurned);
-    // print(_currentPercentage);
-
     return Container(
       height: double.infinity,
       width: double.infinity,
