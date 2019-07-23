@@ -253,7 +253,7 @@ class _WorkoutCardsState extends State<WorkoutCards> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.38,
+      height: MediaQuery.of(context).size.height * 0.45,
       child: Column(
         children: <Widget>[
           ClipRRect(
