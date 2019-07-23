@@ -44,9 +44,7 @@ class BurnPage extends StatelessWidget {
                           // auth.signOut();
                           navBar.onTap(1);
                         },
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
                         borderSide: const BorderSide(color: Color(0xff17e3f1)),
                         highlightColor: const Color(0xff17e3f1),
                         highlightedBorderColor: const Color(0xff17e3f1),

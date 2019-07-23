@@ -30,7 +30,7 @@ class _NavigationBarState extends State<NavigationBar> {
   ];
 
   void updatePageOptions() {
-    // TODO: Remove comments to revert to normal
+    // TODO: Remove comments to revert to normal.
     // setState(() {
     //   if (Provider.of<ProgressProvider>(context).showProgress != null ||
     //       Provider.of<ProgressProvider>(context).showProgress == true) {
@@ -40,7 +40,8 @@ class _NavigationBarState extends State<NavigationBar> {
     //     _pageOptions[0] = BurnPage();
     //     // print('value is false/null!');
     //   }
-    // });
+    //   _pageOptions[0] = BurnPage();
+    // }); //!
   }
 
   void _onItemTapped(int index) {

@@ -53,6 +53,8 @@ class _ProgressPageState extends State<ProgressPage> {
     Size size = MediaQuery.of(context).size;
 
     return Container(
+      height: double.infinity,
+      width: double.infinity,
       decoration: const BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topCenter,
@@ -61,47 +63,52 @@ class _ProgressPageState extends State<ProgressPage> {
           stops: const [0.75, 1],
         ),
       ),
-      child: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Align(
-              alignment: Alignment.topCenter,
-              child: Image.asset('assets/text_logo.png', width: 80),
-            ),
-            const SizedBox(height: 30),
-            // TODO: Use flex to contorl height of widgets.
-            CircularPercentIndicator(
-              radius: size.width * 0.75,
-              lineWidth: 21.0,
-              percent: _currentPercentage * .01,
-              center: Text(
-                '$_currentPercentage%',
-                style: TextStyle(fontSize: 45),
+      child: SafeArea(
+        child: Container(
+          padding: EdgeInsets.only(top: 30, bottom: 30, left: 10, right: 10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image.asset('assets/text_logo.png', width: 80),
+              const SizedBox(height: 30),
+              CircularPercentIndicator(
+                radius: size.width * 0.75,
+                lineWidth: 21.0,
+                percent: _currentPercentage * .01,
+                center: Text(
+                  '$_currentPercentage%',
+                  style: TextStyle(fontSize: 45),
+                ),
+                progressColor: const Color(0xff3ADEA7),
+                backgroundColor: Colors.purple.withOpacity(0.1),
+                reverse: true,
               ),
-              progressColor: const Color(0xff3ADEA7),
-              backgroundColor: Colors.purple.withOpacity(0.1),
-              reverse: true,
-            ),
-            const SizedBox(height: 15),
-            _renderText(),
-            const SizedBox(height: 20),
-            OutlineButton(
-              child: Text(_progressMode ? 'Show Calories' : 'Show Progress', style: TextStyle(color: Colors.white)),
-              onPressed: () {
-                setState(() {
-                  _progressMode = !_progressMode;
-                });
-              },
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
+              const SizedBox(height: 15),
+              _renderText(),
+              const SizedBox(height: 20),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: OutlineButton(
+                    child: Text(
+                      _progressMode ? 'Show Calories' : 'Show Progress',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _progressMode = !_progressMode;
+                      });
+                    },
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                    borderSide: const BorderSide(color: Color(0xff17e3f1)),
+                    highlightColor: const Color(0xff17e3f1),
+                    highlightedBorderColor: const Color(0xff17e3f1),
+                    splashColor: Colors.transparent,
+                  ),
+                ),
               ),
-              borderSide: const BorderSide(color: Color(0xff17e3f1)),
-              highlightColor: const Color(0xff17e3f1),
-              highlightedBorderColor: const Color(0xff17e3f1),
-              splashColor: Colors.transparent,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
