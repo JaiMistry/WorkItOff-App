@@ -78,7 +78,6 @@ class _FoodPageState extends State<FoodPage> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       builder: (ctx) => FoodItemProvider(),
-      // TODO: Instantiate widgets, this might preserve state better
       child: IndexedStack(
         index: _selectedPage,
         children: <Widget>[
@@ -130,9 +129,7 @@ Widget _builderEnterCaloriesButton(BuildContext context, ScrollController contro
           ),
           onTap: () {
             controller.animateTo(
-              // TODO: mess with this value below. People say to use controller.position.maxScrollExtent
-              // but it does a weird jump thing.
-              MediaQuery.of(context).size.height,
+              controller.position.maxScrollExtent,
               curve: Curves.easeOut,
               duration: const Duration(milliseconds: 1000),
             );

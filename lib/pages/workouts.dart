@@ -12,7 +12,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:workitoff/widgets.dart';
 
 final BottomNavigationBar navBar = navBarGlobalKey.currentWidget;
-bool _isSliderMoved = false;
 
 class WorkoutsPage extends StatefulWidget {
   @override
@@ -22,8 +21,8 @@ class WorkoutsPage extends StatefulWidget {
 class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMixin {
   AnimationController _animationController;
   TextEditingController _searchController = new TextEditingController();
-  bool isButtonDisabled = true;
   String _filter;
+  bool _isSliderMoved = false;
 
   Widget _buildCardList(AsyncSnapshot snapshot) {
     return ListView.builder(
@@ -32,11 +31,26 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
       itemBuilder: (BuildContext context, int index) {
         DocumentSnapshot workout = snapshot.data.documents[index];
         return _filter == null || _filter == ''
-            ? WorkoutCards(snapshot.data.documents[index])
-            : workout.documentID.contains(_filter.toLowerCase()) ? WorkoutCards(workout) : Container();
+            ? WorkoutCards(snapshot.data.documents[index], _sliderMoved, _isSliderMoved)
+            : workout.documentID.contains(_filter.toLowerCase())
+                ? WorkoutCards(workout, _sliderMoved, _isSliderMoved)
+                : Container();
       },
       itemCount: snapshot.data.documents.length,
     );
+  }
+
+  void _sliderMoved(bool isSliderMoved) {
+    if (isSliderMoved != _isSliderMoved) {
+      setState(() {
+        _isSliderMoved = isSliderMoved;
+        if (_isSliderMoved == true) {
+          _animationController.forward();
+        } else {
+          _animationController.reverse();
+        }
+      });
+    }
   }
 
   @override
@@ -47,14 +61,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
         _filter = _searchController.text;
       });
     });
-    if (!_isSliderMoved) {
-      isButtonDisabled = false;
-      _animationController = AnimationController(duration: const Duration(milliseconds: 350), vsync: this);
-      _animationController.forward();
-    } else {
-      isButtonDisabled = true;
-      _animationController = AnimationController(vsync: this);
-    }
+    _animationController = AnimationController(duration: const Duration(milliseconds: 350), vsync: this);
   }
 
   void _setSearchText() {
@@ -96,20 +103,22 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                   if (user.getAge() == null || user.getAge().isEmpty) {
                     Navigator.of(context).pop();
                     _showMissingDataDialog('Age');
+                    return;
                   }
                   if (user.getGender() == null || user.getGender().isEmpty) {
                     Navigator.of(context).pop();
                     _showMissingDataDialog('Gender');
+                    return;
                   }
-                  if (user.getWeight() == null || user.getWeight().isEmpty) {
+                  // TODO: Change so the user can sucessfully reset
+                  if (user.getWeight() != null || user.getWeight().isEmpty) {
                     Navigator.of(context).pop();
                     _showMissingDataDialog('Weight');
-                  } else {
-                    Navigator.of(context).pop();
-                    // TODO: show circular progress indicator, re-direct to ProgressPage
-                    Provider.of<ProgressProvider>(context).showProgress = true;
-                    navBar.onTap(0);
+                    return;
                   }
+                  _sliderMoved(false); // Reset the slider
+                  Navigator.of(context).pop(); // Pop the alertDialog
+                  navBar.onTap(0); // Redirect to burn page
                 }),
           ],
         );
@@ -133,14 +142,15 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
               onPressed: () => Navigator.of(context).pop(),
             ),
             FlatButton(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.grey[200],
-                textColor: Colors.black,
-                child: Text('Set $data', style: TextStyle(fontWeight: FontWeight.bold)),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  navBar.onTap(3);
-                }),
+              splashColor: Colors.transparent,
+              highlightColor: Colors.grey[200],
+              textColor: Colors.black,
+              child: Text('Set $data', style: TextStyle(fontWeight: FontWeight.bold)),
+              onPressed: () {
+                Navigator.of(context).pop();
+                navBar.onTap(3);
+              },
+            ),
           ],
         );
       },
@@ -203,7 +213,6 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                       ],
                     ),
                   ),
-                  // TODO: make button fade in realtime when slider is moved
                   Container(
                     alignment: Alignment.bottomCenter,
                     child: FadeTransition(
@@ -218,7 +227,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                           highlightColor: Colors.transparent,
                           child: Text("Enter Workouts", style: TextStyle(fontSize: 18.0)),
                           onPressed: () {
-                            return isButtonDisabled ? null : _showLogDialog();
+                            return _isSliderMoved ? _showLogDialog() : null;
                           },
                         ),
                       ),
@@ -237,7 +246,9 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
 // * Each card needs to have its own individual state
 class WorkoutCards extends StatefulWidget {
   final DocumentSnapshot data;
-  WorkoutCards(this.data) : super();
+  final Function sliderMoved;
+  final bool isSliderMoved;
+  WorkoutCards(this.data, this.sliderMoved, this.isSliderMoved) : super();
 
   @override
   State<StatefulWidget> createState() {
@@ -251,14 +262,24 @@ class _WorkoutCardsState extends State<WorkoutCards> {
   void _setValue(double value) {
     setState(() {
       _sliderValue = value;
-      _isSliderMoved = true;
+      widget.sliderMoved(true);
     });
+  }
+
+  @override
+  void didUpdateWidget(WorkoutCards oldWidget) {
+    if (widget.isSliderMoved == false && _sliderValue > 0.0) {
+      setState(() {
+        _sliderValue = 0.0;
+      });
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.38,
+      height: MediaQuery.of(context).size.height * 0.45,
       child: Column(
         children: <Widget>[
           ClipRRect(
