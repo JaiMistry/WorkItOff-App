@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import 'package:workitoff/navigation_bar.dart';
 import 'package:workitoff/providers/user_provider.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +10,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:workitoff/widgets.dart';
 
+final BottomNavigationBar navBar = navBarGlobalKey.currentWidget;
 bool _isSliderMoved = false;
 
 class WorkoutsPage extends StatefulWidget {
@@ -44,7 +46,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
         _filter = _searchController.text;
       });
     });
-    if (_isSliderMoved) {
+    if (!_isSliderMoved) {
       isButtonDisabled = false;
       _animationController =
           AnimationController(duration: const Duration(milliseconds: 350), vsync: this);
@@ -132,7 +134,10 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                 textColor: Colors.black,
                 child: Text('Set $data', style: TextStyle(fontWeight: FontWeight.bold)),
                 // TODO: Redirect to profile page
-                onPressed: () => Navigator.of(context).pop()),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  navBar.onTap(3);
+                }),
           ],
         );
       },

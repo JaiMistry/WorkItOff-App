@@ -7,6 +7,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
+import 'package:workitoff/navigation_bar.dart';
 // import 'package:workitoff/navigation_bar.dart';
 
 // import 'package:transparent_image/transparent_image.dart';
@@ -15,6 +16,8 @@ import 'package:workitoff/widgets.dart';
 
 // ? https://medium.com/coding-with-flutter/flutter-case-study-multiple-navigators-with-bottomnavigationbar-90eb6caa6dbf
 // This is probably the way to do it.
+
+final BottomNavigationBar navBar = navBarGlobalKey.currentWidget;
 
 class FoodItemProvider extends ChangeNotifier {
   DocumentSnapshot _currentRestaurant;
@@ -369,7 +372,10 @@ Future<void> _mealDialog(BuildContext context, AnimationController controller, F
             CupertinoDialogAction(
               child: Text('Log', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
               // TODO: Send total calories of all food items to Progress Page
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                Navigator.of(context).pop();
+                navBar.onTap(0);
+              },
             ),
           ],
         );
