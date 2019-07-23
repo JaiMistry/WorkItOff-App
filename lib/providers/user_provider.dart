@@ -57,12 +57,15 @@ class WorkItOffUser {
   }
 
   set calsAdded(int newCalsAdded) {
+    // This is the set the value. Not increment
     _firestore.collection('users').document(id).updateData({'cals_added': newCalsAdded});
   }
 
   set calsBurned(int newCalsBurned) {
+    // This is the set the value. Not increment
     _firestore.collection('users').document(id).updateData({'cals_burned': newCalsBurned});
   }
+  
 
   Future<void> updateProfile({
     @required String userID,
