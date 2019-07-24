@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// import 'package:workitoff/pages/congrats.dart';
 
 import 'package:workitoff/pages/profilepage.dart';
 // import 'package:workitoff/pages/burnpage.dart';
@@ -25,6 +26,7 @@ class _NavigationBarState extends State<NavigationBar> {
   List<Widget> _pageOptions = <Widget>[
     // BurnPage(), //TODO: Change Comments to revert to normal
     // ProgressPage(), //!
+    // ParticleBackgroundApp(),
     ProgressOrBurnPage(),
     FoodPage(),
     WorkoutsPage(),

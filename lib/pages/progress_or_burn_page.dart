@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:workitoff/pages/burnpage.dart';
 import 'package:workitoff/pages/progress.dart';
 import 'package:workitoff/providers/user_provider.dart';
+import 'package:workitoff/pages/congrats.dart';
 
 class ProgressOrBurnPage extends StatefulWidget {
   ProgressOrBurnPage({Key key}) : super(key: key);
@@ -22,7 +23,12 @@ class _ProgressOrBurnPageState extends State<ProgressOrBurnPage> {
         _currentPercentage = (user.calsBurned / user.calsAdded * 100).round();
       } catch (e) {}
 
-      return user.calsAdded > 0 ? ProgressPage(_calsRemaining, _currentPercentage) : BurnPage();
+      if (user.calsAdded > 0 && user.calsBurned >= user.calsAdded) {
+        return CongratsPage();
+      } else if (user.calsAdded > 0) {
+        return ProgressPage(_calsRemaining, _currentPercentage);
+      }
+      return BurnPage();
     }
     return Container(
       decoration: const BoxDecoration(
