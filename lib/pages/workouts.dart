@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:workitoff/navigation_bar.dart';
-import 'package:workitoff/providers/progress_provider.dart';
+// import 'package:workitoff/providers/progress_provider.dart';
 import 'package:workitoff/providers/user_provider.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -120,7 +120,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                   user.calsBurned = 500;  // TODO
                   _sliderMoved(false); // Reset the slider
                   Navigator.of(context).pop(); // Pop the alertDialog
-                  Provider.of<ProgressProvider>(context).showProgress = true;
+                  // Provider.of<ProgressProvider>(context).showProgress = true;
                   navBar.onTap(0); // Redirect to burn page
                 }),
           ],

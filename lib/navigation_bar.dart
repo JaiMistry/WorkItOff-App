@@ -4,12 +4,13 @@ import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:workitoff/pages/profilepage.dart';
-import 'package:workitoff/pages/burnpage.dart';
-import 'package:workitoff/pages/progress.dart';
+// import 'package:workitoff/pages/burnpage.dart';
+// import 'package:workitoff/pages/progress.dart';
 import 'package:workitoff/pages/workouts.dart';
 import 'package:workitoff/pages/food.dart';
 import 'package:workitoff/providers/user_provider.dart';
-import 'package:workitoff/providers/progress_provider.dart';
+// import 'package:workitoff/providers/progress_provider.dart';
+import 'package:workitoff/pages/progress_or_burn_page.dart';
 
 // Much easier and better to use this instead of a NavBarProvider.
 GlobalKey navBarGlobalKey = GlobalKey(debugLabel: 'bottomAppBar');
@@ -23,7 +24,8 @@ class _NavigationBarState extends State<NavigationBar> {
   int _selectedIndex = 0;
   List<Widget> _pageOptions = <Widget>[
     // BurnPage(), //TODO: Change Comments to revert to normal
-    ProgressPage(), //!
+    // ProgressPage(), //!
+    ProgressOrBurnPage(),
     FoodPage(),
     WorkoutsPage(),
     ProfilePage(),
@@ -52,7 +54,7 @@ class _NavigationBarState extends State<NavigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    updatePageOptions();
+    // updatePageOptions();
     String userID =
         Provider.of<FirebaseUser>(context, listen: false) != null ? Provider.of<FirebaseUser>(context).uid : 'null';
 

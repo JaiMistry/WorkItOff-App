@@ -8,7 +8,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import 'package:workitoff/navigation_bar.dart';
-import 'package:workitoff/providers/progress_provider.dart';
+// import 'package:workitoff/providers/progress_provider.dart';
 import 'package:workitoff/providers/user_provider.dart';
 // import 'package:workitoff/navigation_bar.dart';
 
@@ -421,7 +421,7 @@ Future<void> _mealDialog(
                 // TODO: Send meals to cloud function. These are placeholder calories
                 user.calsAdded = 500 * meals.length; // TODO
                 Navigator.of(context).pop();
-                Provider.of<ProgressProvider>(context).showProgress = true;
+                // Provider.of<ProgressProvider>(context).showProgress = true;
                 navBar.onTap(0);
               },
             ),
