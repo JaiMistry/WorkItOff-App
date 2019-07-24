@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -363,53 +362,59 @@ class _ExpansionBtnState extends State<ExpansionBtn> {
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(
-      onExpansionChanged: (bool state) {},
-      title: Text(widget.meal, style: TextStyle(color: Colors.white, fontSize: 14)),
-      children: [
-        const SizedBox(height: 2),
-        Container(
-          height: 25,
-          width: 150,
-          child: FlatButton(
-            padding: const EdgeInsets.all(0),
-            color: Colors.purple.withOpacity(0.5),
-            onPressed: () {
-              _showLogDialog(context, _setQuantity, _quantity);
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                RichText(
-                  text: TextSpan(
-                    style: const TextStyle(color: Colors.white),
-                    children: <TextSpan>[
-                      const TextSpan(text: 'Quantity '),
-                      TextSpan(text: _quantity == 0 ? '1/2' : _quantity.toString()),
-                    ],
+    return Theme(
+      data: ThemeData(
+        accentColor: Colors.white.withOpacity(0.7),
+        unselectedWidgetColor: Colors.white.withOpacity(0.7)
+      ),
+      child: ExpansionTile(
+        onExpansionChanged: (bool state) {},
+        title: Text(widget.meal, style: TextStyle(color: Colors.white, fontSize: 14)),
+        children: [
+          const SizedBox(height: 2),
+          Container(
+            height: 25,
+            width: 150,
+            child: FlatButton(
+              padding: const EdgeInsets.all(0),
+              color: Colors.purple.withOpacity(0.5),
+              onPressed: () {
+                _showLogDialog(context, _setQuantity, _quantity);
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      style: const TextStyle(color: Colors.white),
+                      children: <TextSpan>[
+                        const TextSpan(text: 'Quantity '),
+                        TextSpan(text: _quantity == 0 ? '1/2' : _quantity.toString()),
+                      ],
+                    ),
                   ),
-                ),
-                Icon(Icons.arrow_drop_down, color: Colors.white.withOpacity(0.3))
-              ],
+                  Icon(Icons.arrow_drop_down, color: Colors.white.withOpacity(0.3))
+                ],
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 10),
-        Container(
-          height: 25,
-          width: 150,
-          child: FlatButton(
-            color: Colors.teal.withOpacity(0.5),
-            onPressed: () {
-              widget.addToCart(widget.meal, _quantity == 0 ? 0.5 : _quantity);
-              showDefualtFlushBar(
-                  context: context,
-                  text: '${_quantity == 0 ? '1/2' : _quantity.toString()} ${widget.meal} added to cart.');
-            },
-            child: const Text('Add To Meal', style: TextStyle(color: Colors.white)),
-          ),
-        )
-      ],
+          const SizedBox(height: 10),
+          Container(
+            height: 25,
+            width: 150,
+            child: FlatButton(
+              color: Colors.teal.withOpacity(0.5),
+              onPressed: () {
+                widget.addToCart(widget.meal, _quantity == 0 ? 0.5 : _quantity);
+                showDefualtFlushBar(
+                    context: context,
+                    text: '${_quantity == 0 ? '1/2' : _quantity.toString()} ${widget.meal} added to cart.');
+              },
+              child: const Text('Add To Meal', style: TextStyle(color: Colors.white)),
+            ),
+          )
+        ],
+      ),
     );
   }
 }
