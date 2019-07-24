@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:workitoff/pages/burnpage.dart';
-import 'package:workitoff/pages/progress.dart';
+import 'package:workitoff/pages/home/burnpage.dart';
+import 'package:workitoff/pages/home/progress.dart';
 import 'package:workitoff/providers/user_provider.dart';
-import 'package:workitoff/pages/congrats.dart';
+import 'package:workitoff/pages/home/congrats.dart';
 
-class ProgressOrBurnPage extends StatefulWidget {
-  ProgressOrBurnPage({Key key}) : super(key: key);
+class HomeDecider extends StatefulWidget {
+  HomeDecider({Key key}) : super(key: key);
 
-  _ProgressOrBurnPageState createState() => _ProgressOrBurnPageState();
+  _HomeDeciderState createState() => _HomeDeciderState();
 }
 
-class _ProgressOrBurnPageState extends State<ProgressOrBurnPage> {
+class _HomeDeciderState extends State<HomeDecider> {
   @override
   Widget build(BuildContext context) {
     WorkItOffUser user = Provider.of<WorkItOffUser>(context);
