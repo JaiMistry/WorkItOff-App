@@ -59,8 +59,10 @@ class _ProgressPageState extends State<ProgressPage> {
     int _calsRemaining = 0;
     int _currentPercentage = 0;
     if (user != null) {
-      _calsRemaining = (user.calsAdded - user.calsBurned);
-      _currentPercentage = (user.calsBurned / user.calsAdded * 100).round();
+      try {
+        _calsRemaining = (user.calsAdded - user.calsBurned);
+        _currentPercentage = (user.calsBurned / user.calsAdded * 100).round();
+      } catch (e) {}
     }
 
     return Container(
