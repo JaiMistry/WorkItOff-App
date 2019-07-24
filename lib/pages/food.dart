@@ -322,14 +322,28 @@ class _FoodBodyState extends State<FoodBody> {
 class FoodItems extends StatefulWidget {
   final DocumentSnapshot restaurant;
   final String searchText;
+  final Function setPage;
 
-  FoodItems({Key key, @required this.restaurant, @required this.searchText}) : super(key: key);
+  FoodItems({
+    Key key,
+    @required this.restaurant,
+    @required this.searchText,
+    @required this.setPage,
+  }) : super(key: key);
 
   _FoodItemsState createState() => _FoodItemsState();
 }
 
-Widget _enterMealsButton(BuildContext context, AnimationController controller, bool isButtonDisabled, int count,
-    Function resetCart, List<String> meals, List<dynamic> quantities) {
+Widget _enterMealsButton(
+  BuildContext context,
+  AnimationController controller,
+  bool isButtonDisabled,
+  int count,
+  Function resetCart,
+  List<String> meals,
+  List<dynamic> quantities,
+  FoodItems widget,
+) {
   return FadeTransition(
     opacity: CurvedAnimation(parent: controller, curve: Curves.linear),
     child: Container(
@@ -341,7 +355,9 @@ Widget _enterMealsButton(BuildContext context, AnimationController controller, b
         highlightColor: Colors.transparent,
         child: Text("Enter Meal ($count)", style: TextStyle(fontSize: 18.0)),
         onPressed: () {
-          return isButtonDisabled ? null : _mealDialog(context, controller, resetCart, meals, quantities);
+          return isButtonDisabled
+              ? null
+              : _mealDialog(context, controller, resetCart, meals, quantities, widget.setPage);
         },
       ),
     ),
@@ -354,6 +370,7 @@ Future<void> _mealDialog(
   Function resetCart,
   List<String> meals,
   List<dynamic> quantities,
+  Function setPage,
 ) async {
   WorkItOffUser user = Provider.of<WorkItOffUser>(context, listen: false);
 
@@ -379,7 +396,9 @@ Future<void> _mealDialog(
               child: Text('Log', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
               onPressed: () {
                 // TODO: Send meals to cloud function. These are placeholder calories
-                user.calsAdded = 500 * meals.length; // TODO
+                user.calsAdded = 400 * meals.length; // TODO
+                setPage(0);
+                // TODO: Scroll to top of page
                 Navigator.of(context).pop();
                 navBar.onTap(0);
               },
@@ -420,6 +439,8 @@ Future<void> _mealDialog(
               onPressed: () {
                 // TODO: Send meals to cloud function. These are placeholder calories
                 user.calsAdded = 500 * meals.length; // TODO
+                setPage(0);
+                // TODO: Scroll to top of page
                 Navigator.of(context).pop();
                 // Provider.of<ProgressProvider>(context).showProgress = true;
                 navBar.onTap(0);
@@ -535,8 +556,8 @@ class _FoodItemsState extends State<FoodItems> with SingleTickerProviderStateMix
                     return Column(children: widgetList);
                   },
                 ),
-                _enterMealsButton(
-                    context, _animationController, isButtonDisabled, count, _resetCart, listOfMeals, quantityOfMeals)
+                _enterMealsButton(context, _animationController, isButtonDisabled, count, _resetCart, listOfMeals,
+                    quantityOfMeals, widget)
               ],
             ),
           ),
@@ -613,7 +634,7 @@ class _FoodItemPageState extends State<FoodItemPage> {
               child: Column(
                 children: <Widget>[
                   SearchBar(controller: _searchController, hintText: 'Search', topMargin: 5, bottomMargin: 6),
-                  FoodItems(restaurant: _restuarant, searchText: searchText)
+                  FoodItems(restaurant: _restuarant, searchText: searchText, setPage: widget.setPage)
                 ],
               ),
             ),
