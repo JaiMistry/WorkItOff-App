@@ -34,7 +34,6 @@ class FoodItemProvider extends ChangeNotifier {
   }
 }
 
-// class FoodPage
 
 class FoodPage extends StatefulWidget {
   @override
@@ -105,7 +104,7 @@ class _FoodPageState extends State<FoodPage> {
   }
 }
 
-Widget _builderEnterCaloriesButton(BuildContext context, ScrollController controller) {
+Widget _builderEnterCaloriesButton(BuildContext context, ScrollController controller, Function setPageScrollPosition) {
   return Column(
     children: <Widget>[
       const Text("Can't find your cheat meal?", style: TextStyle(fontSize: 20, color: Color(0xff4ff7d3))),
@@ -129,11 +128,12 @@ Widget _builderEnterCaloriesButton(BuildContext context, ScrollController contro
             style: const TextStyle(fontSize: 22, color: Colors.black, fontWeight: FontWeight.bold),
           ),
           onTap: () {
-            controller.animateTo(
-              controller.position.maxScrollExtent,
-              curve: Curves.easeOut,
-              duration: const Duration(milliseconds: 1000),
-            );
+            setPageScrollPosition(true);
+            // controller.animateTo(
+            //   controller.position.maxScrollExtent,
+            //   curve: Curves.easeOut,
+            //   duration: const Duration(milliseconds: 1000),
+            // );
           },
         ),
       ),
@@ -165,6 +165,18 @@ class _FoodBodyState extends State<FoodBody> {
     _scrollController.dispose();
   }
 
+  void setPageScrollPosition(bool scrollToBottom) {
+    double scrollPosition = _scrollController.position.maxScrollExtent;
+    if (scrollToBottom == false) {
+      scrollPosition = _scrollController.position.minScrollExtent;
+    }
+    _scrollController.animateTo(
+      scrollPosition,
+      curve: Curves.easeOut,
+      duration: const Duration(milliseconds: 1000),
+    );
+  }
+
   Widget _makeFoodCard(BuildContext context, DocumentSnapshot restaurant) {
     String imageUrl = restaurant.data['image_url'];
     if (imageUrl == null) {
@@ -176,7 +188,6 @@ class _FoodBodyState extends State<FoodBody> {
         onTap: () {
           Provider.of<FoodItemProvider>(context)._currentRestaurant = restaurant;
           widget.setPage(1);
-          // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => FoodItemPage(restaurant: restaurant)));
         },
         child: ClipRRect(
           borderRadius: BorderRadius.circular(15.0),
@@ -226,7 +237,7 @@ class _FoodBodyState extends State<FoodBody> {
           controller: _scrollController,
           padding: const EdgeInsets.only(top: 20.0),
           children: <Widget>[
-            _builderEnterCaloriesButton(context, _scrollController),
+            _builderEnterCaloriesButton(context, _scrollController, setPageScrollPosition),
             StreamBuilder<QuerySnapshot>(
               stream: Firestore.instance.collection('food').snapshots(),
               builder: (context, snapshot) {
