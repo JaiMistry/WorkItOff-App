@@ -9,7 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:workitoff/providers/user_provider.dart';
 
 import 'package:workitoff/widgets.dart';
-import 'package:workitoff/auth/auth.dart';
+// import 'package:workitoff/auth/auth.dart';
 
 bool _isNumeric(String str) {
   if (str == null) {
@@ -124,11 +124,8 @@ class _GenderRadioState extends State<GenderRadio> {
   void _onRadioChanged(int value) {
     setState(() {
       _selected = value;
-      _genderMapping[value] =
-          Color(0xff4ff7d3); // Change the slected item color
-      value == 0
-          ? _genderMapping[1] = Colors.white
-          : _genderMapping[0] = Colors.white; // Unslected item
+      _genderMapping[value] = Color(0xff4ff7d3); // Change the slected item color
+      value == 0 ? _genderMapping[1] = Colors.white : _genderMapping[0] = Colors.white; // Unslected item
     });
   }
 
@@ -409,11 +406,10 @@ class _UpdateProfileBtnState extends State<UpdateProfileBtn> with SingleTickerPr
 
   void _updateProfile() async {
     String gender = Provider.of<GenderProvider>(context).gender;
-    String userID = Provider.of<FirebaseUser>(context).uid;
     int age = int.parse(widget.ageController.text);
     int weight = int.parse(widget.weightController.text);
 
-    await updateProfile(userID, gender, age, weight).then((onValue) {
+    await Provider.of<WorkItOffUser>(context).updateProfile(age: age, gender: gender, weight: weight).then((onValue) {
       showDefualtFlushBar(context: context, text: 'Profile Updated!');
     }).timeout(const Duration(seconds: 5), onTimeout: () {
       showDefualtFlushBar(context: context, text: 'Connection timed out.');

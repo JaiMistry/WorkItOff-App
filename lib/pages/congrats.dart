@@ -1,7 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_animations/simple_animations.dart';
 import 'package:workitoff/navigation_bar.dart';
+import 'package:workitoff/providers/user_provider.dart';
 
 final BottomNavigationBar navBar = navBarGlobalKey.currentWidget;
 
@@ -78,7 +80,8 @@ class _ParticlesState extends State<Particles> {
   final List<Color> _colors = [];
 
   Color _makeRadomColor() {
-    return Color((Random().nextDouble() * 0xFFFFFF).toInt() << 0).withAlpha(200);
+    int alpha = (Random().nextInt(250) * 0.5 ).round();
+    return Color((Random().nextDouble() * 0xFFFFFF).toInt() << 0).withAlpha(125 + alpha);
   }
 
   @override
@@ -114,7 +117,7 @@ class _ParticlesState extends State<Particles> {
 }
 
 class CongratsPage extends StatelessWidget {
-  Widget _buildColumn() {
+  Widget _buildColumn(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -137,6 +140,7 @@ class CongratsPage extends StatelessWidget {
                 style: const TextStyle(fontSize: 22, color: Colors.black, fontWeight: FontWeight.bold),
               ),
               onTap: () {
+                Provider.of<WorkItOffUser>(context, listen: false).updateProfile(calsAdded: 0, calsBurned: 0);
                 navBar.onTap(1);
               },
             ),
@@ -164,8 +168,8 @@ class CongratsPage extends StatelessWidget {
     return Stack(
       children: <Widget>[
         Positioned.fill(child: buildBackground()),
-        Positioned.fill(child: Particles(100)),
-        Positioned.fill(child: _buildColumn()),
+        Positioned.fill(child: Particles(200)),
+        Positioned.fill(child: _buildColumn(context)),
       ],
     );
   }

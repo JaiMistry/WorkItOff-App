@@ -43,12 +43,12 @@ Future<void> _addNewUser(String userID, String gender, int age, int weight) asyn
       {'age': age, 'weight': weight, 'gender': gender, 'date_joined': Timestamp.now(), 'last_login': Timestamp.now()});
 }
 
-Future<void> updateProfile(String userID, String gender, int age, int weight) async {
-  if (gender == '' || gender == null) {
-    return _firestore.collection('users').document(userID).updateData({'age': age, 'weight': weight});
-  }
-  return _firestore.collection('users').document(userID).updateData({'age': age, 'weight': weight, 'gender': gender});
-}
+// Future<void> updateProfile(String userID, String gender, int age, int weight) async {
+//   if (gender == '' || gender == null) {
+//     return _firestore.collection('users').document(userID).updateData({'age': age, 'weight': weight});
+//   }
+//   return _firestore.collection('users').document(userID).updateData({'age': age, 'weight': weight, 'gender': gender});
+// }
 
 Future<void> updateLastSignedIn(String userID) async {
   return _firestore.collection('users').document(userID).updateData({'last_login': Timestamp.now()});
