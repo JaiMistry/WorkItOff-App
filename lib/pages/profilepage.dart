@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
 import 'package:url_launcher/url_launcher.dart';
+import 'package:workitoff/providers/navbar_provider.dart';
 import 'package:workitoff/providers/user_provider.dart';
 
 import 'package:workitoff/widgets.dart';
@@ -418,6 +419,12 @@ class _UpdateProfileBtnState extends State<UpdateProfileBtn> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
+    if(Provider.of<NavBarProvider>(context).currentPage == 3){
+      _animationController.forward();
+    } else{
+      _animationController.reverse();
+    }
+
     return Container(
       child: FadeTransition(
         opacity: CurvedAnimation(parent: _animationController, curve: Curves.linear),
