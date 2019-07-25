@@ -78,13 +78,13 @@ class _FoodPageState extends State<FoodPage> {
         index: _selectedPage,
         children: <Widget>[
           Container(
+            decoration: getBasicGradient(),
             child: Column(
               children: <Widget>[
                 SearchBar(hintText: 'Search', controller: _searchController, bottomMargin: 6),
                 Expanded(child: FoodBody(restuarantSearchFiler: _restuarantSearchFilter, setPage: _setPage)),
               ],
             ),
-            decoration: getBasicGradient(),
           ),
           FoodItemPage(setPage: _setPage),
         ],

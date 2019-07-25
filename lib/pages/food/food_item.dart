@@ -52,27 +52,37 @@ class _FoodItemPageState extends State<FoodItemPage> {
   @override
   Widget build(BuildContext context) {
     DocumentSnapshot _restuarant = Provider.of<FoodItemProvider>(context).currentRestuarant;
-    return WillPopScope(
-      onWillPop: () {
-        widget.setPage(0);
-        return Future.value(false); // Dont actually go back. I only want to run the function above
-      },
-      child: Column(
-        children: <Widget>[
-          AppBar(
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () {
-                widget.setPage(0);
-              },
+    return Container(
+      decoration: getBasicGradient(),
+      child: WillPopScope(
+        onWillPop: () {
+          widget.setPage(0);
+          return Future.value(false); // Dont actually go back. I only want to run the function above
+        },
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 20),
+            Container(
+              child: Row(
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    color: Colors.white,
+                    onPressed: () {
+                      widget.setPage(0);
+                    },
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      _restuarant == null ? 'Placeholder' : _restuarant.documentID,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  )
+                ],
+              ),
             ),
-            backgroundColor: Color(0xff170422),
-            title: Text(_restuarant == null ? 'Placeholder' : _restuarant.documentID),
-            elevation: 0,
-          ),
-          Flexible(
-            child: Container(
-              decoration: getBasicGradient(),
+            Expanded(
               child: Column(
                 children: <Widget>[
                   SearchBar(controller: _searchController, hintText: 'Search', topMargin: 5, bottomMargin: 6),
@@ -80,8 +90,8 @@ class _FoodItemPageState extends State<FoodItemPage> {
                 ],
               ),
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -269,65 +279,61 @@ class _FoodItemsState extends State<FoodItems> with SingleTickerProviderStateMix
       child: Expanded(
         child: ScrollConfiguration(
           behavior: NoOverscrollBehavior(),
-          child: SafeArea(
-            child: Stack(
-              alignment: Alignment.bottomCenter,
-              children: <Widget>[
-                ListView.builder(
-                  // shrinkWrap: true,
-                  itemCount: 1,
-                  itemBuilder: (BuildContext contect, int index) {
-                    if (widget.restaurant.data['meals'] == null || widget.restaurant.data['meals'].toString() == '{}') {
-                      return Container(
-                          padding: EdgeInsets.only(top: 20), child: Center(child: Text('No Meals Found.')));
-                    }
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: <Widget>[
+              ListView.builder(
+                // shrinkWrap: true,
+                itemCount: 1,
+                itemBuilder: (BuildContext contect, int index) {
+                  if (widget.restaurant.data['meals'] == null || widget.restaurant.data['meals'].toString() == '{}') {
+                    return Container(padding: EdgeInsets.only(top: 20), child: Center(child: Text('No Meals Found.')));
+                  }
 
-                    Map<String, Map> categories = widget.restaurant.data['meals'].cast<String, Map>();
-                    List<Widget> widgetList = [];
+                  Map<String, Map> categories = widget.restaurant.data['meals'].cast<String, Map>();
+                  List<Widget> widgetList = [];
 
-                    categories.forEach((categtory, mealMap) {
-                      List<Widget> mealList = [];
+                  categories.forEach((categtory, mealMap) {
+                    List<Widget> mealList = [];
 
-                      Map<String, int> meals = mealMap.cast<String, int>();
-                      meals.forEach((String meal, int cals) {
-                        String searchText = widget.searchText;
+                    Map<String, int> meals = mealMap.cast<String, int>();
+                    meals.forEach((String meal, int cals) {
+                      String searchText = widget.searchText;
 
-                        //Only reutrn the food items that are being searched for
-                        if (searchText == null ||
-                            searchText == '' ||
-                            meal.toLowerCase().contains(searchText.toLowerCase())) {
-                          mealList.add(
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10),
-                              child: Material(
-                                color: Colors.transparent,
-                                child: ExpansionBtn(meal: meal, key: Key('$meal'), addToCart: _addToCart),
-                              ),
+                      //Only reutrn the food items that are being searched for
+                      if (searchText == null ||
+                          searchText == '' ||
+                          meal.toLowerCase().contains(searchText.toLowerCase())) {
+                        mealList.add(
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: ExpansionBtn(meal: meal, key: Key('$meal'), addToCart: _addToCart),
                             ),
-                          );
-                        }
-                      });
-
-                      // Only return the category if there are food items within
-                      if (mealList.length > 0) {
-                        widgetList.add(
-                          Column(
-                            children: <Widget>[
-                              ListTile(
-                                  title: Text(categtory, style: TextStyle(color: Color(0xff4ff7d3), fontSize: 22))),
-                              Column(children: mealList)
-                            ],
                           ),
                         );
                       }
                     });
-                    return Column(children: widgetList);
-                  },
-                ),
-                _enterMealsButton(context, _animationController, isButtonDisabled, count, _resetCart, listOfMeals,
-                    quantityOfMeals, widget)
-              ],
-            ),
+
+                    // Only return the category if there are food items within
+                    if (mealList.length > 0) {
+                      widgetList.add(
+                        Column(
+                          children: <Widget>[
+                            ListTile(title: Text(categtory, style: TextStyle(color: Color(0xff4ff7d3), fontSize: 22))),
+                            Column(children: mealList)
+                          ],
+                        ),
+                      );
+                    }
+                  });
+                  return Column(children: widgetList);
+                },
+              ),
+              _enterMealsButton(context, _animationController, isButtonDisabled, count, _resetCart, listOfMeals,
+                  quantityOfMeals, widget)
+            ],
           ),
         ),
       ),

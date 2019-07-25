@@ -27,6 +27,7 @@ dependencies:
   cloud_firestore: ^0.12.5+2
   firebase_analytics: ^3.0.3
   firebase_auth: ^0.11.1+7
+  cloud_functions: ^0.4.0+3
   transparent_image: ^1.0.0
   cached_network_image: ^1.0.0
   shared_preferences: ^0.5.3+1
