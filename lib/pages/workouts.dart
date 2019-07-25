@@ -214,8 +214,10 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                             ),
                           ),
                         ),
+                        SizedBox(height: 75),
                       ],
                     ),
+                    
                   ),
                   Consumer<NavBarProvider>(builder: (ctx, navbar, child) {
                     if(navbar.currentPage == 2 && _isSliderMoved){
@@ -224,6 +226,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                       _animationController.reverse();
                     }
                     return Container(
+                      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
                       alignment: Alignment.bottomCenter,
                       child: FadeTransition(
                         opacity: CurvedAnimation(parent: _animationController, curve: Curves.linear),

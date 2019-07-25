@@ -41,13 +41,14 @@ class _NavigationBarState extends State<NavigationBar> {
     return MultiProvider(
       providers: [StreamProvider<WorkItOffUser>.value(value: DatabaseService().streamUser(userID))],
       child: Scaffold(
+        extendBody: true, // Enables transparent BG
         body: IndexedStack(
           children: _pageOptions,
           index: _selectedIndex,
         ),
         bottomNavigationBar: Theme(
           data: Theme.of(context).copyWith(
-            canvasColor: const Color(0xff271037).withOpacity(0.90),
+            canvasColor: const Color(0xff271037).withOpacity(0.90), //Navbar transparency
             splashColor: Colors.transparent,
           ),
           child: BottomNavigationBar(

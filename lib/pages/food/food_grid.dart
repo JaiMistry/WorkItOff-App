@@ -307,7 +307,7 @@ class _FoodBodyState extends State<FoodBody> {
                   style: TextStyle(fontSize: 10.0),
                 ),
                 Text('displayed on this page.', style: TextStyle(fontSize: 10.0)),
-                SizedBox(height: 30.0)
+                SizedBox(height: 100.0)
               ],
             )
           ],
