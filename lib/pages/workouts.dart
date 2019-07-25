@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:workitoff/navigation_bar.dart';
+import 'package:workitoff/providers/navbar_provider.dart';
 // import 'package:workitoff/providers/progress_provider.dart';
 import 'package:workitoff/providers/user_provider.dart';
 
@@ -117,7 +118,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                     return;
                   }
                   // TODO: Send workouts to cloud function. These are placeholder calories
-                  user.calsBurned = 500;  // TODO
+                  user.calsBurned = 500; // TODO
                   _sliderMoved(false); // Reset the slider
                   Navigator.of(context).pop(); // Pop the alertDialog
                   // Provider.of<ProgressProvider>(context).showProgress = true;
@@ -216,26 +217,33 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                       ],
                     ),
                   ),
-                  Container(
-                    alignment: Alignment.bottomCenter,
-                    child: FadeTransition(
-                      opacity: CurvedAnimation(parent: _animationController, curve: Curves.linear),
-                      child: Container(
-                        // width: MediaQuery.of(context).size.width, // Less efficient
-                        width: double.infinity,
-                        child: FlatButton(
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          color: Color(0xff4ff7d3),
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          child: Text("Enter Workouts", style: TextStyle(fontSize: 18.0)),
-                          onPressed: () {
-                            return _isSliderMoved ? _showLogDialog() : null;
-                          },
+                  Consumer<NavBarProvider>(builder: (ctx, navbar, child) {
+                    if(navbar.currentPage == 2 && _isSliderMoved){
+                      _animationController.forward();
+                    } else{
+                      _animationController.reverse();
+                    }
+                    return Container(
+                      alignment: Alignment.bottomCenter,
+                      child: FadeTransition(
+                        opacity: CurvedAnimation(parent: _animationController, curve: Curves.linear),
+                        child: Container(
+                          // width: MediaQuery.of(context).size.width, // Less efficient
+                          width: double.infinity,
+                          child: FlatButton(
+                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            color: Color(0xff4ff7d3),
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            child: Text("Enter Workouts", style: TextStyle(fontSize: 18.0)),
+                            onPressed: () {
+                              return _isSliderMoved ? _showLogDialog() : null;
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  }),
                 ],
               ),
             ),
