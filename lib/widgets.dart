@@ -48,10 +48,7 @@ class _SearchBarState extends State<SearchBar> {
           prefixIcon: const Icon(Icons.search, color: Color(0xff5a5a5a)),
           suffixIcon: empty
               ? null
-              : IconButton(
-                  icon: Icon(Icons.clear, size: 20, color: Colors.grey),
-                  onPressed: _clearController
-                ),
+              : IconButton(icon: Icon(Icons.clear, size: 20, color: Colors.grey), onPressed: _clearController),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
           enabledBorder: const OutlineInputBorder(borderSide: const BorderSide(style: BorderStyle.none)),
           focusedBorder: const OutlineInputBorder(borderSide: const BorderSide(style: BorderStyle.none)),
@@ -82,4 +79,15 @@ class NoOverscrollBehavior extends ScrollBehavior {
   Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
     return child;
   }
+}
+
+BoxDecoration getBasicGradient() {
+  return BoxDecoration(
+    gradient: const LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: const [Color(0xff170422), Color(0xff9B22E6)],
+      stops: const [0.75, 1],
+    ),
+  );
 }

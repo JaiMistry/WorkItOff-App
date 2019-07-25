@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:simple_animations/simple_animations.dart';
 import 'package:workitoff/navigation_bar.dart';
 import 'package:workitoff/providers/user_provider.dart';
+import 'package:workitoff/widgets.dart';
 
 final BottomNavigationBar navBar = navBarGlobalKey.currentWidget;
 
@@ -152,14 +153,7 @@ class CongratsPage extends StatelessWidget {
 
   Widget buildBackground() {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: const [Color(0xff170422), Color(0xff9B22E6)],
-          stops: const [0.75, 1],
-        ),
-      ),
+      decoration: getBasicGradient(),
     );
   }
 

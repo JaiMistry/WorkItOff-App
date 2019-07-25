@@ -164,14 +164,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: const [Color(0xff170422), Color(0xff9B22E6)],
-          stops: const [0.75, 1],
-        ),
-      ),
+      decoration: getBasicGradient(),
       child: Column(
         children: <Widget>[
           SearchBar(hintText: 'Search Workouts', controller: _searchController, bottomMargin: 6),
@@ -231,7 +224,6 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                       child: FadeTransition(
                         opacity: CurvedAnimation(parent: _animationController, curve: Curves.linear),
                         child: Container(
-                          // width: MediaQuery.of(context).size.width, // Less efficient
                           width: double.infinity,
                           child: FlatButton(
                             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

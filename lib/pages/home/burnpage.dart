@@ -1,6 +1,7 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:workitoff/navigation_bar.dart';
+import 'package:workitoff/widgets.dart';
 
 final BottomNavigationBar navBar = navBarGlobalKey.currentWidget;
 
@@ -9,14 +10,7 @@ class BurnPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       constraints: const BoxConstraints.expand(),
-      decoration: const BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: const [Color(0xff170422), Color(0xff9B22E6)],
-          stops: const [0.75, 1],
-        ),
-      ),
+      decoration: getBasicGradient(),
       child: Column(
         children: <Widget>[
           Column(

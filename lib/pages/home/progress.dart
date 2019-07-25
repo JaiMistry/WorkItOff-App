@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:workitoff/widgets.dart';
 
 class ProgressPage extends StatefulWidget {
   final int calsRemaining;
@@ -63,14 +64,7 @@ class _ProgressPageState extends State<ProgressPage> {
     return Container(
       height: double.infinity,
       width: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: const [Color(0xff170422), Color(0xff9B22E6)],
-          stops: const [0.75, 1],
-        ),
-      ),
+      decoration: getBasicGradient(),
       child: SafeArea(
         child: Container(
           padding: EdgeInsets.only(top: 30, bottom: 30, left: 10, right: 10),

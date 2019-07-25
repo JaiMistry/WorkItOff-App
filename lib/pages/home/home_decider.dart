@@ -4,6 +4,7 @@ import 'package:workitoff/pages/home/burnpage.dart';
 import 'package:workitoff/pages/home/progress.dart';
 import 'package:workitoff/providers/user_provider.dart';
 import 'package:workitoff/pages/home/congrats.dart';
+import 'package:workitoff/widgets.dart';
 
 class HomeDecider extends StatefulWidget {
   HomeDecider({Key key}) : super(key: key);
@@ -31,14 +32,7 @@ class _HomeDeciderState extends State<HomeDecider> {
       return BurnPage();
     }
     return Container(
-      decoration: const BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: const [Color(0xff170422), Color(0xff9B22E6)],
-          stops: const [0.75, 1],
-        ),
-      ),
+      decoration: getBasicGradient(),
     );
   }
 }

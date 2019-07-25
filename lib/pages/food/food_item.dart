@@ -17,6 +17,76 @@ import 'package:workitoff/widgets.dart';
 
 final BottomNavigationBar navBar = navBarGlobalKey.currentWidget;
 
+class FoodItemPage extends StatefulWidget {
+  final Function setPage;
+
+  FoodItemPage({@required this.setPage});
+
+  @override
+  _FoodItemPageState createState() => _FoodItemPageState();
+}
+
+class _FoodItemPageState extends State<FoodItemPage> {
+  TextEditingController _searchController = new TextEditingController();
+  String searchText;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_setSearchText);
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_setSearchText);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _setSearchText() {
+    setState(() {
+      searchText = _searchController.text;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    DocumentSnapshot _restuarant = Provider.of<FoodItemProvider>(context).currentRestuarant;
+    return WillPopScope(
+      onWillPop: () {
+        widget.setPage(0);
+        return Future.value(false); // Dont actually go back. I only want to run the function above
+      },
+      child: Column(
+        children: <Widget>[
+          AppBar(
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                widget.setPage(0);
+              },
+            ),
+            backgroundColor: Color(0xff170422),
+            title: Text(_restuarant == null ? 'Placeholder' : _restuarant.documentID),
+            elevation: 0,
+          ),
+          Flexible(
+            child: Container(
+              decoration: getBasicGradient(),
+              child: Column(
+                children: <Widget>[
+                  SearchBar(controller: _searchController, hintText: 'Search', topMargin: 5, bottomMargin: 6),
+                  FoodItems(restaurant: _restuarant, searchText: searchText, setPage: widget.setPage)
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
 class FoodItems extends StatefulWidget {
   final DocumentSnapshot restaurant;
   final String searchText;
@@ -265,84 +335,6 @@ class _FoodItemsState extends State<FoodItems> with SingleTickerProviderStateMix
   }
 }
 
-class FoodItemPage extends StatefulWidget {
-  final Function setPage;
-  // final DocumentSnapshot restaurant;
-
-  FoodItemPage({@required this.setPage});
-
-  @override
-  _FoodItemPageState createState() => _FoodItemPageState();
-}
-
-class _FoodItemPageState extends State<FoodItemPage> {
-  TextEditingController _searchController = new TextEditingController();
-  String searchText;
-
-  @override
-  void initState() {
-    super.initState();
-    _searchController.addListener(_setSearchText);
-  }
-
-  @override
-  void dispose() {
-    _searchController.removeListener(_setSearchText);
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  void _setSearchText() {
-    setState(() {
-      searchText = _searchController.text;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    DocumentSnapshot _restuarant = Provider.of<FoodItemProvider>(context).currentRestuarant;
-    return WillPopScope(
-      onWillPop: () {
-        widget.setPage(0);
-        return Future.value(false); // Dont actually go back. I only want to run the function above
-      },
-      child: Column(
-        children: <Widget>[
-          AppBar(
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () {
-                widget.setPage(0);
-              },
-            ),
-            backgroundColor: Color(0xff170422),
-            title: Text(_restuarant == null ? 'Placeholder' : _restuarant.documentID),
-            elevation: 0,
-          ),
-          Flexible(
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: const [Color(0xff170422), Color(0xff9B22E6)],
-                  stops: const [0.75, 1],
-                ),
-              ),
-              child: Column(
-                children: <Widget>[
-                  SearchBar(controller: _searchController, hintText: 'Search', topMargin: 5, bottomMargin: 6),
-                  FoodItems(restaurant: _restuarant, searchText: searchText, setPage: widget.setPage)
-                ],
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
-
 class ExpansionBtn extends StatefulWidget {
   final String meal;
   final Function addToCart;
@@ -363,10 +355,7 @@ class _ExpansionBtnState extends State<ExpansionBtn> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(
-        accentColor: Colors.white.withOpacity(0.7),
-        unselectedWidgetColor: Colors.white.withOpacity(0.7)
-      ),
+      data: ThemeData(accentColor: Colors.white.withOpacity(0.7), unselectedWidgetColor: Colors.white.withOpacity(0.7)),
       child: ExpansionTile(
         onExpansionChanged: (bool state) {},
         title: Text(widget.meal, style: TextStyle(color: Colors.white, fontSize: 14)),

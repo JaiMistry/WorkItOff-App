@@ -31,7 +31,6 @@ class FoodItemProvider extends ChangeNotifier {
   }
 }
 
-
 class FoodPage extends StatefulWidget {
   @override
   _FoodPageState createState() => _FoodPageState();
@@ -85,14 +84,7 @@ class _FoodPageState extends State<FoodPage> {
                 Expanded(child: FoodBody(restuarantSearchFiler: _restuarantSearchFilter, setPage: _setPage)),
               ],
             ),
-            decoration: const BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: const [Color(0xff170422), Color(0xff9B22E6)],
-                stops: const [0.75, 1],
-              ),
-            ),
+            decoration: getBasicGradient(),
           ),
           FoodItemPage(setPage: _setPage),
         ],
@@ -316,5 +308,3 @@ class _FoodBodyState extends State<FoodBody> {
     );
   }
 }
-
-
