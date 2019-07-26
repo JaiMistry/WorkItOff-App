@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:workitoff/navigation_bar.dart';
 import 'package:workitoff/providers/navbar_provider.dart';
-// import 'package:workitoff/providers/progress_provider.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:workitoff/providers/user_provider.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -84,6 +84,21 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
     super.dispose();
   }
 
+  Future<void> _callCloudFucntion(Map workoutsMap) async {
+    String userID = Provider.of<WorkItOffUser>(context).getID();
+
+    final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
+      functionName: 'addWorkouts',
+    );
+    try {
+      dynamic resp = await callable.call(
+        <String, dynamic>{"userID": userID, "workoutsMap": workoutsMap},
+      );
+    } catch (e) {
+      debugPrint('An error has occured');
+    }
+  }
+
   Future<void> _showLogDialog() async {
     WorkItOffUser user = Provider.of<WorkItOffUser>(context);
     return showDialog<void>(
@@ -124,8 +139,10 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                   }
                   // TODO: Send workouts to cloud function. These are placeholder calories
                   print(workoutsMap); // Contains the values that will be based to the cloud function
-
                   user.calsBurned = 500; // TODO
+
+                  _callCloudFucntion(workoutsMap);
+
                   _sliderMoved(false); // Reset the slider
                   Navigator.of(context).pop(); // Pop the alertDialog
                   // Provider.of<ProgressProvider>(context).showProgress = true;
