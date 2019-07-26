@@ -81,7 +81,6 @@ class _CheckSignOnStatusState extends State<CheckSignOnStatus> {
   Widget build(BuildContext context) {
     FirebaseUser user = Provider.of<FirebaseUser>(context);
     AuthStatus _authStatus = user != null ? AuthStatus.signedIn : AuthStatus.notSignedin;
-    print('Auth Status = $_authStatus');
 
     return _authStatus == AuthStatus.signedIn ? NavigationBar() : IntroPage();
   }

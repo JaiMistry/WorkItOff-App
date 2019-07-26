@@ -41,6 +41,7 @@ class _NavigationBarState extends State<NavigationBar> {
     return MultiProvider(
       providers: [StreamProvider<WorkItOffUser>.value(value: DatabaseService().streamUser(userID))],
       child: Scaffold(
+        // resizeToAvoidBottomInset: false,
         extendBody: true, // Enables transparent BG
         body: IndexedStack(
           children: _pageOptions,

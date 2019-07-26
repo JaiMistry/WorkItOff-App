@@ -24,6 +24,11 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
   TextEditingController _searchController = new TextEditingController();
   String _filter;
   bool _isSliderMoved = false;
+  Map<String, double> workoutsMap = {};
+
+  void _updateWorkoutsList(String workoutName, double sliderValue) {
+    workoutsMap[workoutName] = sliderValue;
+  }
 
   Widget _buildCardList(AsyncSnapshot snapshot) {
     return ListView.builder(
@@ -32,9 +37,9 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
       itemBuilder: (BuildContext context, int index) {
         DocumentSnapshot workout = snapshot.data.documents[index];
         return _filter == null || _filter == ''
-            ? WorkoutCards(snapshot.data.documents[index], _sliderMoved, _isSliderMoved)
+            ? WorkoutCards(snapshot.data.documents[index], _sliderMoved, _isSliderMoved, _updateWorkoutsList)
             : workout.documentID.contains(_filter.toLowerCase())
-                ? WorkoutCards(workout, _sliderMoved, _isSliderMoved)
+                ? WorkoutCards(workout, _sliderMoved, _isSliderMoved, _updateWorkoutsList)
                 : Container();
       },
       itemCount: snapshot.data.documents.length,
@@ -118,6 +123,8 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                     return;
                   }
                   // TODO: Send workouts to cloud function. These are placeholder calories
+                  print(workoutsMap); // Contains the values that will be based to the cloud function
+
                   user.calsBurned = 500; // TODO
                   _sliderMoved(false); // Reset the slider
                   Navigator.of(context).pop(); // Pop the alertDialog
@@ -210,12 +217,11 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                         SizedBox(height: 75),
                       ],
                     ),
-                    
                   ),
                   Consumer<NavBarProvider>(builder: (ctx, navbar, child) {
-                    if(navbar.currentPage == 2 && _isSliderMoved){
+                    if (navbar.currentPage == 2 && _isSliderMoved) {
                       _animationController.forward();
-                    } else{
+                    } else {
                       _animationController.reverse();
                     }
                     return Container(
@@ -254,7 +260,8 @@ class WorkoutCards extends StatefulWidget {
   final DocumentSnapshot data;
   final Function sliderMoved;
   final bool isSliderMoved;
-  WorkoutCards(this.data, this.sliderMoved, this.isSliderMoved) : super();
+  final Function updateWorkoutsList;
+  WorkoutCards(this.data, this.sliderMoved, this.isSliderMoved, this.updateWorkoutsList) : super();
 
   @override
   State<StatefulWidget> createState() {
@@ -266,6 +273,7 @@ class _WorkoutCardsState extends State<WorkoutCards> {
   double _sliderValue = 0.0;
 
   void _setValue(double value) {
+    widget.updateWorkoutsList(widget.data.documentID, value);
     setState(() {
       _sliderValue = value;
       widget.sliderMoved(true);
@@ -291,7 +299,7 @@ class _WorkoutCardsState extends State<WorkoutCards> {
           ClipRRect(
             borderRadius: BorderRadius.circular(10.0),
             child: CachedNetworkImage(
-              imageUrl: this.widget.data['image_url'],
+              imageUrl: widget.data['image_url'],
               placeholder: (context, url) => Container(),
               errorWidget: (context, url, error) => Container(child: Text('Error Loading image..')),
               fit: BoxFit.cover,
