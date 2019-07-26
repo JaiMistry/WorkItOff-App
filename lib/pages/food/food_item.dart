@@ -125,6 +125,7 @@ Widget _enterMealsButton(
   return FadeTransition(
     opacity: CurvedAnimation(parent: controller, curve: Curves.linear),
     child: Container(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       width: MediaQuery.of(context).size.width,
       child: FlatButton(
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
