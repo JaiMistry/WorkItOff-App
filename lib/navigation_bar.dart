@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:workitoff/pages/profilepage.dart';
 import 'package:workitoff/pages/workouts.dart';
-import 'package:workitoff/pages/food/food_grid.dart';
+import 'package:workitoff/pages/food/food_home.dart';
 import 'package:workitoff/providers/navbar_provider.dart';
 import 'package:workitoff/providers/user_provider.dart';
 import 'package:workitoff/pages/home/home_decider.dart';

@@ -1,18 +1,13 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
-
-// import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
+
 import 'package:workitoff/navigation_bar.dart';
-// import 'package:workitoff/providers/progress_provider.dart';
 import 'package:workitoff/providers/user_provider.dart';
-// import 'package:workitoff/navigation_bar.dart';
-import 'package:workitoff/pages/food/food_grid.dart';
-
-// import 'package:transparent_image/transparent_image.dart';
-
+import 'food_item_provider.dart';
 import 'package:workitoff/widgets.dart';
 
 final BottomNavigationBar navBar = navBarGlobalKey.currentWidget;
