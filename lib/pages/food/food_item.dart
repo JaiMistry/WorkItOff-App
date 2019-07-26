@@ -56,22 +56,22 @@ class _FoodItemPageState extends State<FoodItemPage> {
         },
         child: Column(
           children: <Widget>[
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Container(
               child: Row(
                 children: <Widget>[
                   IconButton(
-                    icon: Icon(Icons.arrow_back),
+                    icon: const Icon(Icons.arrow_back),
                     color: Colors.white,
                     onPressed: () {
                       widget.setPage(0);
                     },
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       _restuarant == null ? 'Placeholder' : _restuarant.documentID,
-                      style: TextStyle(fontSize: 20),
+                      style: const TextStyle(fontSize: 20),
                     ),
                   )
                 ],
@@ -154,20 +154,20 @@ Future<void> _mealDialog(
       barrierDismissible: false,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: Text('Log Meal?'),
+          title: const Text('Log Meal?'),
           content: Text('Cart: ${meals.join(", ")} (${quantities.join(",")})'),
           actions: <Widget>[
             CupertinoDialogAction(
-                child: Text('Empty Cart', style: TextStyle(color: Colors.black)),
+                child: const Text('Empty Cart', style: TextStyle(color: Colors.black)),
                 onPressed: () {
                   resetCart();
                   Navigator.of(context).pop();
                 }),
             CupertinoDialogAction(
-                child: Text('Cancel', style: TextStyle(color: Colors.black)),
+                child: const Text('Cancel', style: TextStyle(color: Colors.black)),
                 onPressed: () => Navigator.of(context).pop()),
             CupertinoDialogAction(
-              child: Text('Log', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+              child: const Text('Log', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
               onPressed: () {
                 // TODO: Send meals to cloud function. These are placeholder calories
                 user.calsAdded = 400 * meals.length; // TODO
@@ -187,7 +187,7 @@ Future<void> _mealDialog(
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Log Meal?'),
+          title: const Text('Log Meal?'),
           content: Text('Cart: ${meals.join(", ")} (${quantities.join(",")})'),
           actions: <Widget>[
             FlatButton(
@@ -203,13 +203,13 @@ Future<void> _mealDialog(
                 splashColor: Colors.transparent,
                 highlightColor: Colors.grey[200],
                 textColor: Colors.black,
-                child: Text('Cancel'),
+                child: const Text('Cancel'),
                 onPressed: () => Navigator.of(context).pop()),
             FlatButton(
               splashColor: Colors.transparent,
               highlightColor: Colors.grey[200],
               textColor: Colors.black,
-              child: Text('Log', style: TextStyle(fontWeight: FontWeight.bold)),
+              child: const Text('Log', style: TextStyle(fontWeight: FontWeight.bold)),
               onPressed: () {
                 // TODO: Send meals to cloud function. These are placeholder calories
                 user.calsAdded = 500 * meals.length; // TODO
@@ -283,7 +283,10 @@ class _FoodItemsState extends State<FoodItems> with SingleTickerProviderStateMix
                 itemCount: 1,
                 itemBuilder: (BuildContext contect, int index) {
                   if (widget.restaurant.data['meals'] == null || widget.restaurant.data['meals'].toString() == '{}') {
-                    return Container(padding: EdgeInsets.only(top: 20), child: Center(child: Text('No Meals Found.')));
+                    return Container(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: const Center(child: Text('No Meals Found.')),
+                    );
                   }
 
                   Map<String, Map> categories = widget.restaurant.data['meals'].cast<String, Map>();
@@ -317,7 +320,9 @@ class _FoodItemsState extends State<FoodItems> with SingleTickerProviderStateMix
                       widgetList.add(
                         Column(
                           children: <Widget>[
-                            ListTile(title: Text(categtory, style: TextStyle(color: Color(0xff4ff7d3), fontSize: 22))),
+                            ListTile(
+                              title: Text(categtory, style: const TextStyle(color: Color(0xff4ff7d3), fontSize: 22)),
+                            ),
                             Column(children: mealList)
                           ],
                         ),
@@ -360,7 +365,7 @@ class _ExpansionBtnState extends State<ExpansionBtn> {
       data: ThemeData(accentColor: Colors.white.withOpacity(0.7), unselectedWidgetColor: Colors.white.withOpacity(0.7)),
       child: ExpansionTile(
         onExpansionChanged: (bool state) {},
-        title: Text(widget.meal, style: TextStyle(color: Colors.white, fontSize: 14)),
+        title: Text(widget.meal, style: const TextStyle(color: Colors.white, fontSize: 14)),
         children: [
           const SizedBox(height: 2),
           Container(
@@ -445,7 +450,7 @@ class _QuantityRadioListState extends State<QuantityRadioList> {
             dense: true,
             groupValue: _selected,
             value: index,
-            title: Text(index == 0 ? '1/2' : index.toString(), style: TextStyle(color: Colors.black)),
+            title: Text(index == 0 ? '1/2' : index.toString(), style: const TextStyle(color: Colors.black)),
             onChanged: (int value) {
               onRadioChanged(value);
             },

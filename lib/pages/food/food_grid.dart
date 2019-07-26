@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import 'package:workitoff/navigation_bar.dart';
+import 'package:workitoff/providers/user_provider.dart';
 import 'food_item_provider.dart';
 import 'package:workitoff/widgets.dart';
 
@@ -24,6 +25,8 @@ class FoodBody extends StatefulWidget {
 
 class _FoodBodyState extends State<FoodBody> {
   ScrollController _scrollController;
+  TextEditingController _enterCalsController = TextEditingController();
+  final _enterCalsFormKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -37,6 +40,7 @@ class _FoodBodyState extends State<FoodBody> {
     _scrollController.dispose();
   }
 
+  // TODO: Ignore keyboard input for scroll view
   void setPageScrollPosition(bool scrollToBottom) {
     double scrollPosition = _scrollController.position.maxScrollExtent;
     if (scrollToBottom == false) {
@@ -84,10 +88,7 @@ class _FoodBodyState extends State<FoodBody> {
   }
 
   Widget _builderEnterCaloriesButton(
-    BuildContext context,
-    ScrollController controller,
-    Function setPageScrollPosition
-  ) {
+      BuildContext context, ScrollController controller, Function setPageScrollPosition) {
     return Column(
       children: <Widget>[
         const Text("Can't find your cheat meal?", style: TextStyle(fontSize: 20, color: Color(0xff4ff7d3))),
@@ -139,51 +140,61 @@ class _FoodBodyState extends State<FoodBody> {
       children: <Widget>[
         Container(
           margin: const EdgeInsets.only(top: 60.0, bottom: 35.0),
-          child: const Text(
-            'Enter your own calories',
-            style: const TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold),
-          ),
+          child: const Text('Enter your own calories', style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold)),
           alignment: Alignment.bottomCenter,
         ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 25),
-          alignment: Alignment.center,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Flexible(
-                child: Container(
-                  width: 150,
-                  child: TextField(
-                    cursorColor: Colors.white,
-                    keyboardType: TextInputType.number,
-                    style: TextStyle(color: Colors.white.withOpacity(0.9)),
-                    textAlign: TextAlign.center,
-                    decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(vertical: 8.5, horizontal: 10),
-                        border: InputBorder.none,
-                        hintText: '0',
-                        hintStyle: TextStyle(color: Colors.white.withOpacity(0.9)),
-                        fillColor: Colors.grey.withOpacity(0.2),
-                        filled: true),
+        Form(
+          key: _enterCalsFormKey,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 25),
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Flexible(
+                  child: Container(
+                    width: 150,
+                    child: TextFormField(
+                      controller: _enterCalsController,
+                      cursorColor: Colors.white,
+                      keyboardType: TextInputType.number,
+                      style: TextStyle(color: Colors.white.withOpacity(0.9)),
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(vertical: 8.5, horizontal: 10),
+                          border: InputBorder.none,
+                          hintText: '0',
+                          hintStyle: TextStyle(color: Colors.white.withOpacity(0.9)),
+                          fillColor: Colors.grey.withOpacity(0.2),
+                          filled: true),
+                      validator: (string) {
+                        if (string.isEmpty || !isNumeric(string)) {
+                          return 'Please enter a number.';
+                        }
+                        return null;
+                      },
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 10.0),
-              RaisedButton(
-                child: const Text('Enter Calories', style: TextStyle(fontSize: 20.0)),
-                onPressed: () {
-                  // TODO: Send to cloud function
-                },
-                color: const Color(0xff3ADEA7),
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                elevation: 0.0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5.0),
+                const SizedBox(width: 10.0),
+                RaisedButton(
+                  child: const Text('Enter Calories', style: TextStyle(fontSize: 20.0)),
+                  onPressed: () {
+                    if (_enterCalsFormKey.currentState.validate()) {
+                      int cals = int.parse(_enterCalsController.text);
+                      Provider.of<WorkItOffUser>(context, listen: false).addCalsAdded(cals);
+                    }
+                  },
+                  color: const Color(0xff3ADEA7),
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  elevation: 0.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 30.0),
@@ -215,17 +226,10 @@ class _FoodBodyState extends State<FoodBody> {
             StreamBuilder<QuerySnapshot>(
               stream: Firestore.instance.collection('food').snapshots(),
               builder: (context, snapshot) {
-                if (!snapshot.hasData || snapshot.hasError) {
+                if (!snapshot.hasData || snapshot.hasError || snapshot.connectionState == ConnectionState.waiting) {
                   return Container();
-                } else if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Container(
-                    height: 100,
-                    alignment: Alignment.center,
-                    child: const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xff4ff7d3)),
-                    ),
-                  );
                 }
+
                 return GridView(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,

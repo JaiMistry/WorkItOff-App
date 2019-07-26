@@ -3,6 +3,13 @@ import 'package:flushbar/flushbar.dart';
 
 //* Contains helpful commonly used widgets
 
+bool isNumeric(String str) {
+  if (str == null) {
+    return false;
+  }
+  return double.tryParse(str) != null;
+}
+
 class SearchBar extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;

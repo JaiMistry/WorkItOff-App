@@ -12,13 +12,6 @@ import 'package:workitoff/providers/user_provider.dart';
 import 'package:workitoff/widgets.dart';
 // import 'package:workitoff/auth/auth.dart';
 
-bool _isNumeric(String str) {
-  if (str == null) {
-    return false;
-  }
-  return double.tryParse(str) != null;
-}
-
 class StandardTextInputField extends StatefulWidget {
   final String label;
   final String failedValidateText;
@@ -68,7 +61,7 @@ class _StandardTextInputFieldState extends State<StandardTextInputField> {
             controller: widget.controller,
             focusNode: _focusNode,
             validator: (string) {
-              if (string.isEmpty || !_isNumeric(string)) {
+              if (string.isEmpty || !isNumeric(string)) {
                 return widget.failedValidateText;
               }
               return null;

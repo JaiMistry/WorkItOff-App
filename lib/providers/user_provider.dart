@@ -65,7 +65,16 @@ class WorkItOffUser {
     // This is the set the value. Not increment
     _firestore.collection('users').document(id).updateData({'cals_burned': newCalsBurned});
   }
-  
+
+  Future<void> addCalsAdded(int calsToAdd) {
+    // Increments the total calories added
+    return _firestore.collection('users').document(id).updateData({'cals_added': FieldValue.increment(calsToAdd)});
+  }
+
+  Future<void> addCalsBurned(int calsToBurn) {
+    // Increments the calories burned
+    return _firestore.collection('users').document(id).updateData({'cals_burned': FieldValue.increment(calsToBurn)});
+  }
 
   Future<void> updateProfile({
     String gender,
