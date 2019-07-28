@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
@@ -86,13 +88,14 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
 
   Future<void> _callCloudFucntion(Map workoutsMap) async {
     String userID = Provider.of<WorkItOffUser>(context).getID();
+    print(json.encode(workoutsMap));
 
     final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
       functionName: 'addWorkouts',
     );
     try {
       dynamic resp = await callable.call(
-        <String, dynamic>{"userID": userID, "workoutsMap": workoutsMap},
+        <String, dynamic>{"userID": userID, "workoutsMap": json.encode(workoutsMap)},
       );
     } catch (e) {
       debugPrint('An error has occured');
