@@ -88,14 +88,14 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
 
   Future<void> _callCloudFucntion(Map workoutsMap) async {
     String userID = Provider.of<WorkItOffUser>(context).getID();
-    print(json.encode(workoutsMap));
 
     final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
       functionName: 'addWorkouts',
     );
     try {
+      // print(json.encode(workoutsMap));
       dynamic resp = await callable.call(
-        <String, dynamic>{"userID": userID, "workoutsMap": json.encode(workoutsMap)},
+        <String, dynamic>{"userID": userID, "workoutsMap": workoutsMap},
       );
     } catch (e) {
       debugPrint('An error has occured');
@@ -141,9 +141,8 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                     return;
                   }
                   // TODO: Send workouts to cloud function. These are placeholder calories
-                  print(workoutsMap); // Contains the values that will be based to the cloud function
-                  user.calsBurned = 500; // TODO
-
+                  // print(workoutsMap); // Contains the values that will be based to the cloud function
+                  // user.calsBurned = 500; // TODO
                   _callCloudFucntion(workoutsMap);
 
                   _sliderMoved(false); // Reset the slider
