@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -131,11 +132,36 @@ Widget _enterMealsButton(
         onPressed: () {
           return isButtonDisabled
               ? null
-              : _mealDialog(context, controller, resetCart, meals, quantities, widget.setPage);
+              : _mealDialog(
+                  context,
+                  controller,
+                  resetCart,
+                  meals,
+                  quantities,
+                  widget.setPage,
+                  widget.restaurant.documentID,
+                );
         },
       ),
     ),
   );
+}
+
+Future<void> _callCloudFucntion(String userID, String restuarantName, Map mealsMap) async {
+  print(mealsMap);
+  // final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
+  //   functionName: 'addMeals'
+  // );
+
+  // try {
+  //   dynamic resp = await callable.call(<String, dynamic>{
+  //     "userID": userID,
+  //     "restuarantName": restuarantName,
+  //     "mealsMap": mealsMap,
+  //   });
+  // } catch (e) {
+  //   debugPrint('An error has occured');
+  // }
 }
 
 Future<void> _mealDialog(
@@ -145,6 +171,7 @@ Future<void> _mealDialog(
   List<String> meals,
   List<dynamic> quantities,
   Function setPage,
+  String restaurantName,
 ) async {
   WorkItOffUser user = Provider.of<WorkItOffUser>(context, listen: false);
 
@@ -169,8 +196,11 @@ Future<void> _mealDialog(
             CupertinoDialogAction(
               child: const Text('Log', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
               onPressed: () {
-                // TODO: Send meals to cloud function. These are placeholder calories
-                user.calsAdded = 400 * meals.length; // TODO
+                Map<String, int> _mealsMap = {};
+                meals.asMap().forEach((i, meal) {
+                  _mealsMap[meal] = quantities.elementAt(i);
+                });
+                _callCloudFucntion(user.id, restaurantName, _mealsMap);
                 setPage(0);
                 // TODO: Scroll to top of page
                 Navigator.of(context).pop();
@@ -211,13 +241,14 @@ Future<void> _mealDialog(
               textColor: Colors.black,
               child: const Text('Log', style: TextStyle(fontWeight: FontWeight.bold)),
               onPressed: () {
-                // TODO: Send meals to cloud function. These are placeholder calories
-                user.calsAdded = 500 * meals.length; // TODO
+                Map<String, int> _mealsMap = {};
+                meals.asMap().forEach((i, meal) {
+                  _mealsMap[meal] = quantities.elementAt(i);
+                });
+                _callCloudFucntion(user.id, restaurantName, _mealsMap);
                 setPage(0);
                 // TODO: Scroll to top of page
                 Navigator.of(context).pop();
-                // Provider.of<ProgressProvider>(context).showProgress = true;
-                navBar.onTap(0);
               },
             ),
           ],

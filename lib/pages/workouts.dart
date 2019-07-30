@@ -1,4 +1,4 @@
-import 'dart:convert';
+// import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -92,11 +92,9 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
     final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
       functionName: 'addWorkouts',
     );
+    
     try {
-      // print(json.encode(workoutsMap));
-      dynamic resp = await callable.call(
-        <String, dynamic>{"userID": userID, "workoutsMap": workoutsMap},
-      );
+      dynamic resp = await callable.call(<String, dynamic>{"userID": userID, "workoutsMap": workoutsMap});
     } catch (e) {
       debugPrint('An error has occured');
     }
