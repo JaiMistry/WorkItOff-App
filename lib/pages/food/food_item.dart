@@ -149,17 +149,19 @@ Widget _enterMealsButton(
 }
 
 Future<void> _callCloudFucntion(String userID, String restaurantName, Map mealsMap) async {
-  Map<String, dynamic> functionMap = {
-    "userID": jsonEncode(userID),
-    "restaurantName": jsonEncode(restaurantName),
-    "mealsMap": jsonEncode(mealsMap),
-  };
+  if (mealsMap.isEmpty) return;
+  String functionMap = json.encode({
+    "userID": userID,
+    "restaurantName": restaurantName,
+    "mealsMap": mealsMap,
+  });
 
-  print(functionMap);
+  final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
+    functionName: 'addMeals',
+  );
 
-  final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(functionName: 'addMeals');
   try {
-    dynamic resp = await callable.call(functionMap);
+    dynamic resp = await callable.call(json.decode(functionMap));
   } catch (e) {
     debugPrint('An error has occured');
   }
