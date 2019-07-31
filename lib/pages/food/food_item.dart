@@ -156,7 +156,7 @@ Future<void> _callCloudFucntion(String userID, String restaurantName, Map mealsM
   };
 
   print(functionMap);
-  
+
   final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(functionName: 'addMeals');
   try {
     dynamic resp = await callable.call(functionMap);
@@ -202,6 +202,7 @@ Future<void> _mealDialog(
                   _mealsMap[meal] = quantities.elementAt(i);
                 });
                 _callCloudFucntion(user.id, restaurantName, _mealsMap);
+                resetCart();
                 setPage(0);
                 // TODO: Scroll to top of page
                 Navigator.of(context).pop();
@@ -247,6 +248,7 @@ Future<void> _mealDialog(
                   _mealsMap[meal] = quantities.elementAt(i);
                 });
                 _callCloudFucntion(user.id, restaurantName, _mealsMap);
+                resetCart();
                 setPage(0);
                 // TODO: Scroll to top of page
                 Navigator.of(context).pop();
