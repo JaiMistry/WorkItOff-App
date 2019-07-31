@@ -155,7 +155,7 @@ Future<void> _callCloudFucntion(String userID, String restaurantName, Map mealsM
     "restaurantName": restaurantName,
     "mealsMap": mealsMap,
   });
-
+  print(functionMap);
   final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
     functionName: 'addMeals',
   );
@@ -199,9 +199,9 @@ Future<void> _mealDialog(
             CupertinoDialogAction(
               child: const Text('Log', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
               onPressed: () {
-                Map<String, int> _mealsMap = {};
+                Map<String, double> _mealsMap = {};
                 meals.asMap().forEach((i, meal) {
-                  _mealsMap[meal] = quantities.elementAt(i);
+                  _mealsMap[meal] = quantities.elementAt(i).toDouble();
                 });
                 _callCloudFucntion(user.id, restaurantName, _mealsMap);
                 resetCart();
@@ -245,9 +245,9 @@ Future<void> _mealDialog(
               textColor: Colors.black,
               child: const Text('Log', style: TextStyle(fontWeight: FontWeight.bold)),
               onPressed: () {
-                Map<String, int> _mealsMap = {};
+                Map<String, double> _mealsMap = {};
                 meals.asMap().forEach((i, meal) {
-                  _mealsMap[meal] = quantities.elementAt(i);
+                  _mealsMap[meal] = quantities.elementAt(i).toDouble();
                 });
                 _callCloudFucntion(user.id, restaurantName, _mealsMap);
                 resetCart();
