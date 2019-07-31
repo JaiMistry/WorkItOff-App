@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_functions/cloud_functions.dart';
@@ -147,21 +148,21 @@ Widget _enterMealsButton(
   );
 }
 
-Future<void> _callCloudFucntion(String userID, String restuarantName, Map mealsMap) async {
-  print(mealsMap);
-  // final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
-  //   functionName: 'addMeals'
-  // );
+Future<void> _callCloudFucntion(String userID, String restaurantName, Map mealsMap) async {
+  Map<String, dynamic> functionMap = {
+    "userID": jsonEncode(userID),
+    "restaurantName": jsonEncode(restaurantName),
+    "mealsMap": jsonEncode(mealsMap),
+  };
 
-  // try {
-  //   dynamic resp = await callable.call(<String, dynamic>{
-  //     "userID": userID,
-  //     "restuarantName": restuarantName,
-  //     "mealsMap": mealsMap,
-  //   });
-  // } catch (e) {
-  //   debugPrint('An error has occured');
-  // }
+  print(functionMap);
+  
+  final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(functionName: 'addMeals');
+  try {
+    dynamic resp = await callable.call(functionMap);
+  } catch (e) {
+    debugPrint('An error has occured');
+  }
 }
 
 Future<void> _mealDialog(
