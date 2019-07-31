@@ -155,7 +155,6 @@ Future<void> _callCloudFucntion(String userID, String restaurantName, Map mealsM
     "restaurantName": restaurantName,
     "mealsMap": mealsMap,
   });
-  print(functionMap);
   final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
     functionName: 'addMeals',
   );
@@ -254,6 +253,7 @@ Future<void> _mealDialog(
                 setPage(0);
                 // TODO: Scroll to top of page
                 Navigator.of(context).pop();
+                navBar.onTap(0);
               },
             ),
           ],
