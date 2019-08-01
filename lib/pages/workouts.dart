@@ -132,20 +132,15 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                     _showMissingDataDialog('Gender');
                     return;
                   }
-                  // TODO: Change so the user can sucessfully reset
                   if (user.getWeight() == null || user.getWeight().toString().isEmpty) {
                     Navigator.of(context).pop();
                     _showMissingDataDialog('Weight');
                     return;
                   }
-                  // TODO: Send workouts to cloud function. These are placeholder calories
-                  // print(workoutsMap); // Contains the values that will be based to the cloud function
-                  // user.calsBurned = 500; // TODO
                   _callCloudFucntion(workoutsMap);
 
                   _sliderMoved(false); // Reset the slider
                   Navigator.of(context).pop(); // Pop the alertDialog
-                  // Provider.of<ProgressProvider>(context).showProgress = true;
                   navBar.onTap(0); // Redirect to burn page
                 }),
           ],

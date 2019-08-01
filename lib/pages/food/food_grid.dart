@@ -182,7 +182,8 @@ class _FoodBodyState extends State<FoodBody> {
                   onPressed: () {
                     if (_enterCalsFormKey.currentState.validate()) {
                       int cals = int.parse(_enterCalsController.text);
-                      Provider.of<WorkItOffUser>(context, listen: false).addCalsAdded(cals);
+                      WorkItOffUser user = Provider.of<WorkItOffUser>(context, listen: false);
+                      _showLogDialog(user, cals);
                     }
                   },
                   color: const Color(0xff3ADEA7),
@@ -210,6 +211,43 @@ class _FoodBodyState extends State<FoodBody> {
         const Text('displayed on this page.', style: TextStyle(fontSize: 10.0)),
         const SizedBox(height: 100.0)
       ],
+    );
+  }
+
+  Future<void> _showLogDialog(WorkItOffUser user, int cals) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Log Custom Meal?'),
+          content: Text("Calories: $cals"),
+          actions: <Widget>[
+            FlatButton(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.grey[200],
+              textColor: Colors.black,
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            FlatButton(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.grey[200],
+                textColor: Colors.black,
+                child: Text('Log', style: TextStyle(fontWeight: FontWeight.bold)),
+                onPressed: () {
+                  user.addCalsAdded(cals);
+                  Navigator.of(context).pop();
+                  _scrollController.animateTo(
+                    _scrollController.position.minScrollExtent,
+                    curve: Curves.easeOut,
+                    duration: const Duration(milliseconds: 1000),
+                  );
+                  navBar.onTap(0);
+                }),
+          ],
+        );
+      },
     );
   }
 
