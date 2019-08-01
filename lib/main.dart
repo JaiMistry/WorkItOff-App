@@ -1,3 +1,5 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -8,6 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:workitoff/providers/navbar_provider.dart';
 // import './pages/intropage.dart';
 import 'auth/auth.dart';
+
+FirebaseAnalytics analytics = FirebaseAnalytics();
 
 void main() {
   // Provider.debugCheckInvalidValueType = null;
@@ -26,6 +30,7 @@ class MyApp extends StatelessWidget {
         // ChangeNotifierProvider<ProgressProvider>.value(value: ProgressProvider())
       ],
       child: MaterialApp(
+        navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
         // showPerformanceOverlay: true,
         // home: IntroPage(),
         home: CheckSignOnStatus(),
