@@ -1,11 +1,11 @@
-import 'package:flutter/foundation.dart';
+// import 'package:flutter/foundation.dart';
 
-class ProgressProvider extends ChangeNotifier {
-  bool _showProgress;
+// class ProgressProvider extends ChangeNotifier {
+//   bool _showProgress;
 
-  set showProgress(bool flag) {
-    _showProgress = flag;
-    notifyListeners();
-  }
-  bool get showProgress => _showProgress;
-}
+//   set showProgress(bool flag) {
+//     _showProgress = flag;
+//     notifyListeners();
+//   }
+//   bool get showProgress => _showProgress;
+// }

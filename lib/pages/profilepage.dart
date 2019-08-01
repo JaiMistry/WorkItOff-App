@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,17 +6,11 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
 import 'package:url_launcher/url_launcher.dart';
+import 'package:workitoff/providers/navbar_provider.dart';
 import 'package:workitoff/providers/user_provider.dart';
 
 import 'package:workitoff/widgets.dart';
-import 'package:workitoff/auth/auth.dart';
-
-bool _isNumeric(String str) {
-  if (str == null) {
-    return false;
-  }
-  return double.tryParse(str) != null;
-}
+// import 'package:workitoff/auth/auth.dart';
 
 class StandardTextInputField extends StatefulWidget {
   final String label;
@@ -67,7 +61,7 @@ class _StandardTextInputFieldState extends State<StandardTextInputField> {
             controller: widget.controller,
             focusNode: _focusNode,
             validator: (string) {
-              if (string.isEmpty || !_isNumeric(string)) {
+              if (string.isEmpty || !isNumeric(string)) {
                 return widget.failedValidateText;
               }
               return null;
@@ -124,11 +118,8 @@ class _GenderRadioState extends State<GenderRadio> {
   void _onRadioChanged(int value) {
     setState(() {
       _selected = value;
-      _genderMapping[value] =
-          Color(0xff4ff7d3); // Change the slected item color
-      value == 0
-          ? _genderMapping[1] = Colors.white
-          : _genderMapping[0] = Colors.white; // Unslected item
+      _genderMapping[value] = Color(0xff4ff7d3); // Change the slected item color
+      value == 0 ? _genderMapping[1] = Colors.white : _genderMapping[0] = Colors.white; // Unslected item
     });
   }
 
@@ -360,14 +351,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       constraints: const BoxConstraints.expand(),
-      decoration: const BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: const [Color(0xff170422), Color(0xff9B22E6)],
-          stops: const [0.75, 1],
-        ),
-      ),
+      decoration: getBasicGradient(),
       child: Container(
         constraints: const BoxConstraints.expand(),
         child: ProfilePageData(),
@@ -409,11 +393,10 @@ class _UpdateProfileBtnState extends State<UpdateProfileBtn> with SingleTickerPr
 
   void _updateProfile() async {
     String gender = Provider.of<GenderProvider>(context).gender;
-    String userID = Provider.of<FirebaseUser>(context).uid;
     int age = int.parse(widget.ageController.text);
     int weight = int.parse(widget.weightController.text);
 
-    await updateProfile(userID, gender, age, weight).then((onValue) {
+    await Provider.of<WorkItOffUser>(context).updateProfile(age: age, gender: gender, weight: weight).then((onValue) {
       showDefualtFlushBar(context: context, text: 'Profile Updated!');
     }).timeout(const Duration(seconds: 5), onTimeout: () {
       showDefualtFlushBar(context: context, text: 'Connection timed out.');
@@ -422,11 +405,18 @@ class _UpdateProfileBtnState extends State<UpdateProfileBtn> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
+    if (Provider.of<NavBarProvider>(context).currentPage == 3) {
+      _animationController.forward();
+    } else {
+      _animationController.reverse();
+    }
+    MediaQueryData mQ = MediaQuery.of(context);
+    double padding = mQ.viewInsets.bottom != 0.0 ? mQ.viewInsets.bottom : mQ.padding.bottom;
     return Container(
+      padding: EdgeInsets.only(bottom: padding),
       child: FadeTransition(
         opacity: CurvedAnimation(parent: _animationController, curve: Curves.linear),
         child: Container(
-          // width: MediaQuery.of(context).size.width, // Less efficient
           width: double.infinity,
           child: FlatButton(
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // Removed all padding

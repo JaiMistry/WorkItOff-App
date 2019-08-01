@@ -1,8 +1,11 @@
+// import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:workitoff/navigation_bar.dart';
-import 'package:workitoff/providers/progress_provider.dart';
+import 'package:workitoff/providers/navbar_provider.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:workitoff/providers/user_provider.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,6 +26,11 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
   TextEditingController _searchController = new TextEditingController();
   String _filter;
   bool _isSliderMoved = false;
+  Map<String, double> workoutsMap = {};
+
+  void _updateWorkoutsList(String workoutName, double sliderValue) {
+    workoutsMap[workoutName] = sliderValue;
+  }
 
   Widget _buildCardList(AsyncSnapshot snapshot) {
     return ListView.builder(
@@ -31,9 +39,9 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
       itemBuilder: (BuildContext context, int index) {
         DocumentSnapshot workout = snapshot.data.documents[index];
         return _filter == null || _filter == ''
-            ? WorkoutCards(snapshot.data.documents[index], _sliderMoved, _isSliderMoved)
+            ? WorkoutCards(snapshot.data.documents[index], _sliderMoved, _isSliderMoved, _updateWorkoutsList)
             : workout.documentID.contains(_filter.toLowerCase())
-                ? WorkoutCards(workout, _sliderMoved, _isSliderMoved)
+                ? WorkoutCards(workout, _sliderMoved, _isSliderMoved, _updateWorkoutsList)
                 : Container();
       },
       itemCount: snapshot.data.documents.length,
@@ -78,6 +86,20 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
     super.dispose();
   }
 
+  Future<void> _callCloudFucntion(Map workoutsMap) async {
+    String userID = Provider.of<WorkItOffUser>(context).getID();
+
+    final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
+      functionName: 'addWorkouts',
+    );
+    
+    try {
+      dynamic resp = await callable.call(<String, dynamic>{"userID": userID, "workoutsMap": workoutsMap});
+    } catch (e) {
+      debugPrint('An error has occured');
+    }
+  }
+
   Future<void> _showLogDialog() async {
     WorkItOffUser user = Provider.of<WorkItOffUser>(context);
     return showDialog<void>(
@@ -116,9 +138,14 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                     _showMissingDataDialog('Weight');
                     return;
                   }
+                  // TODO: Send workouts to cloud function. These are placeholder calories
+                  // print(workoutsMap); // Contains the values that will be based to the cloud function
+                  // user.calsBurned = 500; // TODO
+                  _callCloudFucntion(workoutsMap);
+
                   _sliderMoved(false); // Reset the slider
                   Navigator.of(context).pop(); // Pop the alertDialog
-                  Provider.of<ProgressProvider>(context).showProgress = true;
+                  // Provider.of<ProgressProvider>(context).showProgress = true;
                   navBar.onTap(0); // Redirect to burn page
                 }),
           ],
@@ -161,14 +188,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: const [Color(0xff170422), Color(0xff9B22E6)],
-          stops: const [0.75, 1],
-        ),
-      ),
+      decoration: getBasicGradient(),
       child: Column(
         children: <Widget>[
           SearchBar(hintText: 'Search Workouts', controller: _searchController, bottomMargin: 6),
@@ -211,29 +231,37 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                             ),
                           ),
                         ),
+                        SizedBox(height: 75),
                       ],
                     ),
                   ),
-                  Container(
-                    alignment: Alignment.bottomCenter,
-                    child: FadeTransition(
-                      opacity: CurvedAnimation(parent: _animationController, curve: Curves.linear),
-                      child: Container(
-                        // width: MediaQuery.of(context).size.width, // Less efficient
-                        width: double.infinity,
-                        child: FlatButton(
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          color: Color(0xff4ff7d3),
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          child: Text("Enter Workouts", style: TextStyle(fontSize: 18.0)),
-                          onPressed: () {
-                            return _isSliderMoved ? _showLogDialog() : null;
-                          },
+                  Consumer<NavBarProvider>(builder: (ctx, navbar, child) {
+                    if (navbar.currentPage == 2 && _isSliderMoved) {
+                      _animationController.forward();
+                    } else {
+                      _animationController.reverse();
+                    }
+                    return Container(
+                      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+                      alignment: Alignment.bottomCenter,
+                      child: FadeTransition(
+                        opacity: CurvedAnimation(parent: _animationController, curve: Curves.linear),
+                        child: Container(
+                          width: double.infinity,
+                          child: FlatButton(
+                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            color: Color(0xff4ff7d3),
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            child: Text("Enter Workouts", style: TextStyle(fontSize: 18.0)),
+                            onPressed: () {
+                              return _isSliderMoved ? _showLogDialog() : null;
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  }),
                 ],
               ),
             ),
@@ -249,7 +277,8 @@ class WorkoutCards extends StatefulWidget {
   final DocumentSnapshot data;
   final Function sliderMoved;
   final bool isSliderMoved;
-  WorkoutCards(this.data, this.sliderMoved, this.isSliderMoved) : super();
+  final Function updateWorkoutsList;
+  WorkoutCards(this.data, this.sliderMoved, this.isSliderMoved, this.updateWorkoutsList) : super();
 
   @override
   State<StatefulWidget> createState() {
@@ -261,6 +290,7 @@ class _WorkoutCardsState extends State<WorkoutCards> {
   double _sliderValue = 0.0;
 
   void _setValue(double value) {
+    widget.updateWorkoutsList(widget.data.documentID, value);
     setState(() {
       _sliderValue = value;
       widget.sliderMoved(true);
@@ -286,7 +316,7 @@ class _WorkoutCardsState extends State<WorkoutCards> {
           ClipRRect(
             borderRadius: BorderRadius.circular(10.0),
             child: CachedNetworkImage(
-              imageUrl: this.widget.data['image_url'],
+              imageUrl: widget.data['image_url'],
               placeholder: (context, url) => Container(),
               errorWidget: (context, url, error) => Container(child: Text('Error Loading image..')),
               fit: BoxFit.cover,

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 // import 'package:provider/provider.dart';
 // import 'package:flutter/material.dart';
 
@@ -65,34 +65,43 @@ class WorkItOffUser {
     // This is the set the value. Not increment
     _firestore.collection('users').document(id).updateData({'cals_burned': newCalsBurned});
   }
-  
+
+  Future<void> addCalsAdded(int calsToAdd) {
+    // Increments the total calories added
+    return _firestore.collection('users').document(id).updateData({'cals_added': FieldValue.increment(calsToAdd)});
+  }
+
+  Future<void> addCalsBurned(int calsToBurn) {
+    // Increments the calories burned
+    return _firestore.collection('users').document(id).updateData({'cals_burned': FieldValue.increment(calsToBurn)});
+  }
 
   Future<void> updateProfile({
-    @required String userID,
     String gender,
     int age,
     int weight,
     int calsBurned,
     int calsAdded,
   }) async {
-    Map<String, dynamic> userMap;
-    if (gender != null || gender != '') {
+    Map<String, dynamic> userMap = {};
+    if (gender != null && gender.isNotEmpty) {
       userMap.putIfAbsent('gender', () => gender);
     }
-    if (age != null || age.toString() != '' || age == 0) {
+    if (age != null) {
       userMap.putIfAbsent('age', () => age);
     }
-    if (weight != null || weight.toString() != '' || weight == 0) {
+    if (weight != null) {
       userMap.putIfAbsent('weight', () => weight);
     }
-    if (calsAdded != null || calsAdded.toString() != '' || calsAdded == 0) {
+    if (calsAdded != null) {
       userMap.putIfAbsent('cals_added', () => calsAdded);
     }
-    if (calsBurned != null || calsBurned.toString() != '' || calsBurned == 0) {
+    if (calsBurned != null) {
       userMap.putIfAbsent('cals_burned', () => calsBurned);
     }
 
-    return _firestore.collection('users').document(userID).updateData(userMap);
+    print(userMap);
+    return _firestore.collection('users').document(id).updateData(userMap);
   }
 }
 

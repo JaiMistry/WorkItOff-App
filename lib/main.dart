@@ -2,9 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
-import 'package:workitoff/providers/progress_provider.dart';
+// import 'package:workitoff/providers/progress_provider.dart';
 
 // import './navigation_bar.dart';
+import 'package:workitoff/providers/navbar_provider.dart';
 // import './pages/intropage.dart';
 import 'auth/auth.dart';
 
@@ -21,7 +22,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         StreamProvider<FirebaseUser>.value(value: FirebaseAuth.instance.onAuthStateChanged),
-        ChangeNotifierProvider<ProgressProvider>.value(value: ProgressProvider())
+        ChangeNotifierProvider<NavBarProvider>.value(value: NavBarProvider()),
+        // ChangeNotifierProvider<ProgressProvider>.value(value: ProgressProvider())
       ],
       child: MaterialApp(
         // showPerformanceOverlay: true,
