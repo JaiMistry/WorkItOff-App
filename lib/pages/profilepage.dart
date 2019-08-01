@@ -410,15 +410,8 @@ class _UpdateProfileBtnState extends State<UpdateProfileBtn> with SingleTickerPr
     } else {
       _animationController.reverse();
     }
-    MediaQueryData mediaQuery = MediaQuery.of(context);
-    double padding = mediaQuery.viewInsets.bottom != 0.0 ? mediaQuery.viewInsets.bottom : mediaQuery.padding.bottom;
-    // if (mediaQuery.viewInsets.bottom != 0.0) {
-    //   padding = mediaQuery.viewInsets.bottom;
-    // } else {
-    //   padding = mediaQuery.padding.bottom;
-    // }
-
-    print(padding);
+    MediaQueryData mQ = MediaQuery.of(context);
+    double padding = mQ.viewInsets.bottom != 0.0 ? mQ.viewInsets.bottom : mQ.padding.bottom;
     return Container(
       padding: EdgeInsets.only(bottom: padding),
       child: FadeTransition(

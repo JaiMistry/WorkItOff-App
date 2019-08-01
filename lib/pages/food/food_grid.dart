@@ -224,6 +224,7 @@ class _FoodBodyState extends State<FoodBody> {
           children: <Widget>[
             _builderEnterCaloriesButton(context, _scrollController, setPageScrollPosition),
             StreamBuilder<QuerySnapshot>(
+              // initialData: Something,
               stream: Firestore.instance.collection('food').snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData || snapshot.hasError || snapshot.connectionState == ConnectionState.waiting) {
