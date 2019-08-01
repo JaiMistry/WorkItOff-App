@@ -294,6 +294,7 @@ class _FoodItemsState extends State<FoodItems> with SingleTickerProviderStateMix
 
   void _resetCart() {
     setState(() {
+      Provider.of<FoodItemProvider>(context, listen: false).currentRestuarant = null;
       listOfMeals.clear();
       quantityOfMeals.clear();
       _animationController.reverse();

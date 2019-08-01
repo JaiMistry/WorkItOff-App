@@ -405,14 +405,15 @@ class _UpdateProfileBtnState extends State<UpdateProfileBtn> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
-    if(Provider.of<NavBarProvider>(context).currentPage == 3){
+    if (Provider.of<NavBarProvider>(context).currentPage == 3) {
       _animationController.forward();
-    } else{
+    } else {
       _animationController.reverse();
     }
-
+    MediaQueryData mQ = MediaQuery.of(context);
+    double padding = mQ.viewInsets.bottom != 0.0 ? mQ.viewInsets.bottom : mQ.padding.bottom;
     return Container(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+      padding: EdgeInsets.only(bottom: padding),
       child: FadeTransition(
         opacity: CurvedAnimation(parent: _animationController, curve: Curves.linear),
         child: Container(

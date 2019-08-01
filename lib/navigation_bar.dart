@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// import 'package:keyboard_avoider/keyboard_avoider.dart';
 
 import 'package:workitoff/pages/profilepage.dart';
 import 'package:workitoff/pages/workouts.dart';
@@ -35,13 +36,11 @@ class _NavigationBarState extends State<NavigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    String userID =
-        Provider.of<FirebaseUser>(context, listen: false) != null ? Provider.of<FirebaseUser>(context).uid : 'null';
-
+    String userID = Provider.of<FirebaseUser>(context, listen: false)?.uid ?? 'null';
     return MultiProvider(
       providers: [StreamProvider<WorkItOffUser>.value(value: DatabaseService().streamUser(userID))],
       child: Scaffold(
-        // resizeToAvoidBottomInset: false,
+        // resizeToAvoidBottomInset: false, //Changes the way the foodGrid reacts to softkeyboard
         extendBody: true, // Enables transparent BG
         body: IndexedStack(
           children: _pageOptions,
