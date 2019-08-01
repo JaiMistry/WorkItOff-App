@@ -92,11 +92,11 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
     final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
       functionName: 'addWorkouts',
     );
-    
+
     try {
-      dynamic resp = await callable.call(<String, dynamic>{"userID": userID, "workoutsMap": workoutsMap});
+      await callable.call(<String, dynamic>{"userID": userID, "workoutsMap": workoutsMap});
     } catch (e) {
-      debugPrint('An error has occured');
+      debugPrint('Unable to call addWorkouts cloud function...');
     }
   }
 
@@ -185,6 +185,44 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
     );
   }
 
+  Widget _showOverlay() {
+    WorkItOffUser user = Provider.of<WorkItOffUser>(context);
+    // must null check user before doing anything
+    if (user == null) return Container();
+
+    // check if they logged any calories
+    if (user.calsAdded == 0) {
+      return IgnorePointer(
+        child: Stack(
+          children: <Widget>[
+            Container(color: Colors.grey.withOpacity(0.20)),
+            Container(
+              padding: EdgeInsets.only(bottom: 90.0),
+              alignment: Alignment.center,
+              child: Wrap(
+                children: <Widget>[
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      text: 'Log a meal, then come ',
+                      style: TextStyle(fontSize: 35.0, color: Colors.white.withOpacity(0.70)),
+                      children: <TextSpan>[
+                        TextSpan(text: 'back to ', style: TextStyle(color: Colors.white.withOpacity(0.70))),
+                        TextSpan(text: 'Work It Off', style: TextStyle(color: Color(0xff3ADEA7).withOpacity(0.90)))
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      );
+    }
+    // need to return nothing if calories are logged
+    return Container();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -249,19 +287,17 @@ class _WorkoutsPageState extends State<WorkoutsPage> with TickerProviderStateMix
                         child: Container(
                           width: double.infinity,
                           child: FlatButton(
-                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            color: Color(0xff4ff7d3),
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            child: Text("Enter Workouts", style: TextStyle(fontSize: 18.0)),
-                            onPressed: () {
-                              return _isSliderMoved ? _showLogDialog() : null;
-                            },
-                          ),
+                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              color: Color(0xff4ff7d3),
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              child: Text("Enter Workouts", style: TextStyle(fontSize: 18.0)),
+                              onPressed: () => _isSliderMoved ? _showLogDialog() : null),
                         ),
                       ),
                     );
                   }),
+                  _showOverlay()
                 ],
               ),
             ),
@@ -291,9 +327,14 @@ class _WorkoutCardsState extends State<WorkoutCards> {
 
   void _setValue(double value) {
     widget.updateWorkoutsList(widget.data.documentID, value);
+    WorkItOffUser user = Provider.of<WorkItOffUser>(context);
     setState(() {
-      _sliderValue = value;
-      widget.sliderMoved(true);
+      if (user.calsAdded == null || user.calsAdded == 0) {
+        _sliderValue = 0;
+      } else {
+        _sliderValue = value;
+        widget.sliderMoved(true);
+      }
     });
   }
 
