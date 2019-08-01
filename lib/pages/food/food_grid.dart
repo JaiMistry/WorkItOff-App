@@ -231,11 +231,13 @@ class _FoodBodyState extends State<FoodBody> {
                 if (!snapshot.hasData || snapshot.hasError || snapshot.connectionState == ConnectionState.waiting) {
                   return Container();
                 }
+                List<Widget> foodcards = _getFoodCards(snapshot);
+                if (foodcards.length == 0) return Container();
                 return GridView(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-                  children: _getFoodCards(snapshot),
+                  children: foodcards,
                 );
               },
             ),
