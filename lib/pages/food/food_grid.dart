@@ -36,11 +36,10 @@ class _FoodBodyState extends State<FoodBody> {
 
   @override
   void dispose() {
-    super.dispose();
     _scrollController.dispose();
+    super.dispose();
   }
 
-  // TODO: Ignore keyboard input for scroll view
   void setPageScrollPosition(bool scrollToBottom) {
     double scrollPosition = _scrollController.position.maxScrollExtent;
     if (scrollToBottom == false) {
@@ -71,6 +70,7 @@ class _FoodBodyState extends State<FoodBody> {
             color: Colors.white,
             child: InkWell(
               child: CachedNetworkImage(
+                key: Key(imageUrl),
                 placeholder: (context, url) => Container(),
                 errorWidget: (context, url, error) =>
                     Container(child: const Center(child: Text('Error Loading Image..'))),
@@ -198,7 +198,8 @@ class _FoodBodyState extends State<FoodBody> {
           ),
         ),
         const SizedBox(height: 30.0),
-        Image.asset('assets/logo_transparent.png', height: MediaQuery.of(context).size.height * 0.2),
+        // Image.asset('assets/logo_transparent.png', height: MediaQuery.of(context).size.height * 0.2),  caused a rebuild on softkeyboard open
+        Image.asset('assets/logo_transparent.png', height: 100),
         const SizedBox(height: 50.0),
         const Text('We are always adding new restaurants!'),
         const SizedBox(height: 10.0),
@@ -230,7 +231,6 @@ class _FoodBodyState extends State<FoodBody> {
                 if (!snapshot.hasData || snapshot.hasError || snapshot.connectionState == ConnectionState.waiting) {
                   return Container();
                 }
-
                 return GridView(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,

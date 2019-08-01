@@ -40,7 +40,7 @@ class _NavigationBarState extends State<NavigationBar> {
     return MultiProvider(
       providers: [StreamProvider<WorkItOffUser>.value(value: DatabaseService().streamUser(userID))],
       child: Scaffold(
-        // resizeToAvoidBottomInset: false,
+        // resizeToAvoidBottomInset: false, //Changes the way the foodGrid reacts to softkeyboard
         extendBody: true, // Enables transparent BG
         body: IndexedStack(
           children: _pageOptions,
